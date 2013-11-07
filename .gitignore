@@ -1,7 +1,7 @@
 *~
 \#*
 a.out
-.o
+*.o
 lex.yy.c
 y.tab.*
 *.output
