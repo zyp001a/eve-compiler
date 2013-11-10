@@ -1,6 +1,6 @@
 # Makefile
 
-FILES   = Lexer.c Parser.c Sociaty.c Role.c Expresion.c Evaluate.c Common.c main.c
+FILES   = Lexer.c Common.c Expression.c Parser.c Role.c Evaluate.c Sociaty.c main.c
 CC      = g++
 CFLAGS  = -g -ansi
 

@@ -2,68 +2,26 @@
  * main.c file
  */
  
-#include "Expression.h"
+#include "Sociaty.h"
 #include "Parser.h"
 #include "Lexer.h"
+
  
-#include <stdio.h>
- 
-int yyparse(Expression **expression, yyscan_t scanner);
- 
-Expression *getAST(const char *expr)
-{
-	Expression *expression;
-	yyscan_t scanner;
-	YY_BUFFER_STATE state;
- 
-	if (yylex_init(&scanner)) {
-		// couldn't initialize
-		return NULL;
-	}
- 
-	state = yy_scan_string(expr, scanner);
- 
-	if (yyparse(&expression, scanner)) {
-		// error parsing
-		return NULL;
-	}
- 
-	yy_delete_buffer(state, scanner);
- 
-	yylex_destroy(scanner);
- 
-	return expression;
-}
-/* 
-int evaluate(Expression *e)
-{
-	switch (e->type) {
-	case eVALUE:
-		return e->value;
-	case eMULTIPLY:
-		return evaluate(e->left) * evaluate(e->right);
-	case ePLUS:
-		return evaluate(e->left) + evaluate(e->right);
-	default:
-		// shouldn't be here
-		return 0;
-	}
-}
-*/
+
  
 int main(void)
 {
-	Expression *e = NULL;
-	char test[]=" 4 + 2*10 + 3*( 5 + 1 )";
-	int result = 0;
+//	Expression *e = NULL;
+//	char test[]=" 4 + 2*10 + 3*( 5 + 1 )";
+//	int result = 0;
  
-	e = getAST(test);
+//	e = getAST(test);
  
 //	result = evaluate(e);
  
 //	printf("Result of '%s' is %d\n", test, result);
  
-	deleteExpression(e);
+//	deleteExpression(e);
  
 	return 0;
 }

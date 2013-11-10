@@ -4,7 +4,8 @@
  * Parser.y file
  * To generate the parser run: "bison Parser.y"
  */
- 
+
+#include "Common.h" 
 #include "Expression.h"
 #include "Parser.h"
 #include "Lexer.h"
@@ -29,36 +30,52 @@ int yyerror(Expression **expression, yyscan_t scanner, const char *msg) {
  
 %define api.pure
 %lex-param   { yyscan_t scanner }
-%parse-param { SExpression **expression }
+%parse-param { Expression **expression }
 %parse-param { yyscan_t scanner }
  
 %union {
-	int value;
-	SExpression *expression;
+	char *strval;
+	Expression *expression;
 }
  
-%left '+' TOKEN_PLUS
-%left '*' TOKEN_MULTIPLY
+%left ':'
+%left '.'
  
-%token TOKEN_LPAREN
-%token TOKEN_RPAREN
-%token TOKEN_PLUS
-%token TOKEN_MULTIPLY
-%token <value> TOKEN_NUMBER
- 
+%token CONSTANT IDENTIFIER 
+%token END_OF_STATEMENT
+%type <strval> CONSTANT
+%type <strval> IDENTIFIER
 %type <expression> expr
- 
+%type <strval> name
+%type <strval> member
+
+%start translation_unit
+
 %%
- 
-input
-: expr { *expression = $1; }
+translation_unit
+: statement
+| translation_unit statement
 ;
- 
+
+statement
+: expr END_OF_STATEMENT { *expression = $1; }
+| END_OF_STATEMENT
+;
+
 expr
-: expr TOKEN_PLUS expr { $$ = createOperation( ePLUS, $1, $3 ); }
-| expr TOKEN_MULTIPLY expr { $$ = createOperation( eMULTIPLY, $1, $3 ); }
-| TOKEN_LPAREN expr TOKEN_RPAREN { $$ = $2; }
-| TOKEN_NUMBER { $$ = createNumber($1); }
+: name ':' name { Expression_CreateGen($$, $1, $3); }
+| name          { Expression_CreateEval($$, $1); }
+| name '(' ')'  { Expression_CreateEval($$, $1); }
+| name '=' name { Expression_CreateSet($$, $1, $3); }
 ;
- 
+
+name
+: IDENTIFIER
+| member
+| CONSTANT
+;
+member
+: IDENTIFIER '.' IDENTIFIER
+| member '.' IDENTIFIER
+;
 %%

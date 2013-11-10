@@ -1,29 +1,32 @@
 #include "Common.h"
 
-char* estrdup(char *str){
-	char *buffer;
-	buffer = (char*)malloc(strlen(str)+1);
-	strcpy(buffer, str);
-	return buffer;
+void estrdup(char* ori, char *str){
+	if(ori == NULL){
+		ori = (char*)malloc(strlen(str)+1);
+	}
+	else{
+		ori = (char*)realloc(ori, strlen(str)+1);
+	}
+	strcpy(ori, str);
 }
 
+void eerror(char *str){
+	fprintf(stderr, "%s\n", str);
+}
+/*
+char* ereadfile(File *fp){
+	return 
+}
+*/
 
-typedef int Index;
-
-struct IndexArray{
-	Index Length;
-	Index *Values;
-};
-
-typedef struct IndexArray IndexArray;
 void IndexArray_Create(IndexArray *a){
   a->Length = 0;
-  a->Values = malloc(sizeof(Index));
+  a->Values = (Index *)malloc(sizeof(Index));
 }
 
 Index IndexArray_Add(IndexArray *a, Index i){
   int p = a->Length++;
-  a->Values = realloc(a->Values,
+  a->Values = (Index *)realloc(a->Values,
                       a->Length * sizeof(Index));
 	a->Values[p] = i;
   return p;
