@@ -1,4 +1,4 @@
-flex dc.l
-bison -d -y dc.y -v
-gcc -c y.tab.c lex.yy.c symtable.c symhierachy.c
-gcc y.tab.o lex.yy.o symtable.o symhierachy.o -o dc
+flex evec.l
+bison -d -y evec.y -v
+gcc -c y.tab.c lex.yy.c symhierachy.c
+gcc y.tab.o lex.yy.o symhierachy.o -o evec

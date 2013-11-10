@@ -8,14 +8,25 @@
 int yylex(void);
 extern int column;
 void yyerror(char *);
-
+void scancode(char *);
+#define YYPARSE_PARAM scanner
+#define YYLEX_PARAM   scanner
+#ifndef YY_TYPEDEF_YY_SCANNER_T
+#define YY_TYPEDEF_YY_SCANNER_T
+typedef void* yyscan_t;
+#endif
 %}
+
+
 %token CONSTANT IDENTIFIER CODEBLOCK
 %token END_OF_STATEMENT
 %union {
 	int numval;
 	char *strval;
 }
+%locations
+%pure_parser
+
 %type <strval> IDENTIFIER
 %type <strval> CONSTANT
 %type <strval> CODEBLOCK
@@ -30,6 +41,7 @@ void yyerror(char *);
 %type <strval> argument
 
 
+
 %start translation_unit
 %%
 
@@ -40,11 +52,11 @@ translation_unit
 statement
 : declaration END_OF_STATEMENT 
 { 
-
+	fprintf(stderr, "%s\n", $1);
 }
 | expression END_OF_STATEMENT
 { 
-
+	fprintf(stderr, "%s\n", $1);
 }
 | END_OF_STATEMENT
 ;
@@ -83,10 +95,22 @@ expression
 	Sociaty_AddSSRelation("eve", $1);
 	sprintf($$, "%s(%s)",$1,$3);
 }
+| name '=' CONSTANT
+{
+	Sociaty_AddSSRelation("eve", $1);
+  Role_SetCode(Sociaty_SearchRole($1), $3);
+  sprintf($$, "%s = %s",$1,$3);
+}
+| name '=' member
+
+{
+  Sociaty_AddSSRelation("eve", $1);
+  Role_SetCode(Sociaty_SearchRole($1), $3);
+  sprintf($$, "%s = %s",$1,$3);
+}
 | name '=' CODEBLOCK
 {
 	Sociaty_AddSSRelation("eve", $1);
-
 	Role_SetCode(Sociaty_SearchRole($1), $3);
 	sprintf($$, "%s = %s",$1,$3);
 }
@@ -124,10 +148,14 @@ void yyerror(char *s)
 	fflush(stdout);
 	printf("\n%*s\n%*s\n", column, "^", column, s);
 }
+
 int main(void) {
+	yyscan_t scanner;
+	yylex_init(&scanner);
 	Sociaty_Create();
 	printf("#include <stdio.h>\nmain(){\n");
-  yyparse();
+  yyparse(scanner);
+	yylex_destroy(scanner);
 	printf("}\n");
 //	Sociaty_Write();
 //	write_symtable();

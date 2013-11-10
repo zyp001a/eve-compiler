@@ -17,7 +17,11 @@ INT_SUFFIX		(u|U|l|L)*
 #include <string.h>
 #include "y.tab.h"
 void count();
+
 %}
+
+%option reentrant noyywrap 
+%option bison-bridge bison-locations
 
 %%
 "/*"			{ comment(); }
@@ -34,10 +38,13 @@ void count();
 {DIGIT}+"."{DIGIT}*({EXP})?{FLOAT_SUFFIX}? { count(); return(CONSTANT); }
 L?\'(\\.|[^\\\'])+\'	           { count(); return(CONSTANT); }
 L?\"(\\.|[^\\\"])*\"	           { count(); return(CONSTANT); }
-\{\{(\\.|[^\\\}\\\}])*\}\}		   { count(); return(CODEBLOCK); }
+c?\{\{(\\.|[^\\\}\\\}])*\}\}		   { count(); return(CODEBLOCK); }
 
 [;\n] { count(); return(END_OF_STATEMENT); }
-<<EOF>>	  {yyterminate();  return(END_OF_STATEMENT); }
+<<EOF>>	  {	
+	return(END_OF_STATEMENT); 
+	yyterminate();
+}
 [ \t\v\f]		{ count(); }
 ":"        { count(); return(':');}
 "."        { count(); return('.');}
@@ -52,10 +59,7 @@ L?\"(\\.|[^\\\"])*\"	           { count(); return(CONSTANT); }
 
 %%
 
-yywrap()
-{
-		return(1);
-}
+
 
 
 comment()
@@ -63,15 +67,16 @@ comment()
 		char c, c1;
 
 loop:
-		while ((c = input()) != '*' && c != 0)
-				putchar(c);
+/*		
+	while ((c = input()) != '*' && c != 0)
+		putchar(c);
 		
-		if ((c1 = input()) != '/' && c != 0)
-		{
-				unput(c1);
-				goto loop;
-		}
-
+	if ((c1 = input()) != '/' && c != 0)
+	{
+		unput(c1);
+		goto loop;
+	}
+*/
 		if (c != 0)
 				putchar(c1);
 }
@@ -82,7 +87,7 @@ void count()
 {
 
 		int i;
-
+/*
 		for (i = 0; yytext[i] != '\0'; i++)
 				if (yytext[i] == '\n')
 						column = 0;
@@ -90,11 +95,29 @@ void count()
 						column += 8 - (column % 8);
 				else
 						column++;
-
+*/
     yylval.strval = strdup(yytext);
 
 }
 
+void scancode(char *code){
+//  YY_BUFFER_STATE buf;
+	
+//	buf = yy_scan_string(code);
+//	yypush_buffer_state(buf);
+//	depth ++;
+//	yylex();
+
+
+  yyscan_t scanner;
+  YY_BUFFER_STATE buf;
+  yylex_init(&scanner);
+  buf = yy_scan_string(code, scanner);
+  yylex(&yylval, &yylloc, scanner);
+  yy_delete_buffer(buf, scanner);
+  yylex_destroy(scanner);
+ 
+}
 
 
 int check_type()
@@ -114,3 +137,4 @@ int check_type()
 
 		return(IDENTIFIER);
 }
+

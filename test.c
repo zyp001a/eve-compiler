@@ -1,11 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+typedef struct da{
+	int l;
+	void* arr;
+} da;
 main(){
-	int *a;
-	int *b;
-	a= malloc(2*sizeof(int));
-	a[0]=1;
-	a[1]=2;
-	b = a + 1;
-	printf("%d,%d,%d\n",a[0],a[1],*b);
+	da a;
+
+	char **x =(char**)malloc(10*sizeof(char*));
+	x[0] = strdup("xxxxx");
+	x[1]  = strdup("xxxxx");
+	a.arr = x;
+	printf("%s\t%s\n", (char**)a.arr[0], (char**)a.arr[1]);
 }

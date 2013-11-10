@@ -1,4 +1,8 @@
+
 print=c{{
 printf("Hello World\n");
 }}
-print
+p={{
+print;
+}}
+p

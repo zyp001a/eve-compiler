@@ -1,4 +1,4 @@
 #!/bin/bash
-cat $1 | ./dc >$1.c
+cat $1 | ./pp | ./dc >$1.c
 cc $1.c -o $1.exe
 ./$1.exe

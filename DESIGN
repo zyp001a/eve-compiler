@@ -1,0 +1,26 @@
+Eve
+				~Args: 
+				~Flags:
+				~Out
+
+				~Use: 
+				~SetEnv: 
+
+				~RawValue: 
+				~Value: @Eve, $Eve, *=Eve
+				~Name:
+
+				Set:	 Eve = * 
+				Eval:	 Eve[;\n<<EOF>>]
+				Gen:   *:Eve
+				
+$ this
+@ super/base
+~ cannot inherent
+abstract: must set after inherence
+
+
+
+Identifier
+Block
+Constant
