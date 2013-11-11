@@ -128,8 +128,8 @@ void Sociaty_EvalExpression(Expression *expr){
 		Sociaty_Output(Sociaty_GetRole(expr->Role1)->_Value);
 		return;
 	case Set:
-		estrdup(Sociaty_GetRole(expr->Role1)->_Value, 
-						Sociaty_GetRole(expr->Role2)->_Value);
+		Sociaty_GetRole(expr->Role1)->_Value = 
+			estrdup(Sociaty_GetRole(expr->Role2)->_Value);
 		return;
 	case Gen:
 		Sociaty_AddPCRelation(expr->Role1, 

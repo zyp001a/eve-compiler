@@ -1,23 +1,35 @@
 #include "Common.h"
 
-void estrdup(char* ori, char *str){
-	if(ori == NULL){
-		ori = (char*)malloc(strlen(str)+1);
-	}
-	else{
-		ori = (char*)realloc(ori, strlen(str)+1);
-	}
-	strcpy(ori, str);
+
+
+
+char* estrdup(char *str){
+	char *exp;
+	exp = (char*)malloc(strlen(str)+1);		
+	strcpy(exp, str);
+	return exp;
 }
 
 void eerror(char *str){
 	fprintf(stderr, "%s\n", str);
 }
-/*
-char* ereadfile(File *fp){
-	return 
+
+char* ereadfile(FILE *fp){
+	long lsize;
+	char *str;
+	size_t result;
+	fseek(fp, 0L, SEEK_END);
+	lsize = ftell(fp);
+	fseek(fp, 0L, SEEK_SET);
+	str = (char *)malloc(lsize);
+	result = fread (str,1,lsize,fp);
+	if( result != lsize ){
+		eerror("ereadfile failed");
+		exit(1);
+	}
+	return str;
 }
-*/
+
 
 void IndexArray_Create(IndexArray *a){
   a->Length = 0;

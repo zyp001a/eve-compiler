@@ -25,30 +25,40 @@ FLOAT_SUFFIX  (f|F|l|L)
 INT_SUFFIX    (u|U|l|L)* 
 
 
+
 %%
-{LETTER}({LETTER}|{DIGIT})*      { estrdup((char*)yylval, yytext); return(IDENTIFIER); }
 
-0[xX]{HEX}+{INT_SUFFIX}?         { estrdup((char*)yylval, yytext); return(CONSTANT); }
-0{DIGIT}+{INT_SUFFIX}?           { estrdup((char*)yylval, yytext); return(CONSTANT); }
-{DIGIT}+{INT_SUFFIX}?            { estrdup((char*)yylval, yytext); return(CONSTANT); }
-{DIGIT}+{EXP}{FLOAT_SUFFIX}?     { estrdup((char*)yylval, yytext); return(CONSTANT); }
-{DIGIT}*"."{DIGIT}+({EXP})?{FLOAT_SUFFIX}? { estrdup((char*)yylval, yytext); return(CONSTANT); }
-{DIGIT}+"."{DIGIT}*({EXP})?{FLOAT_SUFFIX}? { estrdup((char*)yylval, yytext); return(CONSTANT); }
-L?\'(\\.|[^\\\'])+\'             { estrdup((char*)yylval, yytext); return(CONSTANT); }
-L?\"(\\.|[^\\\"])*\"             { estrdup((char*)yylval, yytext); return(CONSTANT); }
 
-[;\n]      { return(END_OF_STATEMENT); }
+{LETTER}({LETTER}|{DIGIT})*      { yylval->strval = estrdup(yytext); return(IDENTIFIER); }
+
+0[xX]{HEX}+{INT_SUFFIX}?         { yylval->strval = estrdup(yytext); return(CONSTANT); }
+0{DIGIT}+{INT_SUFFIX}?           { yylval->strval = estrdup(yytext); return(CONSTANT); }
+{DIGIT}+{INT_SUFFIX}?            { yylval->strval = estrdup(yytext); return(CONSTANT); }
+{DIGIT}+{EXP}{FLOAT_SUFFIX}?     { yylval->strval = estrdup(yytext); return(CONSTANT); }
+{DIGIT}*"."{DIGIT}+({EXP})?{FLOAT_SUFFIX}? { yylval->strval = estrdup(yytext); return(CONSTANT); }
+{DIGIT}+"."{DIGIT}*({EXP})?{FLOAT_SUFFIX}? { yylval->strval = estrdup(yytext); return(CONSTANT); }
+L?\'(\\.|[^\\\'])+\'             { yylval->strval = estrdup(yytext); return(CONSTANT); }
+L?\"(\\.|[^\\\"])*\"             { yylval->strval = estrdup(yytext); return(CONSTANT); }
+\{\{(\\.|[^\\\}\\\}])*\}\}       { yylval->strval = estrdup(yytext); return(BLOCK); }
+\[\[(\\.|[^\\\]\\\]])*\]\]       { printf("ll-%s\n",yytext); yylval->strval = estrdup(yytext); return(BLOCK); }
+
+[;\n]+      { return(END_OF_STATEMENT); }
+[ \t\v\r]  { }
+<<EOF>>    { yyterminate(); }
 
 ":"        { return(':');}
 "."        { return('.');}
 ","        { return(',');}
 "{"        { return('{');}
 "}"        { return('}');}
+"["        { return('[');}
+"]"        { return(']');}
 "("        { return('(');}
 ")"        { return(')');}
 "="        { return('=');}
 
-.     {  }
+
+.     { printf("unmatched text: %d\n",yytext); }
 
 %%
 

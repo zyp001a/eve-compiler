@@ -6,6 +6,9 @@
 #include <string.h>
 #define _Bool boolean
 
+
+
+
 typedef int Index;
 
 struct IndexArray{
@@ -15,10 +18,11 @@ struct IndexArray{
 
 typedef struct IndexArray IndexArray;
 
-void estrdup(char* ori, char *str);
+char* estrdup(char *str);
 
 void eerror(char *str);
 void IndexArray_Create(IndexArray *a);
 Index IndexArray_Add(IndexArray *a, Index i);
+char* ereadfile(FILE *fp);
 
 #endif

@@ -3,14 +3,14 @@
 
 
 void Role_Create(Role *v, char *name){
-	estrdup(v->_Name ,name);
+	v->_Name = estrdup(name);
 	IndexArray_Create(&v->Subordinates);
 	IndexArray_Create(&v->Superiors);
 	IndexArray_Create(&v->Parents);
 	IndexArray_Create(&v->Children);
 }
 void Role_Set(Role *v, char *value){
-	estrdup(v->_Value ,value);
+	v->_Value = estrdup(value);
 }
 
 void RoleArray_Create(RoleArray *a){

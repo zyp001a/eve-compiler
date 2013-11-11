@@ -19,25 +19,8 @@ void Expression_CreateEval(Expression *expr, char *name){
 void Expression_CreateSet(Expression *expr, char *name1, char *name2){
 
 }
-/*
-void Expression_CreateByString(Expression *expr, char *str){
-  yyscan_t scanner;
-  YY_BUFFER_STATE state;
-	if (yylex_init(&scanner)) {
-    // couldn't initialize
-		eerror("yylex_init failed");
-    return;
-  }
-	state = yy_scan_string(str, scanner);
-	if (yyparse(&expr, scanner)) {
-    // error parsing
-		eerror("yyparse failed");
-    return NULL;
-  }
-	yy_delete_buffer(state, scanner);
-	yylex_destroy(scanner);
-}
-*/
+
+
 															 
 void ExpressionArray_Create(ExpressionArray *a){
 	a->Length = 0;

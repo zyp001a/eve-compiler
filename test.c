@@ -8,7 +8,7 @@ typedef struct da{
 } da;
 main(){
 	da a;
-
+	strdup(&x);
 	char **x =(char**)malloc(10*sizeof(char*));
 	x[0] = strdup("xxxxx");
 	x[1]  = strdup("xxxxx");

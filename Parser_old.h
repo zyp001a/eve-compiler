@@ -40,26 +40,25 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 27 "Parser.y" /* yacc.c:1915  */
+#line 24 "Parser.y" /* yacc.c:1915  */
 
  
 #ifndef YY_TYPEDEF_YY_SCANNER_T
 #define YY_TYPEDEF_YY_SCANNER_T
 	typedef void* yyscan_t;
 #endif
-
-void ParseExpressionFromString(char *str);
+ 
  
 
-#line 55 "Parser.h" /* yacc.c:1915  */
+#line 54 "Parser.h" /* yacc.c:1915  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
   enum yytokentype
   {
-    IDENTIFIER = 258,
-    CONSTANT = 259,
+    CONSTANT = 258,
+    IDENTIFIER = 259,
     BLOCK = 260,
     END_OF_STATEMENT = 261
   };
@@ -70,12 +69,12 @@ void ParseExpressionFromString(char *str);
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 44 "Parser.y" /* yacc.c:1915  */
+#line 41 "Parser.y" /* yacc.c:1915  */
 
 	char *strval;
 	Expression *expression;
 
-#line 79 "Parser.h" /* yacc.c:1915  */
+#line 78 "Parser.h" /* yacc.c:1915  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
@@ -83,6 +82,6 @@ union YYSTYPE
 
 
 
-int yyparse (yyscan_t scanner);
+int yyparse (Expression **expression, yyscan_t scanner);
 
 #endif /* !YY_YY_PARSER_H_INCLUDED  */

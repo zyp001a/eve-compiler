@@ -3,8 +3,7 @@
 #include "Common.h"
 #include "Role.h"
 
-//#include "Parser.h"
-//#include "Lexer.h"
+
 
 
 /**
@@ -41,5 +40,5 @@ void Expression_CreateSet(Expression *expr, char *name1, char *name2);
 void ExpressionArray_Create(ExpressionArray *a);
 Index ExpressionArray_Add(ExpressionArray *a, Expression *e);
 
-//int yyparse(Expression **expression, yyscan_t scanner);
+//
 #endif
