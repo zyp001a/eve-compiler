@@ -20,7 +20,10 @@ typedef struct RoleArray{
 void Role_Create(Role *v, char *name);
 void Role_Set(Role *v, char *value);
 void RoleArray_Create(RoleArray *a);
+Index RoleArray_Add(RoleArray *a, Role *r);
 Index RoleArray_AddNew(RoleArray *a, char *name);
 Index RoleArray_SearchByName(RoleArray *a, char *name);
+Role* CreateRole(char *name);
+
 
 #endif

@@ -5,8 +5,10 @@
 
 char* estrdup(char *str){
 	char *exp;
-	exp = (char*)malloc(strlen(str)+1);		
-	strcpy(exp, str);
+	if(str != NULL){
+		exp = (char*)malloc(strlen(str)+1);		
+		strcpy(exp, str);
+	}
 	return exp;
 }
 

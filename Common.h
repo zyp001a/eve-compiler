@@ -1,6 +1,6 @@
 #ifndef _COMMON
 #define _COMMON
-
+//#define EDEBUG
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,12 +11,15 @@
 
 typedef int Index;
 
-struct IndexArray{
+typedef struct IndexArray{
 	Index Length;
 	Index *Values;
-};
+} IndexArray;
 
-typedef struct IndexArray IndexArray;
+typedef struct IntTuple2{
+	int Int1;
+	int Int2;
+} IntTuple2;
 
 char* estrdup(char *str);
 

@@ -1,27 +1,16 @@
 #include "Expression.h"
 
-/*
-void Expression_Create(Expression *expr,
-											 Role *role1, Role *role2, OperationType op){
+
+Expression* Expression_Create(Index i1, Index i2, OperationType op){
+	Expression *expr;
 	expr = malloc(sizeof(Expression));
-	expr->Role1 = role1;
-	expr->Role2 = role2;
+	expr->Role1 = i1;
+	expr->Role2 = i2;
 	expr->Operation = op;
-}
-*/
-
-void Expression_CreateGen(Expression *expr, char *name1, char *name2){
-
-}
-void Expression_CreateEval(Expression *expr, char *name){
-
-}
-void Expression_CreateSet(Expression *expr, char *name1, char *name2){
-
+	return expr;
 }
 
-
-															 
+/*															 
 void ExpressionArray_Create(ExpressionArray *a){
 	a->Length = 0;
 	a->Values = (Expression*)malloc(sizeof(Expression));
@@ -33,7 +22,7 @@ Index ExpressionArray_Add(ExpressionArray *a, Expression *e){
                       a->Length * sizeof(Expression));
 	a->Values[p] = *e;
 }
-
+*/
 /*
 Index ExpressionArray_AddNew(ExpressionArray *a, 
 														Role *role1, Role *role2, OperationType op){

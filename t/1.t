@@ -1,10 +1,17 @@
 a:b
-a:b;
 a.b:c
 c.d:e.f
-a=1;
-a={{print
-}}
+e:f
+a=b
+e=f;
+e
+c=1
+c
 
-b=[[c]]
-c="xsafsadf"
+
+b="1";
+a=`print } a
+dsaf
+`
+
+

@@ -1,6 +1,16 @@
 #include "Role.h"
 
 
+Role* CreateRole(char *name){
+	Role *v;
+	v = (Role*)malloc(sizeof(Role));
+	v->_Name = estrdup(name);
+  IndexArray_Create(&v->Subordinates);
+  IndexArray_Create(&v->Superiors);
+  IndexArray_Create(&v->Parents);
+  IndexArray_Create(&v->Children);
+	return v;
+}
 
 void Role_Create(Role *v, char *name){
 	v->_Name = estrdup(name);
@@ -16,6 +26,13 @@ void Role_Set(Role *v, char *value){
 void RoleArray_Create(RoleArray *a){
   a->Length = 0;
   a->Values = (Role*)malloc(sizeof(Role));
+}
+Index RoleArray_Add(RoleArray *a, Role *r){	
+  Index p = a->Length++;
+  a->Values = (Role*)realloc(a->Values,
+														 a->Length * sizeof(Role));
+	a->Values[p] = *r;
+
 }
 Index RoleArray_AddNew(RoleArray *a, char *name){
 	Index p = a->Length++;

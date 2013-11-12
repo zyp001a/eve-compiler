@@ -4,8 +4,6 @@
 #include "Role.h"
 
 
-
-
 /**
  * @brief The operation type
  */
@@ -33,12 +31,8 @@ typedef struct ExpressionArray
 	Index Length;
 	Expression *Values;
 } ExpressionArray;
+Expression* Expression_Create(Index i1, Index i2, OperationType op);
 
-void Expression_CreateGen(Expression *expr, char *name1, char *name2);
-void Expression_CreateEval(Expression *expr, char *name);
-void Expression_CreateSet(Expression *expr, char *name1, char *name2);
-void ExpressionArray_Create(ExpressionArray *a);
-Index ExpressionArray_Add(ExpressionArray *a, Expression *e);
 
 //
 #endif

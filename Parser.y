@@ -5,8 +5,11 @@
  * To generate the parser run: "bison Parser.y"
  */
 
-#include "Common.h" 
-#include "Expression.h"
+
+//#include "Expression.h"
+#include "Sociaty.h"
+#include "Role.h"
+#include "Eval.h"
 #include "Parser.h"
 #include "Lexer.h"
 
@@ -17,7 +20,11 @@ int yyerror(Expression **expression, yyscan_t scanner, const char *msg) {
 }
 */
 	int yyparse(yyscan_t scanner);
-	int yyerror(yyscan_t scanner, const char *msg){}
+	int yyerror(yyscan_t scanner, const char *msg){
+//		printf("yyerror, %s: '%s' in line %d\n", msg, yytext, yylineno);
+		printf("yyerror, %s\n",msg);
+	}
+
 
 
 
@@ -25,13 +32,14 @@ int yyerror(Expression **expression, yyscan_t scanner, const char *msg) {
 %}
  
 %code requires {
- 
+#include "Common.h"  
 #ifndef YY_TYPEDEF_YY_SCANNER_T
 #define YY_TYPEDEF_YY_SCANNER_T
 	typedef void* yyscan_t;
 #endif
 
 void ParseExpressionFromString(char *str);
+
  }
  
 %output  "Parser.c"
@@ -42,55 +50,118 @@ void ParseExpressionFromString(char *str);
 %parse-param { yyscan_t scanner }
  
 %union {
+	int numval;
+	IntTuple2 num2val;
 	char *strval;
-	Expression *expression;
 }
  
  
 
-%token <strval> IDENTIFIER CONSTANT BLOCK 
-%token END_OF_STATEMENT
+%token <strval> IDENTIFIER 
+%token <strval> CONSTANT 
 
-%type <expression> expr
-%type <strval> name
-%type <strval> role
-%type <strval> member
+%token END_OF_STATEMENT END_OF_FILE
+
+
+%type <num2val> eval
+%type <num2val> role
+%type <num2val> member
 
 %start translation_unit
 
 %%
 translation_unit
-: statement
-| translation_unit END_OF_STATEMENT statement
-| translation_unit END_OF_STATEMENT 
+: expr END_OF_STATEMENT
+| translation_unit expr END_OF_STATEMENT
+| END_OF_FILE
+| translation_unit expr END_OF_FILE
+| translation_unit END_OF_FILE
 ;
-
-statement
-: expr { /**expression = $1;*/ }
-;
-
 expr
-: name ':' name { printf("p--%s:%s\n",$1,$3); Expression_CreateGen($$, $1, $3); }
-| name          { Expression_CreateEval($$, $1); }
-| name '(' ')'  { Expression_CreateEval($$, $1); }
-| name '=' name { Expression_CreateSet($$, $1, $3); }
-
+: role '=' CONSTANT 
+{ 
+	Sociaty_GetRole($1.Int1)->_Value = strdup($3);
+}
+| role '=' role
+{
+  Sociaty_GetRole($1.Int1)->_Value =
+    estrdup(Sociaty_GetRole($3.Int1)->_Value);
+}
+| role ':' role
+{
+  if(Sociaty_SearchPCRelation($1.Int1, $3.Int1) != 0){
+    eerror("cannot inherent");
+    exit(1);
+  }
+  Sociaty_AddPCRelation($1.Int1, $3.Int1);
+}
+| eval
+{
+	Eval($1.Int1, $1.Int2);
+//	Eval(Sociaty_GetValue());
+//	$$ = Expression_Create($1, NULL, Eval); 
+}
 ;
 
-name
-: role 
+eval
+: role         { $$ = $1; }
+| role '(' ')' { $$ = $1; }
 ;
 
 role
-: IDENTIFIER { strcpy($$, $1); printf("pi-%s\n",$1);}
-| member { strcpy($$, $1); printf("pm-%s\n",$1);}
-| CONSTANT { strcpy($$, $1); printf("pc-%s\n",$1);}
-| BLOCK { strcpy($$, $1); printf("pb-%s\n",$1);}
+/*
+: CONSTANT
+{
+#ifdef EDEBUG
+	printf("get const: %s\n", $1);
+#endif
+  $$.Int1 = Sociaty_AddConstRole($1);
+}
+*/
+: member
+{
+#ifdef EDEBUG
+  printf("get member: %s\n", Sociaty_GetRole($1.Int1)->_Name);
+#endif
+  $$ = $1;
+}
+| IDENTIFIER
+{
+#ifdef EDEBUG
+	printf("get id:    %s\n", $1);
+#endif
+	$$.Int1 = Sociaty_AddNewRole($1);	
+}
+
 ;
 
+
 member
-: IDENTIFIER '.' IDENTIFIER {printf("p-m-%s.%s\n", $1, $3); sprintf($$, "%s.%s", $1, $3);}
-| member '.' IDENTIFIER {printf("p-m-%s.%s\n", $1, $3); sprintf($$, "%s.%s", $1, $3);}
+: IDENTIFIER '.' IDENTIFIER
+{
+	int pi, ci;
+	char *m;
+  pi = Sociaty_AddNewRole($1);
+	m = (char *)malloc(strlen($1) + strlen($3) + 3);
+	sprintf(m, "%s.%s", $1, $3);
+	ci = Sociaty_AddNewRole(m);
+	Sociaty_AddSSRelation(pi, ci);
+	$$.Int1 = ci;
+	$$.Int2 = pi;
+}
+| member '.' IDENTIFIER 
+{
+	int pi, ci;
+	char *m;
+	char *n;
+	n = Sociaty_GetRole($1.Int1)->_Name;
+	m = (char *)malloc(strlen(n) + strlen($3) + 3);
+	sprintf(m, "%s.%s", n, $3);
+	ci = Sociaty_AddNewRole(m);
+	Sociaty_AddSSRelation($1.Int1, ci);
+	$$.Int1 = ci;
+	$$.Int2 = pi;
+}
 ;
 %%
 

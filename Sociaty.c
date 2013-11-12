@@ -3,21 +3,60 @@
 
 Sociaty ns;
 char *eve = "Eve";
+
 FILE *out = stdout;
+char *const_name = "EveConst";
+int const_count = 0;
 
 
 void Sociaty_Create(){
 	RoleArray_Create(&ns.Members);
 	RoleArray_AddNew(&ns.Members, eve);
 }
-Index Sociaty_AddNewRole(char *name){
-	return RoleArray_AddNew(&ns.Members, name);
+
+Index Sociaty_AddRole(Role *r){
+	return RoleArray_Add(&ns.Members, r);
 }
+
+Index Sociaty_AddNewRole(char *name){
+	Index i;
+	i = Sociaty_SearchRole(name);
+	if(i == -1){
+		i = RoleArray_AddNew(&ns.Members, name);
+		Sociaty_AddPCRelation(0, i);
+	}
+	return i;
+}
+
+Index Sociaty_AddChildRole(Index pi, char *name){
+	Index i = RoleArray_AddNew(&ns.Members, name);
+	Sociaty_AddPCRelation(pi, i);
+  return i;
+}
+
+Index Sociaty_AddConstRole(char *str){
+	char *name;
+	char const_suffix[11];
+	Index i;
+	const_count ++;
+	sprintf(const_suffix, "%d", const_count);
+	strcpy(name, const_name);
+	strcat(name, const_suffix);
+  i = RoleArray_AddNew(&ns.Members, name);
+	Sociaty_GetRole(i)->_Value
+		= estrdup(str);
+  Sociaty_AddPCRelation(0, i);
+  return i;
+}
+
+
+/*
 Index Sociaty_AddNewExpression(char *str){
 	Expression e;
 	//Expression_CreateByString(&e, str);
-  return ExpressionArray_Add(&ns.Actions, &e);
+//  return ExpressionArray_Add(&ns.Actions, &e);
 }
+*/
 void Sociaty_Output(char *str){
 	fprintf(out, "%s\n", str);
 }
@@ -27,6 +66,13 @@ Index Sociaty_SearchRole(char *name){
 Role *Sociaty_GetRole(Index i){
 	return ns.Members.Values + i;
 }
+char* Sociaty_GetValue(Index i){
+	int ci = i;
+	char *s;
+//	while (Sociaty_GetRole(i)->Parents
+  return s;
+}
+
 Index Sociaty_GetRoleByName(char *name){
 	Index i = Sociaty_SearchRole(name);
   if(i == -1) i = Sociaty_AddNewRole(name);
@@ -121,7 +167,7 @@ void Sociaty_WriteMembers(){
 		Sociaty_WriteIndexArray(&v->Children);
 	}
 }
-
+/*
 void Sociaty_EvalExpression(Expression *expr){
 	switch (expr->Operation){
 	case Value:
@@ -148,6 +194,7 @@ void Sociaty_EvalExpression(Expression *expr){
 		eerror("Expression_Eval: unknown operation");
 	}
 }
+*/
 
 /*
 main(){

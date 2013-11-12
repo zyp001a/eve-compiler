@@ -4,16 +4,14 @@
  
 #include "Sociaty.h"
 #include "Parser.h"
-#include "Lexer.h"
-
- 
+#include "Lexer.h" 
 
  
 int main(int argc, char **argv)
 {
 	FILE *fp;
 	char *str;
-	Expression *e = NULL;
+//	Expression *e = NULL;
 	if(argc == 1)
 		fp = stdin;
 	else
