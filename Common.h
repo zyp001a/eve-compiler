@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define _Bool boolean
-
+#define boolean _Bool
+#define MAX_FILE_NAME 1024
 
 
 
@@ -22,6 +22,8 @@ typedef struct IntTuple2{
 } IntTuple2;
 
 char* estrdup(char *str);
+char* estrsub(char *big, char *small);
+char* estrcent(char *);
 
 void eerror(char *str);
 void IndexArray_Create(IndexArray *a);

@@ -61,8 +61,9 @@ void ParseExpressionFromString(char *str);
   {
     IDENTIFIER = 258,
     CONSTANT = 259,
-    END_OF_STATEMENT = 260,
-    END_OF_FILE = 261
+    USE = 260,
+    END_OF_STATEMENT = 261,
+    END_OF_FILE = 262
   };
 #endif
 
@@ -77,7 +78,7 @@ union YYSTYPE
 	IntTuple2 num2val;
 	char *strval;
 
-#line 81 "Parser.h" /* yacc.c:1915  */
+#line 82 "Parser.h" /* yacc.c:1915  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

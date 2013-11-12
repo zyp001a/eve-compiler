@@ -9,7 +9,42 @@ char* estrdup(char *str){
 		exp = (char*)malloc(strlen(str)+1);		
 		strcpy(exp, str);
 	}
+	else{
+		exp = (char*)malloc(1);
+		strcpy(exp, "");
+	}
 	return exp;
+}
+char* estrsub(char *big, char *small){
+
+	char *sub;
+	sub = big;
+	if(big && small){
+		int si = strlen(small);
+		while(si--){
+			if(big[si] != small[si]){
+				return sub;
+			}
+			sub ++;
+		}
+	}
+	return sub;
+}
+char* estrcent(char *str){
+	char *rtn;
+	int l;
+	if(str != NULL){
+		l = strlen(str);
+		if(l<2) return estrdup(str);
+		str ++;
+		rtn = (char*)malloc(l-1);
+		rtn[l-2] = '\0';
+		strncpy(rtn, str, l-2);
+	}
+	else{
+		return estrdup(str);
+	}
+	return rtn;
 }
 
 void eerror(char *str){

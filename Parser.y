@@ -59,7 +59,7 @@ void ParseExpressionFromString(char *str);
 
 %token <strval> IDENTIFIER 
 %token <strval> CONSTANT 
-
+%token USE
 %token END_OF_STATEMENT END_OF_FILE
 
 
@@ -78,7 +78,22 @@ translation_unit
 | translation_unit END_OF_FILE
 ;
 expr
-: role '=' CONSTANT 
+: USE CONSTANT
+{
+	char *fpath = estrdup(GetPath($2));
+	char *content;
+	FILE *ifp;
+	if(fpath[0]){
+		ifp=fopen(fpath,"r");
+		content = ereadfile(ifp);
+		ParseExpressionFromString(content);
+	}
+	else{
+		eerror("file not exist");
+		exit(1);
+	}
+}
+| role '=' CONSTANT 
 { 
 	Sociaty_GetRole($1.Int1)->_Value = strdup($3);
 }

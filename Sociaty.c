@@ -1,12 +1,11 @@
 #include "Sociaty.h"
 
 
-Sociaty ns;
-char *eve = "Eve";
-
-FILE *out = stdout;
-char *const_name = "EveConst";
-int const_count = 0;
+extern Sociaty ns;
+extern char *eve;
+extern FILE *out;
+extern char *const_name;
+extern int const_count;
 
 
 void Sociaty_Create(){

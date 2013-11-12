@@ -30,6 +30,8 @@ INT_SUFFIX    (u|U|l|L)*
 
 %%
 
+"Use"				                     { return USE; }
+
 {LETTER}({LETTER}|{DIGIT})*      { p(1); yylval->strval = estrdup(yytext); return(IDENTIFIER); }
 0[xX]{HEX}+{INT_SUFFIX}?         { p(2); yylval->strval = estrdup(yytext); return(CONSTANT); }
 0{DIGIT}+{INT_SUFFIX}?           { p(3); yylval->strval = estrdup(yytext); return(CONSTANT); }
@@ -37,10 +39,10 @@ INT_SUFFIX    (u|U|l|L)*
 {DIGIT}+{EXP}{FLOAT_SUFFIX}?     { p(5); yylval->strval = estrdup(yytext); return(CONSTANT); }
 {DIGIT}*"."{DIGIT}+({EXP})?{FLOAT_SUFFIX}? { p(6); yylval->strval = estrdup(yytext); return(CONSTANT); }
 {DIGIT}+"."{DIGIT}*({EXP})?{FLOAT_SUFFIX}? { p(7); yylval->strval = estrdup(yytext); return(CONSTANT); }
-L?\'(\\.|[^\\'])+\'             { p(8); yylval->strval = estrdup(yytext); return(CONSTANT); }
-L?\"(\\.|[^\\"])*\"             { p(9); yylval->strval = estrdup(yytext); return(CONSTANT); }
+\'(\\.|[^\\'])+\'             { p(8); yylval->strval = estrcent(yytext); return(CONSTANT); }
+\"(\\.|[^\\"])*\"             { p(9); yylval->strval = estrcent(yytext); return(CONSTANT); }
 
-L?\`(\\.|[^\\`])*\`             { p(10); yylval->strval = estrdup(yytext); return(CONSTANT); }
+\`(\\.|[^\\`])*\`             { p(10); yylval->strval = estrcent(yytext); return(CONSTANT); }
 
 [;\n]+      { p(11); return(END_OF_STATEMENT); }
 [ \t\v\r]  { }

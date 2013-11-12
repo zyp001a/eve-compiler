@@ -5,5 +5,5 @@
 #include "Sociaty.h"
 
 void Eval(Index i, Index pi);
-
+char* GetPath(char *);
 #endif

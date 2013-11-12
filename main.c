@@ -6,37 +6,30 @@
 #include "Parser.h"
 #include "Lexer.h" 
 
+Sociaty ns;
+char *eve = "Eve";
+FILE *out = stdout;
+char *const_name = "EveConst";
+int const_count = 0;
+char path[] = "ignore:./:/home/zyp/dna/core/src/Eve/";
+
  
 int main(int argc, char **argv)
 {
 	FILE *fp;
 	char *str;
-//	Expression *e = NULL;
 	if(argc == 1)
 		fp = stdin;
 	else
 		fp = fopen(argv[1], "r");
 	str = ereadfile(fp);
 	fclose(fp);
-//	strcat(str,"\n");
-//	sprintf(str, "%s\n",str);
-
+//	char *a = estrcent("'a'");
+//	printf("%s\n",a);
+///*	
 	Sociaty_Create();
-//	char *a;
-//	estrdup(a, str);
-//	printf("%s\n",str);
 	ParseExpressionFromString(str);
+//*/	
 
-//	char test[]=" 4 + 2*10 + 3*( 5 + 1 )";
-//	int result = 0;
- 
-//	e = getAST(test);
- 
-//	result = evaluate(e);
- 
-//	printf("Result of '%s' is %d\n", test, result);
- 
-//	deleteExpression(e);
- 
 	return 0;
 }

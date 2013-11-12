@@ -1,10 +1,6 @@
 Eve
-				~Args: 
-				~Flags:
-				~Out
 
-				~Use: 
-				~Env: 
+				~Flags
 
 				~RawValue: 
 				~Value: @Eve, $Eve, *=Eve
@@ -19,7 +15,8 @@ $ this
 ~ cannot inherent
 abstract: must set after inherence
 
-
+Keywords
+Use
 
 Identifier
 Block
