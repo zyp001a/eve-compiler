@@ -3,9 +3,9 @@
 
 extern Sociaty ns;
 extern char *eve;
-extern FILE *out;
 extern char *const_name;
 extern int const_count;
+extern FILE* out;
 
 
 void Sociaty_Create(){
@@ -56,9 +56,9 @@ Index Sociaty_AddNewExpression(char *str){
 //  return ExpressionArray_Add(&ns.Actions, &e);
 }
 */
-void Sociaty_Output(char *str){
-	fprintf(out, "%s\n", str);
-}
+
+
+
 Index Sociaty_SearchRole(char *name){
 	return RoleArray_SearchByName(&ns.Members, name);
 }
@@ -155,7 +155,6 @@ void Sociaty_WriteMembers(){
 		printf("Index:    %d\n", i);
 		printf("Name:     %s\n", v->_Name);
 		printf("Value:    %s\n", v->_Value);
-		printf("RawValue: %s\n", v->_RawValue);
 		printf("Subordinates: ");
 		Sociaty_WriteIndexArray(&v->Subordinates);
 		printf("Superiors: ");
@@ -164,6 +163,18 @@ void Sociaty_WriteMembers(){
 		Sociaty_WriteIndexArray(&v->Parents);
 		printf("Children: ");
 		Sociaty_WriteIndexArray(&v->Children);
+	}
+}
+void Sociaty_PutChar(char c){
+	fprintf(out, "%c", c);
+}
+void Sociaty_SetOut(char *str){
+	if(estrisnull(str)){
+		if(out != stdout && out != NULL) fclose(out);
+		out = stdout;
+	}
+	else{
+		out = fopen(str, "w");
 	}
 }
 /*

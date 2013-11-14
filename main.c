@@ -5,9 +5,12 @@
 #include "Sociaty.h"
 #include "Parser.h"
 #include "Lexer.h" 
-
+//#define EDEBUG
 Sociaty ns;
-char *eve = "Eve";
+char *eve = "Eve"; //common ansester
+char *evalstr = "Eval"; //evaluate title name
+char *valuestr = "Value";
+char *namestr = "Name";
 FILE *out = stdout;
 char *const_name = "EveConst";
 int const_count = 0;
@@ -24,7 +27,7 @@ int main(int argc, char **argv)
 		fp = fopen(argv[1], "r");
 	str = ereadfile(fp);
 	fclose(fp);
-//	char *a = estrcent("'a'");
+//	char *a = estrafter("asdf.asdDDDe13.dda'",'.');
 //	printf("%s\n",a);
 ///*	
 	Sociaty_Create();

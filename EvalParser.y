@@ -20,7 +20,7 @@ int yyerror(Expression **expression, yyscan_t scanner, const char *msg) {
 }
 */
 	extern void p(int);
-	extern FILE *out;
+
 	int yyparse(yyscan_t scanner);
 	int yyerror(yyscan_t scanner, const char *msg){
 //		printf("yyerror, %s: '%s' in line %d\n", msg, yytext, yylineno);
@@ -54,23 +54,21 @@ void ParseExpressionFromString(char *str);
  
 %union {
 	int numval;
-
-//	IntTuple2 num2val;
+	IntTuple2 num2val;
 	char *strval;
 }
   
 
 %token <strval> IDENTIFIER 
 %token <strval> CONSTANT 
-%token USE SETFLAG SETOUT
-%token <charval> TOKEN_PRINT
+%token USE SETFLAG SETLANG
 %token END_OF_STATEMENT END_OF_FILE
-%token NULL_TOKEN
 
 
-%type <numval> eval
-%type <numval> role
-%type <numval> member
+
+%type <num2val> eval
+%type <num2val> role
+%type <num2val> member
 
 %start translation_unit
 
@@ -81,37 +79,34 @@ translation_unit
 | END_OF_FILE {p(103);}
 | translation_unit statement END_OF_FILE {p(104);}
 | translation_unit END_OF_FILE {p(105);}
-print_clause
-: NULL_TOKEN
-| print_clause NULL_TOKEN
 ;
 statement
-: print_clause
-| SETFLAG role role
+: SETFLAG role role
 {
   p(201);
-	Sociaty_GetRole($2)->_Flag = Sociaty_GetRole($3)->_Flag;
+	Sociaty_GetRole($2.Int1)->_Flag = Sociaty_GetRole($3.Int1)->_Flag;
 }
 | SETFLAG role CONSTANT
 {
   p(202);
-	Sociaty_GetRole($2)->_Flag = GetFlag($3);
+	Sociaty_GetRole($2.Int1)->_Flag = GetFlag($3);
 }
-
-| SETOUT role 
+/*
+| SETLANG role role
 {
   p(203);
-	Sociaty_SetOut(Sociaty_GetRole($2)->_Value);
+	Sociaty_GetRole($2.Int1)->_Lang = Sociaty_GetRole($3.Int1)->_Lang;
 }
-| SETOUT CONSTANT
+| SETLANG role CONSTANT
 {
   p(204);
-	Sociaty_SetOut($2);
+	Sociaty_GetRole($2.Int1)->_Lang = GetLang($3);
 }
+*/
 | USE role
 {
   p(205);
-	char *fpath = estrdup(GetPath(Sociaty_GetRole($2)->_Value));
+	char *fpath = estrdup(GetPath(Sociaty_GetRole($2.Int1)->_Value));
 	ParseExpressionFromFile(fpath);
 }
 | USE CONSTANT
@@ -123,27 +118,27 @@ statement
 | role '=' CONSTANT 
 { 
   p(207);
-	Sociaty_GetRole($1)->_Value = strdup($3);
+	Sociaty_GetRole($1.Int1)->_Value = strdup($3);
 }
 | role '=' role
 {
   p(208);
-  Sociaty_GetRole($1)->_Value =
-    estrdup(Sociaty_GetRole($3)->_Value);
+  Sociaty_GetRole($1.Int1)->_Value =
+    estrdup(Sociaty_GetRole($3.Int1)->_Value);
 }
 | role ':' role
 {
   p(209);
-  if(Sociaty_SearchPCRelation($1, $3) != 0){
+  if(Sociaty_SearchPCRelation($1.Int1, $3.Int1) != 0){
     eerror("cannot inherent");
     exit(1);
   }
-  Sociaty_AddPCRelation($1, $3);
+  Sociaty_AddPCRelation($1.Int1, $3.Int1);
 }
 | eval
 {
   p(210);
-	Eval($1);
+	Eval($1.Int1, $1.Int2);
 //	Eval(Sociaty_GetValue());
 //	$$ = Expression_Create($1, NULL, Eval); 
 }
@@ -163,7 +158,7 @@ role
 | IDENTIFIER
 {
   p(402);
-	$$ = Sociaty_AddNewRole($1);	
+	$$.Int1 = Sociaty_AddNewRole($1);	
 }
 
 ;
@@ -179,7 +174,8 @@ member
 	sprintf(m, "%s.%s", $1, $3);
 	ci = Sociaty_AddNewRole(m);
 	Sociaty_AddSSRelation(pi, ci);
-	$$ = ci;
+	$$.Int1 = ci;
+	$$.Int2 = pi;
 }
 | member '.' IDENTIFIER 
 {
@@ -187,12 +183,13 @@ member
 	int pi, ci;
 	char *m;
 	char *n;
-	n = Sociaty_GetRole($1)->_Name;
+	n = Sociaty_GetRole($1.Int1)->_Name;
 	m = (char *)malloc(strlen(n) + strlen($3) + 3);
 	sprintf(m, "%s.%s", n, $3);
 	ci = Sociaty_AddNewRole(m);
-	Sociaty_AddSSRelation($1, ci);
-	$$ = ci;
+	Sociaty_AddSSRelation($1.Int1, ci);
+	$$.Int1 = ci;
+	$$.Int2 = pi;
 }
 ;
 %%

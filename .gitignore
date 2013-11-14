@@ -5,3 +5,4 @@ a.out
 lex.yy.c
 y.tab.*
 *.output
+*_old*

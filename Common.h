@@ -1,10 +1,11 @@
+
 #ifndef _COMMON
 #define _COMMON
-//#define EDEBUG
+#define EDEBUG
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define boolean _Bool
+#include <ctype.h>
 #define MAX_FILE_NAME 1024
 
 
@@ -20,12 +21,16 @@ typedef struct IntTuple2{
 	int Int1;
 	int Int2;
 } IntTuple2;
-
+char estrisnull(char *str);
 char* estrdup(char *str);
 char* estrsub(char *big, char *small);
 char* estrcent(char *);
+char* estrlower(char *);
+char* estrupper(char *);
+char* estrafter(char *, char);
 
 void eerror(char *str);
+void ewarn(char *str);
 void IndexArray_Create(IndexArray *a);
 Index IndexArray_Add(IndexArray *a, Index i);
 char* ereadfile(FILE *fp);

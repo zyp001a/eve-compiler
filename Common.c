@@ -1,7 +1,11 @@
 #include "Common.h"
 
 
-
+char estrisnull(char *str){
+	if(str == NULL || str[0] == '\0')
+		return '1';
+	return '\0';
+}
 
 char* estrdup(char *str){
 	char *exp;
@@ -46,9 +50,47 @@ char* estrcent(char *str){
 	}
 	return rtn;
 }
+char *estrlower(char *str){
+	char *rtn;
+	rtn = (char* )malloc(strlen(str)+1);
+	int i = 0;
+	while(str[0]){
+		rtn[i++]=tolower(str[0]);
+		str++;
+	}
+	rtn[i] = '\0';
+	return rtn;
+}
+char *estrupper(char *str){
+	char *rtn;
+	rtn = (char* )malloc(strlen(str)+1);
+	int i = 0;
+	while(str[0]){
+		rtn[i++]=toupper(str[0]);
+		str++;
+	}
+	rtn[i] = '\0';
+	return rtn;
+}
+char *estrafter(char *str, char c){
+	char *rtn = str;
+	while(str++){
+//		printf("%c\t%c\n", str[0], c);
+		if(str[0] == c){
+			rtn = str + 1;
+		}
+		else if(str[0] == '\0'){
+			break;
+		}
+	}
+	return rtn;
+}
 
 void eerror(char *str){
-	fprintf(stderr, "%s\n", str);
+	fprintf(stderr, "Error: %s\n", str);
+}
+void ewarn(char *str){
+	fprintf(stderr, "Warning: %s\n", str);
 }
 
 char* ereadfile(FILE *fp){

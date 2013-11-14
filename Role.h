@@ -1,11 +1,25 @@
 #ifndef _ROLE
 #define _ROLE
 #include "Common.h"
+/*
+typedef enum Lang{
+  awk,
+	bash,
+	c,
+	m4,
+	matlab,
+	perl,
+	python,
+	r,
+
+	stdout
+} Lang;
+*/
+
 typedef struct Role{
   char* _Name;
   char* _Value;
-	char* _RawValue;
-	char _Flags;
+	char _Flag;
 	Index _Index;
   IndexArray Subordinates; //Fields
   IndexArray Superiors;

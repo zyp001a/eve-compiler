@@ -17,7 +17,6 @@ Index Sociaty_AddNewRole(char *name);
 Index Sociaty_AddChildRole(char *name);
 Index Sociaty_AddConstRole(char *str);
 //Index Sociaty_AddNewExpression(char *str);
-void Sociaty_Output(char *str);
 Index Sociaty_SearchRole(char *name);
 Role* Sociaty_GetRole(Index i);
 char* Sociaty_GetValue(Index i);
@@ -30,5 +29,8 @@ void Sociaty_AddPCRelation(Index pi, Index ci);
 void Sociaty_AddSSRelation(Index pi, Index ci);
 void Sociaty_WriteMembers();
 //void Sociaty_EvalExpression(Expression *);
+void Sociaty_PutChar(char);
+void Sociaty_SetOut(char *);
+
 
 #endif

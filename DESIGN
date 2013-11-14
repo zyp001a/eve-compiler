@@ -1,10 +1,12 @@
+
+
+
 Eve
 
 				~Flags
-
-				~RawValue: 
 				~Value: @Eve, $Eve, *=Eve
 				~Name:
+				Lang:
 
 				Set:	 Eve = * 
 				Eval:	 Eve[;\n<<EOF>>]

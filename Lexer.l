@@ -8,12 +8,20 @@
 //#include "Expression.h"
 #include "Parser.h"
 #include "Common.h"
+#include "Sociaty.h"
 void p(int a){
 #ifdef EDEBUG
 printf("%d\n", a);
 #endif
-} 
+}
+/*
+<INITIAL>"Run"               { BEGIN(RUN); return(NULL_TOKEN); }
+<RUN>\n                         { BEGIN(0); return(NULL_TOKEN); }
+<RUN>.                       { return(NULL_TOKEN); }
+*/
+
 %}
+
  
 %option outfile="Lexer.c" header-file="Lexer.h"
 %option warn nodefault
@@ -28,9 +36,28 @@ EXP           [Ee][+-]?{DIGIT}+
 FLOAT_SUFFIX  (f|F|l|L)
 INT_SUFFIX    (u|U|l|L)* 
 
-%%
+%x PRINT
+%x WRITE
 
+
+%%
+<INITIAL>"Print\n"              { p(0); BEGIN(PRINT); return(NULL_TOKEN); }
+<PRINT>"EndPrint\n"             { p(0); BEGIN(0); return(NULL_TOKEN);}
+
+
+<INITIAL>"Write\n"              { p(0); BEGIN(WRITE); return(NULL_TOKEN); }
+<WRITE>"EndWrite\n"             { p(0); BEGIN(0); return(NULL_TOKEN);}
+
+<PRINT,WRITE>(.|\n)             { p(0); Sociaty_PutChar(yytext[0]); return(NULL_TOKEN);}
+
+"Run".+\n                     { p(0); system(yytext+3); return(NULL_TOKEN); }
+
+
+
+"SetFlag"                        { return SETFLAG; }
+"SetOut"                         { return SETOUT; }
 "Use"				                     { return USE; }
+
 
 {LETTER}({LETTER}|{DIGIT})*      { p(1); yylval->strval = estrdup(yytext); return(IDENTIFIER); }
 0[xX]{HEX}+{INT_SUFFIX}?         { p(2); yylval->strval = estrdup(yytext); return(CONSTANT); }
@@ -50,20 +77,26 @@ INT_SUFFIX    (u|U|l|L)*
 
 
 ":"        { p(13);  return(':');}
-"."        { p(13);  return('.');}
-","        { p(13);  return(',');}
-"{"        { p(13);  return('{');}
-"}"        { p(13);  return('}');}
-"["        { p(13);  return('[');}
-"]"        { p(13);  return(']');}
-"("        { p(13);  return('(');}
-")"        { p(13);  return(')');}
-"="        { p(13);  return('=');}
-
+"."        { p(14);  return('.');}
+","        { p(15);  return(',');}
+"{"        { p(16);  return('{');}
+"}"        { p(17);  return('}');}
+"["        { p(18);  return('[');}
+"]"        { p(19);  return(']');}
+"("        { p(20);  return('(');}
+")"        { p(21);  return(')');}
+"="        { p(22);  return('=');}
+"+"	       { p(22);  return('+');}
+"-"	       { p(22);  return('-');}
+"*"	       { p(22);  return('*');}
+"/"	       { p(22);  return('/');}
+"%"	       { p(22);  return('%');}
+"^"	       { p(22);  return('^');}
 
 .     { printf("unmatched text: %d\n",yytext); }
 
 %%
+
 
 int yyerror(const char *msg) {
     fprintf(stderr,"Error:%s\n", msg); return 0;

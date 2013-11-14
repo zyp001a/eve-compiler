@@ -4,6 +4,17 @@
 #include "Role.h"
 #include "Sociaty.h"
 
-void Eval(Index i, Index pi);
+
+
+char* Eval(Index i);
 char* GetPath(char *);
+//Lang GetLang(char *);
+char GetFlag(char *);
+
+char* GetTitleName(Role *r);
+char* GetTitleValue(Role *r, char *title);
+char* GetEvalValue(Role *r);
+void InterpretValue(Role *r, char *value, char **result);
+
+
 #endif
