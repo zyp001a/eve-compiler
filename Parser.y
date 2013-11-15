@@ -76,18 +76,20 @@ void ParseExpressionFromString(char *str);
 
 %%
 translation_unit
-: statement END_OF_STATEMENT {p(101);}
-| translation_unit statement END_OF_STATEMENT {p(102);}
-| END_OF_FILE {p(103);}
-| translation_unit statement END_OF_FILE {p(104);}
-| translation_unit END_OF_FILE {p(105);}
-print_clause
-: NULL_TOKEN
-| print_clause NULL_TOKEN
+: statement
+| translation_unit statement
+| translation_unit END_OF_FILE
+| END_OF_FILE
 ;
 statement
-: print_clause
-| SETFLAG role role
+: expression END_OF_STATEMENT  {p(101);}
+| expression END_OF_FILE
+| END_OF_STATEMENT
+| NULL_TOKEN
+;
+
+expression
+: SETFLAG role role
 {
   p(201);
 	Sociaty_GetRole($2)->_Flag = Sociaty_GetRole($3)->_Flag;
@@ -97,7 +99,6 @@ statement
   p(202);
 	Sociaty_GetRole($2)->_Flag = GetFlag($3);
 }
-
 | SETOUT role 
 {
   p(203);
@@ -138,15 +139,16 @@ statement
     eerror("cannot inherent");
     exit(1);
   }
-  Sociaty_AddPCRelation($1, $3);
+  Sociaty_AddPCRelation($3, $1);
 }
 | eval
 {
   p(210);
 	char *rtn;
 	rtn = Eval($1);
-//	printf("%s\n", rtn);
-
+#ifdef EDEBUG
+	printf("%s\n", rtn);
+#endif
 	ParseExpressionFromString(rtn);
 //	Eval(Sociaty_GetValue());
 //	$$ = Expression_Create($1, NULL, Eval); 

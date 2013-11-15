@@ -6,13 +6,13 @@ extern char *namestr;
 extern char *valuestr;
 extern char *superstr;
 
+//#define EDEBUGPRO
 char* Eval(Index i){
 //	printf();
 	Role *r;
 	char *title, *value, *eval;
 	char result_buf[100000];
   char *result = &result_buf[0];
-
 	r = Sociaty_GetRole(i);
 
 	title = GetTitleName(r);
@@ -21,13 +21,25 @@ char* Eval(Index i){
 		eerror("Eval is not allowed to use");
 		exit(1);
 	}
-	if(estrisnull(r->_Value)){		
+#ifdef EDEBUGPRO
+	printf("Eval %s\n", r->_Name);
+  printf("Title %s\n", title);
+#endif
+
+	if(estrisnull(r->_Value) && strcmp(r->_Name, title)){		
 		r->_Value = GetTitleValueFromSuperiors(r, title, strlen(title));
+#ifdef EDEBUGPRO
+  printf("Set New Value %s\n", r->_Value);
+#endif
+
 	}
 	eval = GetEvalValue(r);
-//	printf("%s\n", eval);
+#ifdef EDEBUGPRO
+	printf("EvalContent %s\n", eval);
+#endif
 	InterpretValue(r, eval, &result);
 	result[0] = '\n';
+	result[1] = '\0';
 	result =  &result_buf[0];
 //	printf("%s\n", result);
 	return result;
@@ -141,23 +153,42 @@ char* GetTitleValue(Role *r, char *title, int len){
 	char *rpr;
 	char *ttitle;
 	//_Value, _Name, _Super exception
-	
+#ifdef EDEBUGPRO
+	printf("GetTitleValue: %s\n", r->_Name);
+#endif
 	if(!strncmp(title, valuestr, strlen(valuestr))){
+#ifdef EDEBUGPRO
+		printf("GetTitleValue _Value\n");
+#endif
 		return r->_Value;
 	}
 	if(!strncmp(title, namestr, strlen(namestr))){
+#ifdef EDEBUGPRO
+		printf("GetTitleValue _Name\n");
+#endif
 		return r->_Name;
 	}
 	if(strncmp(title, superstr, strlen(superstr))){
 		rpr = GetTitleValueLevel1(r, title, len);
-		if(!estrisnull(rpr)) return rpr;
+
+#ifdef EDEBUGPRO
+      printf("GetTitleValue From Self\n");
+#endif
+		if(!estrisnull(rpr)){
+			return rpr;
+		}
 	}
 
 	for(i=0; i<r->Parents.Length; i++){
 		pr = Sociaty_GetRole(r->Parents.Values[i]);
-		
+
+#ifdef EDEBUGPRO
+		printf("GetTitleValue Try From Parent %s, Total %d\n", pr->_Name, r->Parents.Length);
+#endif
 		rpr = GetTitleValueLevel1(pr, title, len);
-		if(!estrisnull(rpr)) return rpr;
+		if(!estrisnull(rpr)){
+			return rpr;
+		}
 	}
 	return "";
 }
@@ -174,9 +205,16 @@ char *GetTitleValueLevel1(Role *pr, char *title, int len){
 			return psr->_Value;
 		}
 	}
+	for(j=0;  j<pr->Parents.Length; j++){
+		psr = Sociaty_GetRole(pr->Parents.Values[j]);
+		GetTitleValueLevel1(psr, title, len);
+	}
 	return NULL;
 }
 char* GetEvalValue(Role *r){
+#ifdef EDEBUGPRO
+	printf("GetEvalValue: %s\n", r->_Name);
+#endif
 	return GetTitleValue(r, evalstr, strlen(evalstr));
 }
 void InterpretValue(Role *r, char *v, char **out_curr){
