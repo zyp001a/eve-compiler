@@ -14,6 +14,7 @@ Role* CreateRole(char *name){
 
 void Role_Create(Role *v, char *name){
 	v->_Name = estrdup(name);
+	v->_Value = NULL;
 	IndexArray_Create(&v->Subordinates);
 	IndexArray_Create(&v->Superiors);
 	IndexArray_Create(&v->Parents);

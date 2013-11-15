@@ -19,6 +19,7 @@ typedef enum Lang{
 typedef struct Role{
   char* _Name;
   char* _Value;
+	char** _Values;
 	char _Flag;
 	Index _Index;
   IndexArray Subordinates; //Fields

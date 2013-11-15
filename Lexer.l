@@ -42,11 +42,11 @@ INT_SUFFIX    (u|U|l|L)*
 
 %%
 <INITIAL>"Print\n"              { p(0); BEGIN(PRINT); return(NULL_TOKEN); }
-<PRINT>"EndPrint\n"             { p(0); BEGIN(0); return(NULL_TOKEN);}
+<PRINT>"EndPrint"             { p(0); BEGIN(0); return(NULL_TOKEN);}
 
 
 <INITIAL>"Write\n"              { p(0); BEGIN(WRITE); return(NULL_TOKEN); }
-<WRITE>"EndWrite\n"             { p(0); BEGIN(0); return(NULL_TOKEN);}
+<WRITE>"EndWrite"             { p(0); BEGIN(0); return(NULL_TOKEN);}
 
 <PRINT,WRITE>(.|\n)             { p(0); Sociaty_PutChar(yytext[0]); return(NULL_TOKEN);}
 

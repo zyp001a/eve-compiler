@@ -12,7 +12,10 @@ char* GetPath(char *);
 char GetFlag(char *);
 
 char* GetTitleName(Role *r);
-char* GetTitleValue(Role *r, char *title);
+char* GetTitleValue(Role *r, char *title, int len);
+char *GetTitleValueLevel1(Role *pr, char *title, int len);
+
+char* GetTitleValueFromSuperiors(Role *r, char *title, int len);
 char* GetEvalValue(Role *r);
 void InterpretValue(Role *r, char *value, char **result);
 

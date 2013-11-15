@@ -8,9 +8,10 @@
 //#define EDEBUG
 Sociaty ns;
 char *eve = "Eve"; //common ansester
-char *evalstr = "Eval"; //evaluate title name
-char *valuestr = "Value";
-char *namestr = "Name";
+char *evalstr = "_Eval"; //evaluate title name
+char *valuestr = "_Value";
+char *namestr = "_Name";
+char *superstr = "_Super";
 FILE *out = stdout;
 char *const_name = "EveConst";
 int const_count = 0;
@@ -32,6 +33,7 @@ int main(int argc, char **argv)
 ///*	
 	Sociaty_Create();
 	ParseExpressionFromString(str);
+//	Sociaty_WriteMembers();
 //*/	
 
 	return 0;

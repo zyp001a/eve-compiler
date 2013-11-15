@@ -163,7 +163,9 @@ void Sociaty_WriteMembers(){
 		Sociaty_WriteIndexArray(&v->Parents);
 		printf("Children: ");
 		Sociaty_WriteIndexArray(&v->Children);
+	printf("=====================\n");
 	}
+
 }
 void Sociaty_PutChar(char c){
 	fprintf(out, "%c", c);

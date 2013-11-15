@@ -1,7 +1,7 @@
 
 #ifndef _COMMON
 #define _COMMON
-#define EDEBUG
+//#define EDEBUG
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -28,6 +28,10 @@ char* estrcent(char *);
 char* estrlower(char *);
 char* estrupper(char *);
 char* estrafter(char *, char);
+
+char eisletter(char c);
+char eisdigit(char c);
+char eiss(char c);
 
 void eerror(char *str);
 void ewarn(char *str);

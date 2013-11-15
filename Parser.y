@@ -143,7 +143,11 @@ statement
 | eval
 {
   p(210);
-	Eval($1);
+	char *rtn;
+	rtn = Eval($1);
+//	printf("%s\n", rtn);
+
+	ParseExpressionFromString(rtn);
 //	Eval(Sociaty_GetValue());
 //	$$ = Expression_Create($1, NULL, Eval); 
 }
@@ -152,6 +156,8 @@ statement
 eval
 : role         {   p(301);$$ = $1; }
 | role '(' ')' {  p(302); $$ = $1; }
+| role argument_list
+| role '(' argument_list ')'
 ;
 
 role
@@ -194,7 +200,19 @@ member
 	Sociaty_AddSSRelation($1, ci);
 	$$ = ci;
 }
+| member '[' argument ']'
+{
+}
 ;
+argument
+: role
+| CONSTANT
+;
+argument_list
+: argument
+| argument_list ',' argument
+;
+
 %%
 
 	//void ParseExpressionFromString(Expression *expr, char *str){

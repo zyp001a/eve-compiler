@@ -86,6 +86,26 @@ char *estrafter(char *str, char c){
 	return rtn;
 }
 
+char eisletter(char c){
+	if(c >= 'a' && c <= 'z') return 1;
+	if(c >= 'A' && c <= 'Z') return 1;
+	if(c == '_') return 1;
+	return 0;
+}
+char eisdigit(char c){
+	if(c >= '0' && c <= '9') return 1;
+	return 0;
+}
+char eiss(char c){
+	if(c >= 'a' && c <= 'z') return 1;
+  if(c >= 'A' && c <= 'Z') return 1;
+  if(c == '_') return 1;
+	if(c >= '0' && c <= '9') return 1;
+	return 0;
+}
+
+
+
 void eerror(char *str){
 	fprintf(stderr, "Error: %s\n", str);
 }
