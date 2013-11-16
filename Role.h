@@ -19,13 +19,13 @@ typedef enum Lang{
 typedef struct Role{
   char* _Name;
   char* _Value;
-	char** _Values;
 	char _Flag;
 	Index _Index;
   IndexArray Subordinates; //Fields
   IndexArray Superiors;
   IndexArray Parents;
   IndexArray Children;
+	IndexArray Elements;
 } Role;
 
 typedef struct RoleArray{
@@ -33,12 +33,13 @@ typedef struct RoleArray{
   Role *Values;
 } RoleArray;
 void Role_Create(Role *v, char *name);
+//void Role_AddElements(Role *v, Index *i);
 void Role_Set(Role *v, char *value);
 void RoleArray_Create(RoleArray *a);
 Index RoleArray_Add(RoleArray *a, Role *r);
 Index RoleArray_AddNew(RoleArray *a, char *name);
 Index RoleArray_SearchByName(RoleArray *a, char *name);
-Role* CreateRole(char *name);
+//Role* CreateRole(char *name);
 
 
 #endif

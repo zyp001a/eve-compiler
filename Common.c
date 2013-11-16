@@ -120,12 +120,15 @@ char* ereadfile(FILE *fp){
 	fseek(fp, 0L, SEEK_END);
 	lsize = ftell(fp);
 	fseek(fp, 0L, SEEK_SET);
-	str = (char *)malloc(lsize);
+	str = (char *)malloc(lsize+1);
 	result = fread (str,1,lsize,fp);
 	if( result != lsize ){
 		eerror("ereadfile failed");
 		exit(1);
 	}
+	str[result] = '\n';
+	str[result +1] = '\0';
+	
 	return str;
 }
 

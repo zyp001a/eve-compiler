@@ -13,6 +13,7 @@ void p(int a){
 #ifdef EDEBUG
 printf("%d\n", a);
 #endif
+/*<<EOF>>    { p(12); static int once = 0; return (once = !once) ? END_OF_FILE : 0; }*/
 }
 /*
 <INITIAL>"Run"               { BEGIN(RUN); return(NULL_TOKEN); }
@@ -41,16 +42,17 @@ INT_SUFFIX    (u|U|l|L)*
 
 
 %%
+
 <INITIAL>"Print\n"              { p(0); BEGIN(PRINT); return(NULL_TOKEN); }
-<PRINT>"EndPrint"             { p(0); BEGIN(0); return(NULL_TOKEN);}
+<PRINT>"EndPrint"               { p(0); BEGIN(0); return(NULL_TOKEN);}
 
 
 <INITIAL>"Write\n"              { p(0); BEGIN(WRITE); return(NULL_TOKEN); }
-<WRITE>"EndWrite"             { p(0); BEGIN(0); return(NULL_TOKEN);}
+<WRITE>"EndWrite"               { p(0); BEGIN(0); return(NULL_TOKEN);}
 
 <PRINT,WRITE>(.|\n)             { p(0); Sociaty_PutChar(yytext[0]); return(NULL_TOKEN);}
 
-"Run".+\n                     { p(0); system(yytext+3); return(NULL_TOKEN); }
+"Run".+\n                       { p(0); system(yytext+3); return(NULL_TOKEN); }
 
 
 
@@ -71,9 +73,9 @@ INT_SUFFIX    (u|U|l|L)*
 
 \`(\\.|[^\\`])*\`             { p(10); yylval->strval = estrcent(yytext); return(CONSTANT); }
 
-[;\n]+      { p(11); return(END_OF_STATEMENT); }
+[;\n]      { p(11); return(END_OF_STATEMENT); }
 [ \t\v\r]  { }
-<<EOF>>    { p(12); static int once = 0; return (once = !once) ? END_OF_FILE : 0; }
+
 
 
 ":"        { p(13);  return(':');}

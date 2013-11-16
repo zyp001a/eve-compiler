@@ -11,7 +11,16 @@ extern FILE* out;
 void Sociaty_Create(){
 	RoleArray_Create(&ns.Members);
 	RoleArray_AddNew(&ns.Members, eve);
+	Hash_Create(&ns.UsedFiles);
 }
+
+void Sociaty_AddUsedFile(char *f){
+	Hash_Add(&ns.UsedFiles, f);
+}
+Index Sociaty_SearchUsedFile(char *f){
+  return Hash_Search(&ns.UsedFiles, f);
+}
+
 
 Index Sociaty_AddRole(Role *r){
 	return RoleArray_Add(&ns.Members, r);

@@ -67,8 +67,7 @@ void ParseExpressionFromString(char *str);
     SETOUT = 262,
     TOKEN_PRINT = 263,
     END_OF_STATEMENT = 264,
-    END_OF_FILE = 265,
-    NULL_TOKEN = 266
+    NULL_TOKEN = 265
   };
 #endif
 
@@ -80,11 +79,10 @@ union YYSTYPE
 #line 55 "Parser.y" /* yacc.c:1915  */
 
 	int numval;
-
 //	IntTuple2 num2val;
 	char *strval;
 
-#line 88 "Parser.h" /* yacc.c:1915  */
+#line 86 "Parser.h" /* yacc.c:1915  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

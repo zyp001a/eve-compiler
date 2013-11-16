@@ -106,11 +106,14 @@ char GetFlag(char *str){
 }
 char* GetPath(char *id){
 	char *token;
-
-	token = strtok(path ,":");
+	char tpath[MAX_FILE_NAME];
 	char *fname;
 	FILE *tfp;
-	fname = (char*)malloc(MAX_FILE_NAME);
+	strcpy(tpath, path);
+	token = strtok(tpath ,":");
+
+	fname = (char *)malloc(MAX_FILE_NAME);
+
 	while ( token = strtok(NULL, ":") ){
 		strcpy(fname, token);
 		strcat(fname, id);
@@ -231,7 +234,14 @@ void InterpretValue(Role *r, char *v, char **out_curr){
 			end=1;
 			return;
 		case '\\':
-			in_curr ++;
+			if(in_curr[1] == '$'){
+				in_curr ++;
+			}
+			else if (in_curr[1] == '\\'){
+				(*out_curr)[0] = in_curr[0];
+				(*out_curr) ++;
+				in_curr++;
+			}
 			(*out_curr)[0] = in_curr[0];
 			(*out_curr) ++;
 			in_curr++;

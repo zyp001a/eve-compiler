@@ -1,25 +1,119 @@
-123456789 $bb abcdefghi \$bb
-23456789 $bb abcdefghi \$bb
-3456789 $bb abcdefghi \$bb
-456789 $bb abcdefghi \$bb
-56789 $bb abcdefghi \$bb
-6789 $bb abcdefghi \$bb
-789 $bb abcdefghi \$bb
-89 $bb abcdefghi \$bb
-9 $bb abcdefghi \$bb
- $bb abcdefghi \$bb
-$bb abcdefghi \$bb
-abcdefghi \$bb
-bcdefghi \$bb
-cdefghi \$bb
-defghi \$bb
-efghi \$bb
-fghi \$bb
-ghi \$bb
-hi \$bb
-i \$bb
- \$bb
-\$bb
-
-END
-123456789  abcdefghi $
+a
+a.c
+Action.h~
+a.out
+b
+build
+build~
+cat.c
+Common.c
+Common.c~
+Common.h
+Common.h~
+Common.o
+dc
+dc.l
+dc.l~
+dc.y
+dc.y~
+DESIGN
+DESIGN~
+Eval.c
+Eval.c~
+Eval.h
+Eval.h~
+EvalLexer.l
+EvalLexer.l~
+EvalParser.y
+Evaluate.c~
+Evaluate.h~
+Evaluate.o
+eve
+eve~
+Eve
+Eve_old
+Expression.c
+Expression.c~
+Expression.h
+Expression.h~
+Expression.o
+Expression_old.c
+Expression_old.h
+Hash.c
+Hash.c~
+Hash.h
+Hash.h~
+Hierachy.c~
+Hierachy.h~
+Lexer.c
+Lexer.h
+Lexer.l
+Lexer.l~
+Lexer_old.l
+lex.yy.c
+lex.yy.c~
+lex.yy.o
+main.c
+main.c~
+main_old.c
+Makefile
+Makefile~
+Parser.c
+Parser.h
+Parser_old.h
+Parser_old.y
+Parser.output
+Parser.y
+Parser.y~
+pp
+pp~
+preprocesser.h~
+#README#
+Role.
+Role.c
+Role.c~
+Role.h
+Role.h~
+Role.o
+s0.e
+s0.e~
+s1.e
+s1.e~
+s2.e
+s2.e~
+sample2.e
+sample2.e~
+sample2.e.c
+sample.d
+sample.d~
+sample.e
+sample.e~
+sample.e.c
+Sociaty.c
+Sociaty.c~
+Sociaty.h
+Sociaty.h~
+Sociaty.o
+symhierachy.c
+symhierachy.c~
+symhierachy.h
+symhierachy.h~
+symhierachy.o
+symtable.c
+symtable.c~
+symtable.h
+symtable.h~
+symtable.o
+t
+test
+test.c
+test.c~
+TestFlex.l
+TestFlex.l~
+TODO
+TODO~
+x
+#y.tab.c#
+y.tab.c
+y.tab.h
+y.tab.o

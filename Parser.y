@@ -54,7 +54,6 @@ void ParseExpressionFromString(char *str);
  
 %union {
 	int numval;
-
 //	IntTuple2 num2val;
 	char *strval;
 }
@@ -64,7 +63,7 @@ void ParseExpressionFromString(char *str);
 %token <strval> CONSTANT 
 %token USE SETFLAG SETOUT
 %token <charval> TOKEN_PRINT
-%token END_OF_STATEMENT END_OF_FILE
+%token END_OF_STATEMENT 
 %token NULL_TOKEN
 
 
@@ -76,18 +75,14 @@ void ParseExpressionFromString(char *str);
 
 %%
 translation_unit
-: statement
-| translation_unit statement
-| translation_unit END_OF_FILE
-| END_OF_FILE
+: statement { p(1000);}
+| translation_unit statement { p(1002);}
 ;
 statement
-: expression END_OF_STATEMENT  {p(101);}
-| expression END_OF_FILE
-| END_OF_STATEMENT
-| NULL_TOKEN
+: END_OF_STATEMENT {p(101);}
+| expression END_OF_STATEMENT  {p(102);}
+| NULL_TOKEN {p(103);}
 ;
-
 expression
 : SETFLAG role role
 {
@@ -113,13 +108,27 @@ expression
 {
   p(205);
 	char *fpath = estrdup(GetPath(Sociaty_GetRole($2)->_Value));
-	ParseExpressionFromFile(fpath);
+	if(Sociaty_SearchUsedFile(fpath) == -1){
+		Sociaty_AddUsedFile(fpath);
+		ParseExpressionFromFile(fpath);
+	}
+	free(fpath);
 }
 | USE CONSTANT
 {
   p(206);
+//	printf("$2%s\n", $2);
 	char *fpath = estrdup(GetPath($2));
-	ParseExpressionFromFile(fpath);
+	if(Sociaty_SearchUsedFile(fpath) == -1){
+//		printf("%s\n", fpath);
+		Sociaty_AddUsedFile(fpath);
+		ParseExpressionFromFile(fpath);
+	}
+	free(fpath);
+}
+| role '=' '(' argument_list ')'
+{
+	
 }
 | role '=' CONSTANT 
 { 
@@ -173,7 +182,6 @@ role
   p(402);
 	$$ = Sociaty_AddNewRole($1);	
 }
-
 ;
 
 member
@@ -204,6 +212,7 @@ member
 }
 | member '[' argument ']'
 {
+	
 }
 ;
 argument

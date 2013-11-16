@@ -3,15 +3,18 @@
 
 #include "Common.h"
 #include "Role.h"
+#include "Hash.h"
 //#include "Expression.h"
 
 #define MAX_ROLE 1000000
 typedef struct Sociaty{
 	RoleArray Members;
+	Hash UsedFiles;
 } Sociaty;
 
-
 void Sociaty_Create();
+void Sociaty_AddUsedFile(char *f);
+Index Sociaty_SearchUsedFile(char *f);
 Index Sociaty_AddRole(Role *r);
 Index Sociaty_AddNewRole(char *name);
 Index Sociaty_AddChildRole(char *name);
