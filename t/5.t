@@ -1,8 +1,8 @@
-a._Eval = `Print
+a._Eval = `_Print
 a:$a
 Value:$_Value
 Name:$_Name
-EndPrint`
+_EndPrint`
 a.b="bbb"
 a.a = 'aaa'
 a
@@ -10,8 +10,8 @@ b:a
 b.a = '1'
 b._Eval = `
 
-Print
+_Print
 $b
 xxx
-EndPrint`
+_EndPrint`
 b

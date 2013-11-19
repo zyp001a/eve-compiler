@@ -27,7 +27,7 @@ int yyerror(Expression **expression, yyscan_t scanner, const char *msg) {
 		printf("yyerror, %s\n",msg);
 	}
 
-
+	int const_count = 0;
 
 
  
@@ -54,6 +54,7 @@ void ParseExpressionFromString(char *str);
  
 %union {
 	int numval;
+	IndexArray iaval;
 //	IntTuple2 num2val;
 	char *strval;
 }
@@ -61,15 +62,17 @@ void ParseExpressionFromString(char *str);
 
 %token <strval> IDENTIFIER 
 %token <strval> CONSTANT 
-%token USE SETFLAG SETOUT
+%token USE SETFLAG SETOUT SETARGS
 %token <charval> TOKEN_PRINT
 %token END_OF_STATEMENT 
 %token NULL_TOKEN
 
-
+%type <iaval> argument_list
 %type <numval> eval
+
 %type <numval> role
 %type <numval> member
+%type <numval> argument
 
 %start translation_unit
 
@@ -93,6 +96,9 @@ expression
 {
   p(202);
 	Sociaty_GetRole($2)->_Flag = GetFlag($3);
+}
+| SETARGS role argument_list
+{
 }
 | SETOUT role 
 {
@@ -128,7 +134,7 @@ expression
 }
 | role '=' '(' argument_list ')'
 {
-	
+	// array TODO
 }
 | role '=' CONSTANT 
 { 
@@ -168,7 +174,16 @@ eval
 : role         {   p(301);$$ = $1; }
 | role '(' ')' {  p(302); $$ = $1; }
 | role argument_list
+{
+	p(303); $$ = $1;
+	IndexArray_PassbySymbol(&Sociaty_GetRole($1)->Args, &$2);
+}
 | role '(' argument_list ')'
+{
+	p(304); $$ = $1;
+  IndexArray_PassbySymbol(&Sociaty_GetRole($1)->Args, &$3);
+
+}
 ;
 
 role
@@ -212,16 +227,26 @@ member
 }
 | member '[' argument ']'
 {
-	
+// TODO array	
 }
 ;
 argument
-: role
-| CONSTANT
+: role { $$ = $1; }
+| CONSTANT 
+{ 
+	char *str;
+	int ri;
+	str = (char *)malloc(12);
+	const_count++;
+	sprintf(str, "CONST_%d",const_count);
+	ri = Sociaty_AddNewRole(str); 
+	$$ = ri;
+}
+| '*' {$$ = 0; }
 ;
 argument_list
-: argument
-| argument_list ',' argument
+: argument { IndexArray_Create(&$$); IndexArray_Add(&$$, $1); }
+| argument_list ',' argument { $$ = $1; IndexArray_Add(&$$, $3); }
 ;
 
 %%

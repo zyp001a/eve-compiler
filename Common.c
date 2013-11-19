@@ -127,8 +127,7 @@ char* ereadfile(FILE *fp){
 		exit(1);
 	}
 	str[result] = '\n';
-	str[result +1] = '\0';
-	
+	str[result +1] = '\0';	
 	return str;
 }
 
@@ -144,6 +143,24 @@ Index IndexArray_Add(IndexArray *a, Index i){
                       a->Length * sizeof(Index));
 	a->Values[p] = i;
   return p;
+}
+void IndexArray_PassbySymbol(IndexArray *a, IndexArray *b){
+	if(a->Values != NULL)
+		free(a->Values);
+	*a = *b;
+}
+void IndexArray_PassbyValue(IndexArray *a, IndexArray *b){
+	a->Length = b->Length;
+	if(a->Values != NULL){
+		a->Values = (Index* )realloc(a->Values, a->Length*sizeof(Index));
+	}
+	else{
+		a->Values = (Index* )malloc(a->Length*sizeof(Index));
+	}
+	int i;
+	for(i=0; i<a->Length; i++){
+		a->Values[i] = b->Values[i];
+	}
 }
 
 

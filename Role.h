@@ -25,20 +25,23 @@ typedef struct Role{
   IndexArray Superiors;
   IndexArray Parents;
   IndexArray Children;
-	IndexArray Elements;
+	IndexArray Args; //Arguments
 } Role;
 
 typedef struct RoleArray{
 	Index Length;
   Role *Values;
 } RoleArray;
+
 void Role_Create(Role *v, char *name);
 //void Role_AddElements(Role *v, Index *i);
 void Role_Set(Role *v, char *value);
+
 void RoleArray_Create(RoleArray *a);
 Index RoleArray_Add(RoleArray *a, Role *r);
 Index RoleArray_AddNew(RoleArray *a, char *name);
 Index RoleArray_SearchByName(RoleArray *a, char *name);
+void RoleArray_PassbySymbol(RoleArray *a, RoleArray *b);
 //Role* CreateRole(char *name);
 
 

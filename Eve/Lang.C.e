@@ -1,4 +1,6 @@
-C._Eval = `
+Use "Common"
+Lang.C._Eval = `
+$_Value
 SetOut "a.c"
 Print
 $Includes
@@ -11,19 +13,19 @@ EndPrint
 SetOut ""
 Run gcc a.c
 Run ./a.out
-
 `
-C.Includes = `
+
+Lang.C.Includes = `
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 `
-C.Structs = ``
-C.Functions = ``
-C.MainDef = `
+Lang.C.Structs = ``
+Lang.C.Functions = ``
+Lang.C.MainDef = `
 main(){
 `
-C.MainBody = `$_Value`
-C.MainEnd = `}`
+Lang.C.MainBody = `$_Value`
+Lang.C.MainEnd = `}`
 
 

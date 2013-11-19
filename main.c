@@ -9,13 +9,14 @@
 Sociaty ns;
 char *eve = "Eve"; //common ansester
 char *evalstr = "_Eval"; //evaluate title name
+char *argsstr = "_Args";
 char *valuestr = "_Value";
 char *namestr = "_Name";
 char *superstr = "_Super";
 FILE *out = stdout;
 char *const_name = "EveConst";
-int const_count = 0;
-char path[] = "ignore:./:/home/zyp/dna/core/src/Eve/";
+
+char path[] = "ignore:./:/zyp/eve/compiler/Eve/";
 
  
 int main(int argc, char **argv)
@@ -27,7 +28,7 @@ int main(int argc, char **argv)
 	else
 		fp = fopen(argv[1], "r");
 	str = ereadfile(fp);
-	fclose(fp);
+	//fclose(fp);
 //	char *a = estrafter("asdf.asdDDDe13.dda'",'.');
 //	printf("%s\n",a);
 ///*	

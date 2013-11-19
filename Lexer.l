@@ -43,19 +43,19 @@ INT_SUFFIX    (u|U|l|L)*
 
 %%
 
-<INITIAL>"Print\n"              { p(0); BEGIN(PRINT); return(NULL_TOKEN); }
-<PRINT>"EndPrint"               { p(0); BEGIN(0); return(NULL_TOKEN);}
+<INITIAL>"_Print\n"              { p(80); BEGIN(PRINT); return(NULL_TOKEN); }
+<PRINT>"_EndPrint"               { p(81); BEGIN(0); return(NULL_TOKEN);}
 
 
-<INITIAL>"Write\n"              { p(0); BEGIN(WRITE); return(NULL_TOKEN); }
-<WRITE>"EndWrite"               { p(0); BEGIN(0); return(NULL_TOKEN);}
+<INITIAL>"_Write\n"              { p(82); BEGIN(WRITE); return(NULL_TOKEN); }
+<WRITE>"_EndWrite"               { p(83); BEGIN(0); return(NULL_TOKEN);}
 
-<PRINT,WRITE>(.|\n)             { p(0); Sociaty_PutChar(yytext[0]); return(NULL_TOKEN);}
+<PRINT,WRITE>(.|\n)             { p(84); Sociaty_PutChar(yytext[0]); return(NULL_TOKEN);}
 
-"Run".+\n                       { p(0); system(yytext+3); return(NULL_TOKEN); }
+"_Run".+                       { p(85); system(yytext+4);  return(NULL_TOKEN); }
 
 
-
+"SetArgs"                        { return SETARGS; }
 "SetFlag"                        { return SETFLAG; }
 "SetOut"                         { return SETOUT; }
 "Use"				                     { return USE; }

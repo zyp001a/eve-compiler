@@ -2,40 +2,53 @@
 extern char path[];
 extern Sociaty ns;
 extern char* evalstr;
+extern char* argsstr;
 extern char *namestr;
 extern char *valuestr;
-extern char *superstr;
+
 
 //#define EDEBUGPRO
 char* Eval(Index i){
 //	printf();
 	Role *r;
-	char *title, *value, *eval;
+	char *title, *value, *eval, *args;
 	char result_buf[100000];
   char *result = &result_buf[0];
 	r = Sociaty_GetRole(i);
 
 	title = GetTitleName(r);
+/*
 	if(!strcmp(title, evalstr)){
 //		printf("%s\t%s\n",title,evalstr);
 		eerror("Eval is not allowed to use");
 		exit(1);
 	}
+*/
 #ifdef EDEBUGPRO
-	printf("Eval %s\n", r->_Name);
-  printf("Title %s\n", title);
+	printf("Eval: %s\n", r->_Name);
+  printf("\tEval Get Title: %s\n", title);
 #endif
-
+//if not null and has superiors
 	if(estrisnull(r->_Value) && strcmp(r->_Name, title)){		
-		r->_Value = GetTitleValueFromSuperiors(r, title, strlen(title));
 #ifdef EDEBUGPRO
-  printf("Set New Value %s\n", r->_Value);
+    printf("\tEval Try to Get NewValue: %s\n");
 #endif
-
-	}
-	eval = GetEvalValue(r);
+		r->_Value = GetValueFromSuperiors(r, title, strlen(title));
 #ifdef EDEBUGPRO
-	printf("EvalContent %s\n", eval);
+		printf("\tEval Set NewValue: %s\n", r->_Value);
+#endif
+	}
+
+/*
+	args = GetValue(r, argsstr, strlen(argsstr));	
+#ifdef EDEBUGPRO
+	printf("ArgsContent %s\n", args);
+#endif
+	InterpretValue(r, args, &result);
+*/
+	eval = GetValue(r, evalstr, strlen(evalstr)); 
+#ifdef EDEBUGPRO
+	printf("\tEval GetEvalContent: \n========\n%s\n========\n", eval);
 #endif
 	InterpretValue(r, eval, &result);
 	result[0] = '\n';
@@ -138,88 +151,126 @@ char* GetPath(char *id){
 char* GetTitleName(Role *r){
 	return estrafter(r->_Name, '.');
 }
-char* GetTitleValueFromSuperiors(Role *r, char *title, int len){
+char* GetValueFromSuperiors(Role *r, char *title, int len){
 	Role *sr;
 	char *rpr;
 	int i;
-	for(i=0; i<r->Superiors.Length; i++){
-		sr = Sociaty_GetRole(r->Superiors.Values[i]);
-		
-    rpr = GetTitleValueLevel1(sr, title, len);
-    if(!estrisnull(rpr)) return rpr;
+
+	for(i=r->Superiors.Length; i>0; --i){
+		sr = Sociaty_GetRole(r->Superiors.Values[i-1]);
+#ifdef EDEBUGPRO
+		printf("\tFrom Superior %d, %s\n", i-1, sr->_Name);
+#endif		
+
+    rpr = GetValue(sr, title, len);
+
+    if(!estrisnull(rpr)){
+			
+			return rpr;
+		}
 	}
 	return "";
 }
-char* GetTitleValue(Role *r, char *title, int len){
+char* GetValueFromParents(Role *r, char *title, int len){
+	Role *sr;
+	char *rpr;
+	int i;
+
+	for(i=r->Parents.Length; i>0; --i){
+		sr = Sociaty_GetRole(r->Parents.Values[i-1]);
+#ifdef EDEBUGPRO
+		printf("\tFrom Superior %d, %s\n", i-1, sr->_Name);
+#endif		
+
+    rpr = GetValue(sr, title, len);
+
+    if(!estrisnull(rpr)){
+			
+			return rpr;
+		}
+	}
+	return "";
+}
+char* GetValue(Role *r, char *title, int len){
 	int i,j;
 	Role *pr,* psr;
 	char *rpr;
 	char *ttitle;
 	//_Value, _Name, _Super exception
 #ifdef EDEBUGPRO
-	printf("GetTitleValue: %s\n", r->_Name);
+	printf("\t\tTry to Get Value: %s, %s\n", r->_Name, title);
 #endif
 	if(!strncmp(title, valuestr, strlen(valuestr))){
-#ifdef EDEBUGPRO
-		printf("GetTitleValue _Value\n");
-#endif
 		return r->_Value;
 	}
 	if(!strncmp(title, namestr, strlen(namestr))){
-#ifdef EDEBUGPRO
-		printf("GetTitleValue _Name\n");
-#endif
 		return r->_Name;
 	}
-	if(strncmp(title, superstr, strlen(superstr))){
-		rpr = GetTitleValueLevel1(r, title, len);
+
+/*
+	if(!strncmp(title, superstr, strlen(superstr))){
+		ttitle = GetTitleName(r);
+		return GetValueFromSuperiors(r, ttitle, strlen(ttitle));
+	}
+*/
+
+	rpr = GetValueRecursive(r, title, len);
+
 
 #ifdef EDEBUGPRO
-      printf("GetTitleValue From Self\n");
+//      printf("GetValue From Self\n");
 #endif
-		if(!estrisnull(rpr)){
-			return rpr;
-		}
+	if(!estrisnull(rpr)){
+		return rpr;
 	}
-
+//	}
+/*
 	for(i=0; i<r->Parents.Length; i++){
 		pr = Sociaty_GetRole(r->Parents.Values[i]);
 
 #ifdef EDEBUGPRO
-		printf("GetTitleValue Try From Parent %s, Total %d\n", pr->_Name, r->Parents.Length);
+//		printf("GetValue Try From Parent %s, Total %d\n", pr->_Name, r->Parents.Length);
 #endif
-		rpr = GetTitleValueLevel1(pr, title, len);
+		rpr = GetValueRecursive(pr, title, len);
 		if(!estrisnull(rpr)){
 			return rpr;
 		}
 	}
+*/
 	return "";
 }
-char *GetTitleValueLevel1(Role *pr, char *title, int len){
+char *GetValueRecursive(Role *pr, char *title, int len){
 	Role *psr;
 	char *ttitle;
+	char *v;
 	int j;
 	for(j=0; j<pr->Subordinates.Length; j++){
 		psr = Sociaty_GetRole(pr->Subordinates.Values[j]);
+#ifdef EDEBUGPRO
+		printf("\t\t\tCheck Subordinate %d, %s\n", j, psr->_Name);
+#endif
 		ttitle = GetTitleName(psr);
+
 		if(strlen(ttitle) >= len
 			 && !strncmp(title, ttitle, len)
 			 && !estrisnull(psr->_Value)){
+
 			return psr->_Value;
 		}
 	}
-	for(j=0;  j<pr->Parents.Length; j++){
-		psr = Sociaty_GetRole(pr->Parents.Values[j]);
-		GetTitleValueLevel1(psr, title, len);
+
+	for(j=pr->Parents.Length; j>0; --j){
+		psr = Sociaty_GetRole(pr->Parents.Values[j-1]);
+#ifdef EDEBUGPRO
+    printf("\t\tCheck Parent %d, %s\n", j-1, psr->_Name);
+#endif
+		v = GetValueRecursive(psr, title, len);
+		if(!estrisnull(v)) return v;
 	}
+	
 	return NULL;
 }
-char* GetEvalValue(Role *r){
-#ifdef EDEBUGPRO
-	printf("GetEvalValue: %s\n", r->_Name);
-#endif
-	return GetTitleValue(r, evalstr, strlen(evalstr));
-}
+
 void InterpretValue(Role *r, char *v, char **out_curr){
 	char *in_curr, *trans;
 	char *in_tmp;
@@ -234,7 +285,7 @@ void InterpretValue(Role *r, char *v, char **out_curr){
 			end=1;
 			return;
 		case '\\':
-			if(in_curr[1] == '$'){
+			if(in_curr[1] == '$' || in_curr[1] == '@'){
 				in_curr ++;
 			}
 			else if (in_curr[1] == '\\'){
@@ -242,10 +293,7 @@ void InterpretValue(Role *r, char *v, char **out_curr){
 				(*out_curr) ++;
 				in_curr++;
 			}
-			(*out_curr)[0] = in_curr[0];
-			(*out_curr) ++;
-			in_curr++;
-			continue;
+			break;
 	  case '$':
 			in_tmp = in_curr +1;
 			len = 0;
@@ -256,22 +304,49 @@ void InterpretValue(Role *r, char *v, char **out_curr){
 					len ++;
 					in_tmp++;
 				}			
-				trans = GetTitleValue(r, in_curr + 1, len);
+				trans = GetValue(r, in_curr + 1, len);
 //				printf("get %s\n", trans);
 				InterpretValue(r, trans, out_curr);
 				in_curr = in_tmp;
 			}
-			else{
-				(*out_curr)[0] = in_curr[0];
-				(*out_curr) ++;
-				in_curr++;
-			}
-			continue;
+			else if (in_tmp[0] == '$'){
+				in_tmp ++;
+				if(eisletter(in_tmp[0])){
+					len ++;
+					in_tmp++;
+					while(eiss(in_tmp[0])){
+						len ++;
+						in_tmp++;
+					}
+					trans = GetValueFromParents(r, in_curr + 2, len);
+//        printf("get %s\n", trans);
+					InterpretValue(r, trans, out_curr);
+					in_curr = in_tmp;
+				}
+      }
+			break;
+		case '@':
+			in_tmp = in_curr +1;
+      len = 0;
+      if(eisletter(in_tmp[0])){
+        len ++;
+        in_tmp++;
+        while(eiss(in_tmp[0])){
+          len ++;
+          in_tmp++;
+        }
+        trans = GetValueFromSuperiors(r, in_curr + 1, len);
+//        printf("get %s\n", trans);
+        InterpretValue(r, trans, out_curr);
+        in_curr = in_tmp;
+      }
+      break;
 		default:
-			(*out_curr)[0] = in_curr[0];
-			(*out_curr) ++;
-			in_curr++;
+			;
 		}
+		(*out_curr)[0] = in_curr[0];
+		(*out_curr) ++;
+		in_curr++;
 	}
 }
 

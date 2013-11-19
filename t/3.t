@@ -1,15 +1,15 @@
 SetOut "a"
-Print
+_Print
 echo a
-EndPrint
+_EndPrint
 
 
 
-Print
+_Print
 echo b
-EndPrint
+_EndPrint
 
 SetOut ""
-Run sh a 
+_Run sh a    
 
 

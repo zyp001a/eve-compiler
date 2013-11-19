@@ -19,7 +19,7 @@ void Role_Create(Role *v, char *name){
 	IndexArray_Create(&v->Superiors);
 	IndexArray_Create(&v->Parents);
 	IndexArray_Create(&v->Children);
-	IndexArray_Create(&v->Elements);
+	IndexArray_Create(&v->Args);
 }
 
 void Role_Set(Role *v, char *value){
@@ -56,6 +56,12 @@ Index RoleArray_SearchByName(RoleArray *a, char *name){
     }
   }
   return -1;
+}
+void RoleArray_PassbySymbol(RoleArray *a, RoleArray *b){
+	if (a->Values != NULL){
+		free(a->Values);
+	}
+	*a = *b;
 }
 
 
