@@ -55,9 +55,13 @@ INT_SUFFIX    (u|U|l|L)*
 "_Run".+                       { p(85); system(yytext+4);  return(NULL_TOKEN); }
 
 
-"SetArgs"                        { return SETARGS; }
-"SetFlag"                        { return SETFLAG; }
-"SetOut"                         { return SETOUT; }
+"_SetArgs"                       { return SETARGS; }
+"_SetFlag"                       { return SETFLAG; }
+"_SetOut"                        { return SETOUT; }
+
+"For"                            { return FOR; }
+"If"                             { return IF; }
+"Add"                            { return ADD; }
 "Use"				                     { return USE; }
 
 
@@ -94,6 +98,9 @@ INT_SUFFIX    (u|U|l|L)*
 "/"	       { p(22);  return('/');}
 "%"	       { p(22);  return('%');}
 "^"	       { p(22);  return('^');}
+"&"        { p(22);  return('&');}
+"@"        { p(22);  return('@');}
+"$"        { p(22);  return('$');}
 
 .     { printf("unmatched text: %d\n",yytext); }
 

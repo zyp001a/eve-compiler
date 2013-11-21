@@ -1,7 +1,2 @@
-Genomics.Position = `
-	
-`
+Genomics.Position : Lang.C
 
-Genomics.Position = `
-	
-`

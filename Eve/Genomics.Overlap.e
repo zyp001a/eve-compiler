@@ -1,2 +1,2 @@
 Genomics.Overlap : Lang.C
-Genomics.Overlap.Position1 
+Genomics.Overlap.Position1 = ""

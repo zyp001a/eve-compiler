@@ -139,6 +139,15 @@ char* GetPath(char *id){
 
 		strcpy(fname, token);
 		strcat(fname, id);
+		strcat(fname, ".ec");	
+    tfp = fopen(fname, "r");
+    if(tfp != NULL){
+      fclose(tfp);
+      return fname;
+    }
+
+		strcpy(fname, token);
+		strcat(fname, id);
 		strcat(fname, ".e");	
     tfp = fopen(fname, "r");
     if(tfp != NULL){
@@ -308,6 +317,7 @@ void InterpretValue(Role *r, char *v, char **out_curr){
 //				printf("get %s\n", trans);
 				InterpretValue(r, trans, out_curr);
 				in_curr = in_tmp;
+				continue;
 			}
 			else if (in_tmp[0] == '$'){
 				in_tmp ++;
@@ -322,6 +332,7 @@ void InterpretValue(Role *r, char *v, char **out_curr){
 //        printf("get %s\n", trans);
 					InterpretValue(r, trans, out_curr);
 					in_curr = in_tmp;
+					continue;
 				}
       }
 			break;
@@ -339,6 +350,7 @@ void InterpretValue(Role *r, char *v, char **out_curr){
 //        printf("get %s\n", trans);
         InterpretValue(r, trans, out_curr);
         in_curr = in_tmp;
+				continue;
       }
       break;
 		default:

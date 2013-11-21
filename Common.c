@@ -61,6 +61,18 @@ char *estrlower(char *str){
 	rtn[i] = '\0';
 	return rtn;
 }
+
+void estradd(char **a, char *b){
+	if(b==NULL) return;
+	int lena;
+	if(*a==NULL){
+		*a=estrdup(b);
+	}
+	else{
+		*a=(char*)realloc(*a, (strlen(*a) + strlen(b) + 1));
+		strcat(*a,b);
+	}
+}
 char *estrupper(char *str){
 	char *rtn;
 	rtn = (char* )malloc(strlen(str)+1);
@@ -144,12 +156,13 @@ Index IndexArray_Add(IndexArray *a, Index i){
 	a->Values[p] = i;
   return p;
 }
-void IndexArray_PassbySymbol(IndexArray *a, IndexArray *b){
+void IndexArray_PassBySymbol(IndexArray *a, IndexArray *b){
 	if(a->Values != NULL)
 		free(a->Values);
 	*a = *b;
 }
-void IndexArray_PassbyValue(IndexArray *a, IndexArray *b){
+
+void IndexArray_PassByValue(IndexArray *a, IndexArray *b){
 	a->Length = b->Length;
 	if(a->Values != NULL){
 		a->Values = (Index* )realloc(a->Values, a->Length*sizeof(Index));

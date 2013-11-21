@@ -14,6 +14,7 @@ char *valuestr = "_Value";
 char *namestr = "_Name";
 char *superstr = "_Super";
 FILE *out = stdout;
+char *prefix = "";
 char *const_name = "EveConst";
 
 char path[] = "ignore:./:/zyp/eve/compiler/Eve/";

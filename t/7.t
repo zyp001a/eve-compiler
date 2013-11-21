@@ -1,4 +1,5 @@
 Use "Lang.C"
-a:C
-a=`printf("Hello\\n");`
+a : Lang.C
+
+a.Main=`printf("Hello\n");`
 a

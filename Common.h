@@ -25,6 +25,7 @@ char estrisnull(char *str);
 char* estrdup(char *str);
 char* estrsub(char *big, char *small);
 char* estrcent(char *);
+void estradd(char**, char *);
 char* estrlower(char *);
 char* estrupper(char *);
 char* estrafter(char *, char);
@@ -37,7 +38,8 @@ void eerror(char *str);
 void ewarn(char *str);
 void IndexArray_Create(IndexArray *a);
 Index IndexArray_Add(IndexArray *a, Index i);
-void IndexArray_PassbySymbol(IndexArray*, IndexArray*);
+void IndexArray_PassBySymbol(IndexArray*, IndexArray*);
+void IndexArray_PassByValue(IndexArray*, IndexArray*);
 char* ereadfile(FILE *fp);
 
 #endif

@@ -1,4 +1,4 @@
-SetOut "a"
+_SetOut "a"
 _Print
 echo a
 _EndPrint
@@ -9,7 +9,7 @@ _Print
 echo b
 _EndPrint
 
-SetOut ""
+_SetOut ""
 _Run sh a    
 
 

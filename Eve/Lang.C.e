@@ -1,18 +1,24 @@
 Use "Common"
+
 Lang.C._Eval = `
-$_Value
-SetOut "a.c"
-Print
+$$_Value
+_SetOut "a.c"
+_Print
+
 $Includes
+
 $Structs
+
 $Functions
+
 $MainDef
-$MainBody
+$Main
 $MainEnd
-EndPrint
-SetOut ""
-Run gcc a.c
-Run ./a.out
+
+_EndPrint
+_SetOut ""
+_Run gcc a.c
+_Run ./a.out
 `
 
 Lang.C.Includes = `
@@ -20,12 +26,18 @@ Lang.C.Includes = `
 #include <string.h>
 #include <stdlib.h>
 `
+
 Lang.C.Structs = ``
+Lang.C.Structs
+
 Lang.C.Functions = ``
+
 Lang.C.MainDef = `
 main(){
 `
-Lang.C.MainBody = `$_Value`
+
+Lang.C.Main = `$_Value`
+
 Lang.C.MainEnd = `}`
 
 

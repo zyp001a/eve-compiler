@@ -62,7 +62,8 @@ void ParseExpressionFromString(char *str);
 
 %token <strval> IDENTIFIER 
 %token <strval> CONSTANT 
-%token USE SETFLAG SETOUT SETARGS
+%token FOR IF USE ADD
+%token SETFLAG SETOUT SETARGS
 %token <charval> TOKEN_PRINT
 %token END_OF_STATEMENT 
 %token NULL_TOKEN
@@ -73,6 +74,7 @@ void ParseExpressionFromString(char *str);
 %type <numval> role
 %type <numval> member
 %type <numval> argument
+
 
 %start translation_unit
 
@@ -99,6 +101,7 @@ expression
 }
 | SETARGS role argument_list
 {
+	//TODO Argument Parsing
 }
 | SETOUT role 
 {
@@ -110,6 +113,9 @@ expression
   p(204);
 	Sociaty_SetOut($2);
 }
+| ADD role CONSTANT
+| ADD role role
+
 | USE role
 {
   p(205);
@@ -132,21 +138,59 @@ expression
 	}
 	free(fpath);
 }
-| role '=' '(' argument_list ')'
+| FOR role role CONSTANT
 {
+	int i;
+	for(i=0; i< Sociaty_GetRole($3)->Elements.Length; i++){
+		Sociaty_GetRole($2)->_Value = 
+			Sociaty_GetRole(Sociaty_GetRole($3)->Elements.Values[i])->_Value;
+		ParseExpressionFromString($4);
+	}
+}
+| IF role CONSTANT
+{
+	if(!estrisnull(Sociaty_GetRole($2)->_Value)){
+		ParseExpressionFromString($3);
+	}
+}
+| role '=' '[' argument_list ']'
+{
+	p(206);
+	IndexArray_PassByValue(&Sociaty_GetRole($1)->Elements, &$4);
+//	free($4.Values);
 	// array TODO
 }
 | role '=' CONSTANT 
 { 
   p(207);
-	Sociaty_GetRole($1)->_Value = strdup($3);
+	if(Sociaty_GetRole($1)->_Value != NULL) free(Sociaty_GetRole($1)->_Value);
+	Sociaty_GetRole($1)->_Value = estrdup($3);
 }
 | role '=' role
 {
   p(208);
+	if(Sociaty_GetRole($1)->_Value != NULL) free(Sociaty_GetRole($1)->_Value);
   Sociaty_GetRole($1)->_Value =
     estrdup(Sociaty_GetRole($3)->_Value);
 }
+| role '+' '=' CONSTANT
+{
+  p(207);
+  estradd(&Sociaty_GetRole($1)->_Value, $4);
+}
+| role '+' '=' role
+{
+	p(207);
+	estradd(&Sociaty_GetRole($1)->_Value, Sociaty_GetRole($4)->_Value);
+}
+| role '=' '&' role
+{
+	if(Sociaty_GetRole($1)->_Value != NULL) free(Sociaty_GetRole($1)->_Value);
+
+	Sociaty_GetRole($1)->_Value =
+		Sociaty_GetRole($4)->_Value;
+}
+
 | role ':' role
 {
   p(209);
@@ -164,6 +208,7 @@ expression
 #ifdef EDEBUG
 	printf("%s\n", rtn);
 #endif
+
 	ParseExpressionFromString(rtn);
 //	Eval(Sociaty_GetValue());
 //	$$ = Expression_Create($1, NULL, Eval); 
@@ -175,13 +220,15 @@ eval
 | role '(' ')' {  p(302); $$ = $1; }
 | role argument_list
 {
+//TODO
 	p(303); $$ = $1;
-	IndexArray_PassbySymbol(&Sociaty_GetRole($1)->Args, &$2);
+	IndexArray_PassBySymbol(&Sociaty_GetRole($1)->Args, &$2);
 }
 | role '(' argument_list ')'
 {
+//TODO
 	p(304); $$ = $1;
-  IndexArray_PassbySymbol(&Sociaty_GetRole($1)->Args, &$3);
+  IndexArray_PassBySymbol(&Sociaty_GetRole($1)->Args, &$3);
 
 }
 ;
@@ -197,6 +244,12 @@ role
   p(402);
 	$$ = Sociaty_AddNewRole($1);	
 }
+/*
+| role '[' CONSTANT ']'
+{
+	$$ = Sociaty_GetRole($1)->Elements.Values[atoi($3)];	
+}
+*/
 ;
 
 member
@@ -212,7 +265,7 @@ member
 	Sociaty_AddSSRelation(pi, ci);
 	$$ = ci;
 }
-| member '.' IDENTIFIER 
+| member '.' IDENTIFIER
 {
   p(502);
 	int pi, ci;
@@ -225,11 +278,13 @@ member
 	Sociaty_AddSSRelation($1, ci);
 	$$ = ci;
 }
-| member '[' argument ']'
-{
-// TODO array	
-}
 ;
+/*
+idunit
+: IDENTIFIER
+| IDENTIFIER '[' CONSTANT ']'
+;
+*/
 argument
 : role { $$ = $1; }
 | CONSTANT 
@@ -240,12 +295,17 @@ argument
 	const_count++;
 	sprintf(str, "CONST_%d",const_count);
 	ri = Sociaty_AddNewRole(str); 
+	Sociaty_GetRole(ri)->_Value = estrdup($1);
 	$$ = ri;
 }
 | '*' {$$ = 0; }
 ;
 argument_list
-: argument { IndexArray_Create(&$$); IndexArray_Add(&$$, $1); }
+: argument 
+{ 
+	IndexArray_Create(&$$); 
+	IndexArray_Add(&$$, $1); 
+}
 | argument_list ',' argument { $$ = $1; IndexArray_Add(&$$, $3); }
 ;
 

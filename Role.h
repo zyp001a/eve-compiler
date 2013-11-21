@@ -25,6 +25,7 @@ typedef struct Role{
   IndexArray Superiors;
   IndexArray Parents;
   IndexArray Children;
+	IndexArray Elements; 
 	IndexArray Args; //Arguments
 } Role;
 

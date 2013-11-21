@@ -19,6 +19,7 @@ void Role_Create(Role *v, char *name){
 	IndexArray_Create(&v->Superiors);
 	IndexArray_Create(&v->Parents);
 	IndexArray_Create(&v->Children);
+	IndexArray_Create(&v->Elements);
 	IndexArray_Create(&v->Args);
 }
 
