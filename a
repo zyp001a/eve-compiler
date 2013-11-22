@@ -1,2 +1,7 @@
-echo a
-echo b
+Use "Common"
+Add a 1
+Add a 2
+
+_Print
+\n_EndPrint
+>"\n"

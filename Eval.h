@@ -17,6 +17,7 @@ char *GetValueRecursive(Role *pr, char *title, int len);
 
 char* GetValueFromSuperiors(Role *r, char *title, int len);
 char* GetValueFromParents(Role *r, char *title, int len);
+char* GetValueFromParents2(Role *r, char *title, int len);
 char* GetEvalValue(Role *r);
 void InterpretValue(Role *r, char *value, char **result);
 

@@ -11,7 +11,7 @@ Lexer.c:        Lexer.l
 	              flex Lexer.l
 
 Parser.c:       Parser.y Lexer.c
-	              bison -rstates -t Parser.y
+	              bison -rstates -t -v Parser.y
 
 clean:
 	 			        rm -f *.o *~ Lexer.c Lexer.h Parser.c Parser.h test

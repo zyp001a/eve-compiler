@@ -27,9 +27,6 @@ int yyerror(Expression **expression, yyscan_t scanner, const char *msg) {
 		printf("yyerror, %s\n",msg);
 	}
 
-	int const_count = 0;
-
-
  
 %}
  
@@ -40,7 +37,7 @@ int yyerror(Expression **expression, yyscan_t scanner, const char *msg) {
 	typedef void* yyscan_t;
 #endif
 void ParseExpressionFromFile(char *fpath);
-void ParseExpressionFromFile(char *str);
+void ParseExpressionFromFp(FILE *fp);
 void ParseExpressionFromString(char *str);
 
  }
@@ -62,7 +59,7 @@ void ParseExpressionFromString(char *str);
 
 %token <strval> IDENTIFIER 
 %token <strval> CONSTANT 
-%token FOR IF USE ADD
+%token FOR IF IFELSE USE ADD
 %token SETFLAG SETOUT SETARGS
 %token <charval> TOKEN_PRINT
 %token END_OF_STATEMENT 
@@ -114,8 +111,15 @@ expression
 	Sociaty_SetOut($2);
 }
 | ADD role CONSTANT
+{
+	IndexArray_Add(&Sociaty_GetRole($2)->Elements,
+								 Sociaty_AddConstRole($3));
+}
 | ADD role role
-
+{
+	IndexArray_Add(&Sociaty_GetRole($2)->Elements,
+								 $3);
+}
 | USE role
 {
   p(205);
@@ -144,13 +148,26 @@ expression
 	for(i=0; i< Sociaty_GetRole($3)->Elements.Length; i++){
 		Sociaty_GetRole($2)->_Value = 
 			Sociaty_GetRole(Sociaty_GetRole($3)->Elements.Values[i])->_Value;
+		estraddeol(&$4);
 		ParseExpressionFromString($4);
 	}
 }
 | IF role CONSTANT
 {
 	if(!estrisnull(Sociaty_GetRole($2)->_Value)){
+		estraddeol(&$3);
 		ParseExpressionFromString($3);
+	}
+}
+| IFELSE role CONSTANT CONSTANT
+{
+  if(!estrisnull(Sociaty_GetRole($2)->_Value)){
+		estraddeol(&$3);
+    ParseExpressionFromString($3);
+  }
+	else{
+		estraddeol(&$4);
+		ParseExpressionFromString($4);
 	}
 }
 | role '=' '[' argument_list ']'
@@ -288,15 +305,8 @@ idunit
 argument
 : role { $$ = $1; }
 | CONSTANT 
-{ 
-	char *str;
-	int ri;
-	str = (char *)malloc(12);
-	const_count++;
-	sprintf(str, "CONST_%d",const_count);
-	ri = Sociaty_AddNewRole(str); 
-	Sociaty_GetRole(ri)->_Value = estrdup($1);
-	$$ = ri;
+{
+	$$ = Sociaty_AddConstRole($1);
 }
 | '*' {$$ = 0; }
 ;
@@ -312,20 +322,29 @@ argument_list
 %%
 
 	//void ParseExpressionFromString(Expression *expr, char *str){
-void ParseExpressionFromFile(char *fpath){
+void ParseExpressionFromFp(FILE *fp){
 	char *content;
-	FILE *ifp;
-	if(fpath[0]){
-		ifp=fopen(fpath,"r");
-		content = ereadfile(ifp);
-		ParseExpressionFromString(content);
-	}
-	else{
-		eerror("file not exist");
-		exit(1);
-	}
+	content = ereadfile(fp);
+	estraddeol(&content);
+	ParseExpressionFromString(content);
+//	free(fpath);
 }
+void ParseExpressionFromFile(char *fpath){
+  char *content;
+  FILE *ifp;
+  if(fpath[0]){
+    ifp=fopen(fpath,"r");
+		ParseExpressionFromFp(ifp);
+  }
+  else{
+    eerror("file not exist");
+    exit(1);
+  }
+//  free(fpath);
+}
+
 void ParseExpressionFromString(char *str){
+//	printf("\nParseExpressionFromString\n=====\n%s\n=====\n\n", str);
   yyscan_t scanner;
   YY_BUFFER_STATE state;
 	if (yylex_init(&scanner)) {
@@ -342,5 +361,6 @@ void ParseExpressionFromString(char *str){
   }
 	yy_delete_buffer(state, scanner);
 	yylex_destroy(scanner);
+//	free(str);
 
 }

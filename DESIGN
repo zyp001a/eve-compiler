@@ -1,3 +1,22 @@
+$@|| internal language
+. access subordinate
+: inherence
+= assign
++= add
+-= remove
+> select write file
+>> add write
+< input use file
+~ run
+# comment
+^^ write string
+
+? if
+?: ifelse
+?! ifnot
+
+`` constant
+
 
 
 

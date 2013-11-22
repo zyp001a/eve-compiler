@@ -1,11 +1,24 @@
-Use "Common"
+
+
+Eve._Eval = `
+_Print
+$_Value\_EndPrint`
+
+
+
 a=["1","2","3"]
+Add a "4"
 For b a `
-		b.Print
+		b
 `
+
+IfElse a `_Print
+1_EndPrint
+` `b`
+
 If b `
-	 b.Print
+	 b
 `
-If a `
-a.Print
-`
+
+
+

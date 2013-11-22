@@ -53,16 +53,20 @@ INT_SUFFIX    (u|U|l|L)*
 <PRINT,WRITE>(.|\n)             { p(84); Sociaty_PutChar(yytext[0]); return(NULL_TOKEN);}
 
 "_Run".+                       { p(85); system(yytext+4);  return(NULL_TOKEN); }
+">".+          { p(85); system(yytext+1);  return(NULL_TOKEN); }
+"~".+          { p(85); Sociaty_PutString(yytext+1);  return(NULL_TOKEN); }
+"#".+          { p(85);  return(NULL_TOKEN); }
+\^(\\.|[^\\\^])*\^             { p(10); char *str =  estrcent(yytext); Sociaty_PutString(str); free(str); return(NULL_TOKEN); }
 
+"_SetArgs"                       { p(85);return SETARGS; }
+"_SetFlag"                       { p(85);return SETFLAG; }
+"_SetOut"                        { p(85); return SETOUT; }
 
-"_SetArgs"                       { return SETARGS; }
-"_SetFlag"                       { return SETFLAG; }
-"_SetOut"                        { return SETOUT; }
-
-"For"                            { return FOR; }
-"If"                             { return IF; }
-"Add"                            { return ADD; }
-"Use"				                     { return USE; }
+"For"                            { p(85);return FOR; }
+"If"                             { p(85);return IF; }
+"IfElse"                         { p(85);return IFELSE; }
+"Add"                            { p(85);return ADD; }
+"Use"				                     { p(85);return USE; }
 
 
 {LETTER}({LETTER}|{DIGIT})*      { p(1); yylval->strval = estrdup(yytext); return(IDENTIFIER); }
@@ -78,7 +82,7 @@ INT_SUFFIX    (u|U|l|L)*
 \`(\\.|[^\\`])*\`             { p(10); yylval->strval = estrcent(yytext); return(CONSTANT); }
 
 [;\n]      { p(11); return(END_OF_STATEMENT); }
-[ \t\v\r]  { }
+[ \t\v\r]  { p(99);}
 
 
 

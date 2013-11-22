@@ -200,6 +200,23 @@ char* GetValueFromParents(Role *r, char *title, int len){
 	}
 	return "";
 }
+char* GetValueFromParents2(Role *r, char *title, int len){
+	Role *pr, *ppr;
+  char *rpr;
+  int i,j;
+
+  for(i=r->Parents.Length; i>0; --i){
+    pr = Sociaty_GetRole(r->Parents.Values[i-1]);
+		for(j=pr->Parents.Length; j>0; --j){
+			ppr = Sociaty_GetRole(pr->Parents.Values[j-1]);
+			rpr = GetValue(ppr, title, len);
+			if(!estrisnull(rpr)){
+				return rpr;
+			}
+		}
+	}
+	return "";
+}
 char* GetValue(Role *r, char *title, int len){
 	int i,j;
 	Role *pr,* psr;
@@ -207,7 +224,11 @@ char* GetValue(Role *r, char *title, int len){
 	char *ttitle;
 	//_Value, _Name, _Super exception
 #ifdef EDEBUGPRO
-	printf("\t\tTry to Get Value: %s, %s\n", r->_Name, title);
+	printf("\t\tTry to Get Value: %s, ", r->_Name);
+	for(i=0; i<len; i++){
+		printf("%c", title[i]);
+	}
+	printf("\n");
 #endif
 	if(!strncmp(title, valuestr, strlen(valuestr))){
 		return r->_Value;
@@ -294,13 +315,15 @@ void InterpretValue(Role *r, char *v, char **out_curr){
 			end=1;
 			return;
 		case '\\':
-			if(in_curr[1] == '$' || in_curr[1] == '@'){
+			if(in_curr[1] == '$' 
+				 || in_curr[1] == '@'
+				 || in_curr[1] == '\''
+				 || in_curr[1] == '"'
+				 || in_curr[1] == '`'
+				 || in_curr[1] == '_'
+				 || in_curr[1] == '['
+				){
 				in_curr ++;
-			}
-			else if (in_curr[1] == '\\'){
-				(*out_curr)[0] = in_curr[0];
-				(*out_curr) ++;
-				in_curr++;
 			}
 			break;
 	  case '$':
@@ -351,6 +374,22 @@ void InterpretValue(Role *r, char *v, char **out_curr){
         InterpretValue(r, trans, out_curr);
         in_curr = in_tmp;
 				continue;
+      }
+			else if (in_tmp[0] == '@'){
+				in_tmp ++;
+				if(eisletter(in_tmp[0])){
+					len ++;
+					in_tmp++;
+					while(eiss(in_tmp[0])){
+						len ++;
+						in_tmp++;
+					}
+					trans = GetValueFromParents2(r, in_curr + 2, len);
+//        printf("get %s\n", trans);
+					InterpretValue(r, trans, out_curr);
+					in_curr = in_tmp;
+					continue;
+				}
       }
       break;
 		default:

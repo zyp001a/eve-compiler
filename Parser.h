@@ -40,7 +40,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 36 "Parser.y" /* yacc.c:1915  */
+#line 33 "Parser.y" /* yacc.c:1915  */
 
 #include "Common.h"  
 #ifndef YY_TYPEDEF_YY_SCANNER_T
@@ -48,7 +48,7 @@ extern int yydebug;
 	typedef void* yyscan_t;
 #endif
 void ParseExpressionFromFile(char *fpath);
-void ParseExpressionFromFile(char *str);
+void ParseExpressionFromFp(FILE *fp);
 void ParseExpressionFromString(char *str);
 
  
@@ -64,14 +64,15 @@ void ParseExpressionFromString(char *str);
     CONSTANT = 259,
     FOR = 260,
     IF = 261,
-    USE = 262,
-    ADD = 263,
-    SETFLAG = 264,
-    SETOUT = 265,
-    SETARGS = 266,
-    TOKEN_PRINT = 267,
-    END_OF_STATEMENT = 268,
-    NULL_TOKEN = 269
+    IFELSE = 262,
+    USE = 263,
+    ADD = 264,
+    SETFLAG = 265,
+    SETOUT = 266,
+    SETARGS = 267,
+    TOKEN_PRINT = 268,
+    END_OF_STATEMENT = 269,
+    NULL_TOKEN = 270
   };
 #endif
 
@@ -80,14 +81,14 @@ void ParseExpressionFromString(char *str);
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 55 "Parser.y" /* yacc.c:1915  */
+#line 52 "Parser.y" /* yacc.c:1915  */
 
 	int numval;
 	IndexArray iaval;
 //	IntTuple2 num2val;
 	char *strval;
 
-#line 91 "Parser.h" /* yacc.c:1915  */
+#line 92 "Parser.h" /* yacc.c:1915  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

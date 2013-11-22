@@ -43,18 +43,15 @@ Index Sociaty_AddChildRole(Index pi, char *name){
 }
 
 Index Sociaty_AddConstRole(char *str){
-	char *name;
-	char const_suffix[11];
-	Index i;
-	const_count ++;
-	sprintf(const_suffix, "%d", const_count);
-	strcpy(name, const_name);
-	strcat(name, const_suffix);
-  i = RoleArray_AddNew(&ns.Members, name);
-	Sociaty_GetRole(i)->_Value
-		= estrdup(str);
-  Sociaty_AddPCRelation(0, i);
-  return i;
+	char *nstr;
+	int ri;
+	nstr = (char *)malloc(12);
+	const_count++;
+	sprintf(nstr, "CONST_%d",const_count);
+	ri = Sociaty_AddNewRole(nstr); 
+	Sociaty_GetRole(ri)->_Value = estrdup(str);
+	free(nstr);
+	return ri;
 }
 
 
@@ -179,6 +176,10 @@ void Sociaty_WriteMembers(){
 void Sociaty_PutChar(char c){
 	fprintf(out, "%c", c);
 }
+void Sociaty_PutString(char *s){
+  fprintf(out, "%s", s);
+}
+
 void Sociaty_SetOut(char *str){
 	if(estrisnull(str)){
 		if(out != stdout && out != NULL) fclose(out);

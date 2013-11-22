@@ -97,6 +97,12 @@ char *estrafter(char *str, char c){
 	}
 	return rtn;
 }
+void* estraddeol(char **str){
+	int slen = strlen(*str);
+	*str=(char *)realloc(*str, slen+2);
+	(*str)[slen] = '\n';
+	(*str)[slen+1] = '\0';
+}
 
 char eisletter(char c){
 	if(c >= 'a' && c <= 'z') return 1;
@@ -138,8 +144,9 @@ char* ereadfile(FILE *fp){
 		eerror("ereadfile failed");
 		exit(1);
 	}
-	str[result] = '\n';
-	str[result +1] = '\0';	
+	str[result] = '\0';
+
+
 	return str;
 }
 

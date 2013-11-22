@@ -33,6 +33,7 @@ void Sociaty_AddSSRelation(Index pi, Index ci);
 void Sociaty_WriteMembers();
 //void Sociaty_EvalExpression(Expression *);
 void Sociaty_PutChar(char);
+void Sociaty_PutString(char*);
 void Sociaty_SetOut(char *);
 
 

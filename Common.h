@@ -29,6 +29,7 @@ void estradd(char**, char *);
 char* estrlower(char *);
 char* estrupper(char *);
 char* estrafter(char *, char);
+void* estraddeol(char **);
 
 char eisletter(char c);
 char eisdigit(char c);

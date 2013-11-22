@@ -15,7 +15,8 @@ char *namestr = "_Name";
 char *superstr = "_Super";
 FILE *out = stdout;
 char *prefix = "";
-char *const_name = "EveConst";
+int const_count = 0;
+//char *const_name = "EveConst";
 
 char path[] = "ignore:./:/zyp/eve/compiler/Eve/";
 
@@ -24,17 +25,17 @@ int main(int argc, char **argv)
 {
 	FILE *fp;
 	char *str;
+	Sociaty_Create();
 	if(argc == 1)
 		fp = stdin;
 	else
 		fp = fopen(argv[1], "r");
-	str = ereadfile(fp);
 	//fclose(fp);
 //	char *a = estrafter("asdf.asdDDDe13.dda'",'.');
 //	printf("%s\n",a);
 ///*	
-	Sociaty_Create();
-	ParseExpressionFromString(str);
+
+	ParseExpressionFromFp(fp);
 //	Sociaty_WriteMembers();
 //*/	
 

@@ -1,2 +1,2 @@
 Use "t/3.t"
-Run ls >x
+_Run ls >x
