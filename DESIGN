@@ -1,4 +1,8 @@
-$@|| internal language
+$@&||[] internal language
+$ this $$ parent
+@ super @@ super'super
+& the value
+
 . access subordinate
 : inherence
 = assign
@@ -9,6 +13,7 @@ $@|| internal language
 < input use file
 ~ run
 # comment
+// /**/
 ^^ write string
 
 ? if
@@ -16,6 +21,8 @@ $@|| internal language
 ?! ifnot
 
 `` constant
+[] array
+{} block
 
 
 

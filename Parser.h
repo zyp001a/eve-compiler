@@ -50,7 +50,7 @@ extern int yydebug;
 void ParseExpressionFromFile(char *fpath);
 void ParseExpressionFromFp(FILE *fp);
 void ParseExpressionFromString(char *str);
-
+yyscan_t current_scanner;
  
 
 #line 57 "Parser.h" /* yacc.c:1915  */
@@ -62,17 +62,18 @@ void ParseExpressionFromString(char *str);
   {
     IDENTIFIER = 258,
     CONSTANT = 259,
-    FOR = 260,
-    IF = 261,
-    IFELSE = 262,
-    USE = 263,
-    ADD = 264,
-    SETFLAG = 265,
-    SETOUT = 266,
-    SETARGS = 267,
-    TOKEN_PRINT = 268,
-    END_OF_STATEMENT = 269,
-    NULL_TOKEN = 270
+    BLOCK = 260,
+    FOR = 261,
+    IF = 262,
+    IFELSE = 263,
+    USE = 264,
+    ADD = 265,
+    SETFLAG = 266,
+    SETOUT = 267,
+    SETARGS = 268,
+    TOKEN_PRINT = 269,
+    END_OF_STATEMENT = 270,
+    STATEMENT = 271
   };
 #endif
 
@@ -88,7 +89,7 @@ union YYSTYPE
 //	IntTuple2 num2val;
 	char *strval;
 
-#line 92 "Parser.h" /* yacc.c:1915  */
+#line 93 "Parser.h" /* yacc.c:1915  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

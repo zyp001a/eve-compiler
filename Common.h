@@ -7,7 +7,7 @@
 #include <string.h>
 #include <ctype.h>
 #define MAX_FILE_NAME 1024
-
+#define MAX_BLOCK_SIZE 1024*128
 
 
 typedef int Index;

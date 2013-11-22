@@ -8,17 +8,18 @@ $_Value\_EndPrint`
 
 a=["1","2","3"]
 Add a "4"
-For b a `
+For b a {
 		b
-`
+}
 
-IfElse a `_Print
+IfElse a {_Print
 1_EndPrint
-` `b`
-
-If b `
-	 b
-`
+} {b}
+a = 1;
+If b {
+	 b 
+	 If a {a}
+}
 
 
 

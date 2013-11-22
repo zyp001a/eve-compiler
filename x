@@ -1,119 +1,421 @@
-a
-a.c
-Action.h~
-a.out
-b
-build
-build~
-cat.c
-Common.c
-Common.c~
-Common.h
-Common.h~
-Common.o
-dc
-dc.l
-dc.l~
-dc.y
-dc.y~
-Demo
-DESIGN
-DESIGN~
-Eval.c
-Eval.c~
-Eval.h
-Eval.h~
-EvalLexer.l
-EvalLexer.l~
-EvalParser.y
-Evaluate.c~
-Evaluate.h~
-Evaluate.o
-eve
-eve~
-Eve
-Eve_old
-Expression.c
-Expression.c~
-Expression.h
-Expression.h~
-Expression.o
-Expression_old.c
-Expression_old.h
-Hash.c
-Hash.c~
-Hash.h
-Hash.h~
-Hierachy.c~
-Hierachy.h~
-Lexer.c
-Lexer.h
-Lexer.l
-Lexer.l~
-Lexer_old.l
-lex.yy.c
-lex.yy.c~
-lex.yy.o
-main.c
-main.c~
-main_old.c
-Makefile
-Makefile~
-Parser.c
-Parser.h
-Parser_old.h
-Parser_old.y
-Parser.output
-Parser.y
-Parser.y~
-pp
-pp~
-preprocesser.h~
-#README#
-Role.c
-Role.c~
-Role.h
-Role.h~
-Role.o
-s0.e
-s0.e~
-s1.e
-s1.e~
-s2.e
-s2.e~
-sample2.e
-sample2.e~
-sample2.e.c
-sample.d
-sample.d~
-sample.e
-sample.e~
-sample.e.c
-Sociaty.c
-Sociaty.c~
-Sociaty.h
-Sociaty.h~
-Sociaty.o
-symhierachy.c
-symhierachy.c~
-symhierachy.h
-symhierachy.h~
-symhierachy.o
-symtable.c
-symtable.c~
-symtable.h
-symtable.h~
-symtable.o
-t
-test
-test.c
-test.c~
-TestFlex.l
-TestFlex.l~
-TODO
-TODO~
-x
-#y.tab.c#
-y.tab.c
-y.tab.h
-y.tab.o
+Lexer.c:641: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘struct’
+Lexer.c: In function ‘yylex’:
+Lexer.c:866: error: ‘struct yyguts_t’ has no member named ‘yylval_r’
+Lexer.c:868: error: ‘struct yyguts_t’ has no member named ‘yy_init’
+Lexer.c:870: error: ‘struct yyguts_t’ has no member named ‘yy_init’
+Lexer.c:876: error: ‘struct yyguts_t’ has no member named ‘yy_start’
+Lexer.c:877: error: ‘struct yyguts_t’ has no member named ‘yy_start’
+Lexer.c:879: error: ‘struct yyguts_t’ has no member named ‘yyin_r’
+Lexer.c:880: error: ‘struct yyguts_t’ has no member named ‘yyin_r’
+Lexer.c:882: error: ‘struct yyguts_t’ has no member named ‘yyout_r’
+Lexer.c:883: error: ‘struct yyguts_t’ has no member named ‘yyout_r’
+Lexer.c:885: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:885: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:885: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:887: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:887: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:888: error: ‘struct yyguts_t’ has no member named ‘yyin_r’
+Lexer.c:896: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:899: error: ‘struct yyguts_t’ has no member named ‘yy_hold_char’
+Lexer.c:906: error: ‘struct yyguts_t’ has no member named ‘yy_start’
+Lexer.c:913: error: ‘struct yyguts_t’ has no member named ‘yy_last_accepting_state’
+Lexer.c:914: error: ‘struct yyguts_t’ has no member named ‘yy_last_accepting_cpos’
+Lexer.c:926: error: ‘struct yyguts_t’ has no member named ‘yy_last_accepting_cpos’
+Lexer.c:927: error: ‘struct yyguts_t’ has no member named ‘yy_last_accepting_state’
+Lexer.c:932: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.c:932: error: ‘struct yyguts_t’ has no member named ‘yyleng_r’
+Lexer.c:932: error: ‘struct yyguts_t’ has no member named ‘yy_hold_char’
+Lexer.c:932: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:937: error: ‘struct yyguts_t’ has no member named ‘yyleng_r’
+Lexer.c:938: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.c:940: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:940: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:941: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:941: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:952: error: ‘struct yyguts_t’ has no member named ‘yy_hold_char’
+Lexer.c:953: error: ‘struct yyguts_t’ has no member named ‘yy_last_accepting_cpos’
+Lexer.c:954: error: ‘struct yyguts_t’ has no member named ‘yy_last_accepting_state’
+Lexer.l:46: error: ‘struct yyguts_t’ has no member named ‘yy_start’
+Lexer.l:47: error: ‘struct yyguts_t’ has no member named ‘yy_start’
+Lexer.l:50: error: ‘struct yyguts_t’ has no member named ‘yy_start’
+Lexer.l:51: error: ‘struct yyguts_t’ has no member named ‘yy_start’
+Lexer.l:53: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.l:55: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.l:56: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.l:57: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.l:59: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.l:63: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.l:63: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.l:67: error: ‘current_scanner’ undeclared (first use in this function)
+Lexer.l:67: error: (Each undeclared identifier is reported only once
+Lexer.l:67: error: for each function it appears in.)
+Lexer.l:74: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.l:94: error: ‘struct yyguts_t’ has no member named ‘yylval_r’
+Lexer.l:94: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.l:95: error: ‘struct yyguts_t’ has no member named ‘yylval_r’
+Lexer.l:95: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.l:96: error: ‘struct yyguts_t’ has no member named ‘yylval_r’
+Lexer.l:96: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.l:97: error: ‘struct yyguts_t’ has no member named ‘yylval_r’
+Lexer.l:97: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.l:98: error: ‘struct yyguts_t’ has no member named ‘yylval_r’
+Lexer.l:98: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.l:99: error: ‘struct yyguts_t’ has no member named ‘yylval_r’
+Lexer.l:99: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.l:100: error: ‘struct yyguts_t’ has no member named ‘yylval_r’
+Lexer.l:100: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.l:101: error: ‘struct yyguts_t’ has no member named ‘yylval_r’
+Lexer.l:101: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.l:102: error: ‘struct yyguts_t’ has no member named ‘yylval_r’
+Lexer.l:102: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.l:104: error: ‘struct yyguts_t’ has no member named ‘yylval_r’
+Lexer.l:104: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.l:131: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.c:1255: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.c:1258: error: ‘struct yyguts_t’ has no member named ‘yy_hold_char’
+Lexer.c:1261: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1261: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1272: error: ‘struct yyguts_t’ has no member named ‘yy_n_chars’
+Lexer.c:1272: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1272: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1273: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1273: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1273: error: ‘struct yyguts_t’ has no member named ‘yyin_r’
+Lexer.c:1274: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1274: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1284: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1284: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1284: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1284: error: ‘struct yyguts_t’ has no member named ‘yy_n_chars’
+Lexer.c:1288: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1288: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.c:1303: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.c:1308: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1315: error: ‘struct yyguts_t’ has no member named ‘yy_last_accepting_cpos’
+Lexer.c:1316: error: ‘struct yyguts_t’ has no member named ‘yy_last_accepting_state’
+Lexer.c:1325: error: ‘struct yyguts_t’ has no member named ‘yy_did_buffer_switch_on_eof’
+Lexer.c:1338: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1338: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.c:1340: error: ‘struct yyguts_t’ has no member named ‘yy_start’
+Lexer.c:1346: error: ‘struct yyguts_t’ has no member named ‘yy_did_buffer_switch_on_eof’
+Lexer.c:1347: error: ‘struct yyguts_t’ has no member named ‘yyin_r’
+Lexer.c:1353: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1354: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.c:1358: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1359: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.c:1363: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1364: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1364: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1364: error: ‘struct yyguts_t’ has no member named ‘yy_n_chars’
+Lexer.c:1368: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1369: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.c: In function ‘yy_get_next_buffer’:
+Lexer.c:1392: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1392: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1393: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.c:1397: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1397: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1397: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1397: error: ‘struct yyguts_t’ has no member named ‘yy_n_chars’
+Lexer.c:1401: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1401: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1403: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1403: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.c:1423: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1423: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.c:1428: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1428: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1432: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1432: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1432: error: ‘struct yyguts_t’ has no member named ‘yy_n_chars’
+Lexer.c:1437: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1437: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1443: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1443: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1446: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1469: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1471: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1471: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1480: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1480: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1480: error: ‘struct yyguts_t’ has no member named ‘yyin_r’
+Lexer.c:1480: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1480: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1480: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1480: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1480: error: ‘struct yyguts_t’ has no member named ‘yyin_r’
+Lexer.c:1480: error: ‘struct yyguts_t’ has no member named ‘yy_n_chars’
+Lexer.c:1480: error: ‘struct yyguts_t’ has no member named ‘yy_n_chars’
+Lexer.c:1480: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1480: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1480: error: ‘struct yyguts_t’ has no member named ‘yyin_r’
+Lexer.c:1480: error: ‘struct yyguts_t’ has no member named ‘yyin_r’
+Lexer.c:1480: error: ‘struct yyguts_t’ has no member named ‘yyin_r’
+Lexer.c:1483: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1483: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1483: error: ‘struct yyguts_t’ has no member named ‘yy_n_chars’
+Lexer.c:1486: error: ‘struct yyguts_t’ has no member named ‘yy_n_chars’
+Lexer.c:1491: error: ‘struct yyguts_t’ has no member named ‘yyin_r’
+Lexer.c:1497: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1497: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1505: error: ‘struct yyguts_t’ has no member named ‘yy_n_chars’
+Lexer.c:1505: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1505: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1507: error: ‘struct yyguts_t’ has no member named ‘yy_n_chars’
+Lexer.c:1507: error: ‘struct yyguts_t’ has no member named ‘yy_n_chars’
+Lexer.c:1508: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1508: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1508: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1508: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1509: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1509: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1513: error: ‘struct yyguts_t’ has no member named ‘yy_n_chars’
+Lexer.c:1514: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1514: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1514: error: ‘struct yyguts_t’ has no member named ‘yy_n_chars’
+Lexer.c:1515: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1515: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1515: error: ‘struct yyguts_t’ has no member named ‘yy_n_chars’
+Lexer.c:1517: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.c:1517: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1517: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c: In function ‘yy_get_previous_state’:
+Lexer.c:1530: error: ‘struct yyguts_t’ has no member named ‘yy_start’
+Lexer.c:1532: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.c:1532: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1537: error: ‘struct yyguts_t’ has no member named ‘yy_last_accepting_state’
+Lexer.c:1538: error: ‘struct yyguts_t’ has no member named ‘yy_last_accepting_cpos’
+Lexer.c: In function ‘yy_try_NUL_trans’:
+Lexer.c:1561: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1566: error: ‘struct yyguts_t’ has no member named ‘yy_last_accepting_state’
+Lexer.c:1567: error: ‘struct yyguts_t’ has no member named ‘yy_last_accepting_cpos’
+Lexer.c: In function ‘yyunput’:
+Lexer.c:1587: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1590: error: ‘struct yyguts_t’ has no member named ‘yy_hold_char’
+Lexer.c:1592: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1592: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1595: error: ‘struct yyguts_t’ has no member named ‘yy_n_chars’
+Lexer.c:1596: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1596: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1597: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1597: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1599: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1599: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1601: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1601: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1606: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1606: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1607: error: ‘struct yyguts_t’ has no member named ‘yy_n_chars’
+Lexer.c:1607: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1607: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1609: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1609: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1616: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1616: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1619: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.c:1620: error: ‘struct yyguts_t’ has no member named ‘yy_hold_char’
+Lexer.c:1621: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c: In function ‘input’:
+Lexer.c:1635: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1635: error: ‘struct yyguts_t’ has no member named ‘yy_hold_char’
+Lexer.c:1637: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1643: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1643: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1643: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1643: error: ‘struct yyguts_t’ has no member named ‘yy_n_chars’
+Lexer.c:1645: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1649: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1649: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.c:1650: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1666: error: ‘struct yyguts_t’ has no member named ‘yyin_r’
+Lexer.c:1675: error: ‘struct yyguts_t’ has no member named ‘yy_did_buffer_switch_on_eof’
+Lexer.c:1676: error: ‘struct yyguts_t’ has no member named ‘yyin_r’
+Lexer.c:1685: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1685: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.c:1691: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1692: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1693: error: ‘struct yyguts_t’ has no member named ‘yy_hold_char’
+Lexer.c:1693: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1697: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1697: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1698: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1698: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c: In function ‘yyrestart’:
+Lexer.c:1715: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1715: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1715: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1717: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1717: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1718: error: ‘struct yyguts_t’ has no member named ‘yyin_r’
+Lexer.c:1721: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1721: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1721: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c: In function ‘yy_switch_to_buffer’:
+Lexer.c:1739: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1739: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1739: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1742: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1742: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1742: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1745: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1745: error: ‘struct yyguts_t’ has no member named ‘yy_hold_char’
+Lexer.c:1746: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1746: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1746: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1747: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1747: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1747: error: ‘struct yyguts_t’ has no member named ‘yy_n_chars’
+Lexer.c:1750: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1750: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1758: error: ‘struct yyguts_t’ has no member named ‘yy_did_buffer_switch_on_eof’
+Lexer.c: In function ‘yy_load_buffer_state’:
+Lexer.c:1764: error: ‘struct yyguts_t’ has no member named ‘yy_n_chars’
+Lexer.c:1764: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1764: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1765: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.c:1765: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1765: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1765: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1766: error: ‘struct yyguts_t’ has no member named ‘yyin_r’
+Lexer.c:1766: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1766: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1767: error: ‘struct yyguts_t’ has no member named ‘yy_hold_char’
+Lexer.c:1767: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c: In function ‘yy_delete_buffer’:
+Lexer.c:1811: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1811: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1811: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1812: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1812: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c: In function ‘yy_init_buffer’:
+Lexer.c:1839: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1839: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1839: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c: In function ‘yy_flush_buffer’:
+Lexer.c:1873: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1873: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1873: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c: In function ‘yypush_buffer_state’:
+Lexer.c:1892: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1892: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1892: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1895: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1895: error: ‘struct yyguts_t’ has no member named ‘yy_hold_char’
+Lexer.c:1896: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1896: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1896: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:1897: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1897: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1897: error: ‘struct yyguts_t’ has no member named ‘yy_n_chars’
+Lexer.c:1901: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1901: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1901: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1902: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1903: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1903: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1907: error: ‘struct yyguts_t’ has no member named ‘yy_did_buffer_switch_on_eof’
+Lexer.c: In function ‘yypop_buffer_state’:
+Lexer.c:1917: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1917: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1917: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1920: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1920: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1920: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1921: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1921: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1922: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1923: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1925: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1925: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1925: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1927: error: ‘struct yyguts_t’ has no member named ‘yy_did_buffer_switch_on_eof’
+Lexer.c: In function ‘yyensure_buffer_stack’:
+Lexer.c:1939: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1946: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1949: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1952: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1954: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_max’
+Lexer.c:1955: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1959: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:1959: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_max’
+Lexer.c:1964: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_max’
+Lexer.c:1965: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1966: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1969: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1973: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:1973: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_max’
+Lexer.c:1974: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_max’
+Lexer.c: In function ‘yyget_extra’:
+Lexer.c:2099: error: ‘struct yyguts_t’ has no member named ‘yyextra_r’
+Lexer.c: In function ‘yyget_lineno’:
+Lexer.c:2109: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:2109: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:2109: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:2112: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:2112: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c: In function ‘yyget_column’:
+Lexer.c:2122: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:2122: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:2122: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:2125: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:2125: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c: In function ‘yyget_in’:
+Lexer.c:2134: error: ‘struct yyguts_t’ has no member named ‘yyin_r’
+Lexer.c: In function ‘yyget_out’:
+Lexer.c:2143: error: ‘struct yyguts_t’ has no member named ‘yyout_r’
+Lexer.c: In function ‘yyget_leng’:
+Lexer.c:2152: error: ‘struct yyguts_t’ has no member named ‘yyleng_r’
+Lexer.c: In function ‘yyget_text’:
+Lexer.c:2162: error: ‘struct yyguts_t’ has no member named ‘yytext_r’
+Lexer.c: In function ‘yyset_extra’:
+Lexer.c:2172: error: ‘struct yyguts_t’ has no member named ‘yyextra_r’
+Lexer.c: In function ‘yyset_lineno’:
+Lexer.c:2184: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:2184: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:2184: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:2187: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:2187: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c: In function ‘yyset_column’:
+Lexer.c:2199: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:2199: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:2199: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:2202: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:2202: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c: In function ‘yyset_in’:
+Lexer.c:2214: error: ‘struct yyguts_t’ has no member named ‘yyin_r’
+Lexer.c: In function ‘yyset_out’:
+Lexer.c:2220: error: ‘struct yyguts_t’ has no member named ‘yyout_r’
+Lexer.c: In function ‘yyget_debug’:
+Lexer.c:2226: error: ‘struct yyguts_t’ has no member named ‘yy_flex_debug_r’
+Lexer.c: In function ‘yyset_debug’:
+Lexer.c:2232: error: ‘struct yyguts_t’ has no member named ‘yy_flex_debug_r’
+Lexer.c: In function ‘yyget_lval’:
+Lexer.c:2240: error: ‘struct yyguts_t’ has no member named ‘yylval_r’
+Lexer.c: In function ‘yyset_lval’:
+Lexer.c:2246: error: ‘struct yyguts_t’ has no member named ‘yylval_r’
+Lexer.c: In function ‘yy_init_globals’:
+Lexer.c:2320: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:2321: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:2322: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_max’
+Lexer.c:2323: error: ‘struct yyguts_t’ has no member named ‘yy_c_buf_p’
+Lexer.c:2324: error: ‘struct yyguts_t’ has no member named ‘yy_init’
+Lexer.c:2325: error: ‘struct yyguts_t’ has no member named ‘yy_start’
+Lexer.c:2327: error: ‘struct yyguts_t’ has no member named ‘yy_start_stack_ptr’
+Lexer.c:2328: error: ‘struct yyguts_t’ has no member named ‘yy_start_stack_depth’
+Lexer.c:2329: error: ‘struct yyguts_t’ has no member named ‘yy_start_stack’
+Lexer.c:2336: error: ‘struct yyguts_t’ has no member named ‘yyin_r’
+Lexer.c:2337: error: ‘struct yyguts_t’ has no member named ‘yyout_r’
+Lexer.c: In function ‘yylex_destroy’:
+Lexer.c:2352: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:2352: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:2352: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:2353: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:2353: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:2353: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:2354: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:2354: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack_top’
+Lexer.c:2359: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:2360: error: ‘struct yyguts_t’ has no member named ‘yy_buffer_stack’
+Lexer.c:2363: error: ‘struct yyguts_t’ has no member named ‘yy_start_stack’
+Lexer.c:2364: error: ‘struct yyguts_t’ has no member named ‘yy_start_stack’
+make: *** [Lexer.o] Error 1

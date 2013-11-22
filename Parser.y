@@ -39,7 +39,7 @@ int yyerror(Expression **expression, yyscan_t scanner, const char *msg) {
 void ParseExpressionFromFile(char *fpath);
 void ParseExpressionFromFp(FILE *fp);
 void ParseExpressionFromString(char *str);
-
+yyscan_t current_scanner;
  }
  
 %output  "Parser.c"
@@ -59,11 +59,13 @@ void ParseExpressionFromString(char *str);
 
 %token <strval> IDENTIFIER 
 %token <strval> CONSTANT 
+%token <strval> BLOCK
+
 %token FOR IF IFELSE USE ADD
 %token SETFLAG SETOUT SETARGS
 %token <charval> TOKEN_PRINT
 %token END_OF_STATEMENT 
-%token NULL_TOKEN
+%token STATEMENT
 
 %type <iaval> argument_list
 %type <numval> eval
@@ -83,10 +85,44 @@ translation_unit
 statement
 : END_OF_STATEMENT {p(101);}
 | expression END_OF_STATEMENT  {p(102);}
-| NULL_TOKEN {p(103);}
+| STATEMENT {p(103);}
+;
+controls
+: FOR role role BLOCK
+{
+	int i;
+	for(i=0; i< Sociaty_GetRole($3)->Elements.Length; i++){
+		Sociaty_GetRole($2)->_Value = 
+			Sociaty_GetRole(Sociaty_GetRole($3)->Elements.Values[i])->_Value;
+		estraddeol(&$4);
+		ParseExpressionFromString($4);
+	}
+}
+| IF role BLOCK
+{
+
+	if(!estrisnull(Sociaty_GetRole($2)->_Value)){
+		estraddeol(&$3);
+		ParseExpressionFromString($3);
+	}
+
+}
+| IFELSE role BLOCK BLOCK
+{
+  if(!estrisnull(Sociaty_GetRole($2)->_Value)){
+		estraddeol(&$3);
+    ParseExpressionFromString($3);
+  }
+	else{
+		estraddeol(&$4);
+		ParseExpressionFromString($4);
+	}
+}
+ 
 ;
 expression
-: SETFLAG role role
+: controls
+| SETFLAG role role
 {
   p(201);
 	Sociaty_GetRole($2)->_Flag = Sociaty_GetRole($3)->_Flag;
@@ -141,34 +177,6 @@ expression
 		ParseExpressionFromFile(fpath);
 	}
 	free(fpath);
-}
-| FOR role role CONSTANT
-{
-	int i;
-	for(i=0; i< Sociaty_GetRole($3)->Elements.Length; i++){
-		Sociaty_GetRole($2)->_Value = 
-			Sociaty_GetRole(Sociaty_GetRole($3)->Elements.Values[i])->_Value;
-		estraddeol(&$4);
-		ParseExpressionFromString($4);
-	}
-}
-| IF role CONSTANT
-{
-	if(!estrisnull(Sociaty_GetRole($2)->_Value)){
-		estraddeol(&$3);
-		ParseExpressionFromString($3);
-	}
-}
-| IFELSE role CONSTANT CONSTANT
-{
-  if(!estrisnull(Sociaty_GetRole($2)->_Value)){
-		estraddeol(&$3);
-    ParseExpressionFromString($3);
-  }
-	else{
-		estraddeol(&$4);
-		ParseExpressionFromString($4);
-	}
 }
 | role '=' '[' argument_list ']'
 {
@@ -346,6 +354,7 @@ void ParseExpressionFromFile(char *fpath){
 void ParseExpressionFromString(char *str){
 //	printf("\nParseExpressionFromString\n=====\n%s\n=====\n\n", str);
   yyscan_t scanner;
+	current_scanner = scanner;
   YY_BUFFER_STATE state;
 	if (yylex_init(&scanner)) {
     // couldn't initialize

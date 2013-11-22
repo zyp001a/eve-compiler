@@ -17,7 +17,7 @@ void Sociaty_AddUsedFile(char *f);
 Index Sociaty_SearchUsedFile(char *f);
 Index Sociaty_AddRole(Role *r);
 Index Sociaty_AddNewRole(char *name);
-Index Sociaty_AddChildRole(char *name);
+Index Sociaty_AddChildRole(Index pi, char *name);
 Index Sociaty_AddConstRole(char *str);
 //Index Sociaty_AddNewExpression(char *str);
 Index Sociaty_SearchRole(char *name);

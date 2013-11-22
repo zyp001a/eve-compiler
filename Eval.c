@@ -12,7 +12,7 @@ char* Eval(Index i){
 //	printf();
 	Role *r;
 	char *title, *value, *eval, *args;
-	char result_buf[100000];
+	char result_buf[MAX_BLOCK_SIZE];
   char *result = &result_buf[0];
 	r = Sociaty_GetRole(i);
 
