@@ -23,6 +23,7 @@ typedef struct IntTuple2{
 } IntTuple2;
 char estrisnull(char *str);
 char* estrdup(char *str);
+char* estrndup(char *str, int len);
 char* estrsub(char *big, char *small);
 char* estrcent(char *);
 void estradd(char**, char *);
@@ -41,6 +42,8 @@ void IndexArray_Create(IndexArray *a);
 Index IndexArray_Add(IndexArray *a, Index i);
 void IndexArray_PassBySymbol(IndexArray*, IndexArray*);
 void IndexArray_PassByValue(IndexArray*, IndexArray*);
+void IndexArray_Dispose(IndexArray*);
+void IndexArray_DisposeSub(IndexArray*);
 char* ereadfile(FILE *fp);
 
 #endif

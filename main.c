@@ -13,7 +13,6 @@ char *argsstr = "_Args";
 char *valuestr = "_Value";
 char *namestr = "_Name";
 char *superstr = "_Super";
-FILE *out;
 char *prefix = "";
 int const_count = 0;
 //char *const_name = "EveConst";
@@ -23,7 +22,7 @@ char path[] = "ignore:./:/zyp/eve/compiler/Eve/";
  
 int main(int argc, char **argv)
 {
-	out = stdout;
+	ns.Out = stdout;
 	FILE *fp;
 	char *str;
 	Sociaty_Create();

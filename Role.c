@@ -43,6 +43,7 @@ Index RoleArray_AddNew(RoleArray *a, char *name){
   a->Values = (Role*)realloc(a->Values,
 											a->Length * sizeof(Role));
 	Role_Create(&a->Values[p], name);
+	a->Values[p]._Index = p;
 	return p;
 }
 

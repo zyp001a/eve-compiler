@@ -221,8 +221,6 @@ void yyfree (void * ,yyscan_t yyscanner );
 
 #ifdef YY_HEADER_EXPORT_START_CONDITIONS
 #define INITIAL 0
-#define PRINT 1
-#define WRITE 2
 
 #endif
 
@@ -340,9 +338,9 @@ extern int yylex \
 #undef YY_DECL
 #endif
 
-#line 145 "Lexer.l"
+#line 287 "Lexer.l"
 
 
-#line 347 "Lexer.h"
+#line 345 "Lexer.h"
 #undef yyIN_HEADER
 #endif /* yyHEADER_H */

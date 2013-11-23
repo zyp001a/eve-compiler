@@ -6,26 +6,26 @@
  */
 
 
-//#include "Expression.h"
 #include "Sociaty.h"
 #include "Role.h"
 #include "Eval.h"
 #include "Parser.h"
 #include "Lexer.h"
 
-/*
-int yyparse(Expression **expression, yyscan_t scanner);
-int yyerror(Expression **expression, yyscan_t scanner, const char *msg) {
-	// Add error handling routine as needed
-}
-*/
-	extern void p(int);
-	extern FILE *out;
-	int yyparse(yyscan_t scanner);
-	int yyerror(yyscan_t scanner, const char *msg){
-//		printf("yyerror, %s: '%s' in line %d\n", msg, yytext, yylineno);
+int yyparse(yyscan_t scanner);
+int yyerror(yyscan_t scanner, const char *msg){
 		printf("yyerror, %s\n",msg);
 	}
+
+#define YACCDEBUG
+#ifdef YACCDEBUG
+#define yd_print(s) \
+  {\
+    fprintf(stderr, "--->Match %s\n", s);\
+  }
+#else
+#define yd_print(s) 
+#endif
 
  
 %}
@@ -40,7 +40,7 @@ void ParseExpressionFromFile(char *fpath);
 void ParseExpressionFromFp(FILE *fp);
 void ParseExpressionFromString(char *str);
 yyscan_t current_scanner;
- }
+}
  
 %output  "Parser.c"
 %defines "Parser.h"
@@ -52,7 +52,6 @@ yyscan_t current_scanner;
 %union {
 	int numval;
 	IndexArray iaval;
-//	IntTuple2 num2val;
 	char *strval;
 }
   
@@ -60,36 +59,51 @@ yyscan_t current_scanner;
 %token <strval> IDENTIFIER 
 %token <strval> CONSTANT 
 %token <strval> BLOCK
-
-%token FOR IF IFELSE USE ADD
-%token SETFLAG SETOUT SETARGS
-%token <charval> TOKEN_PRINT
+%token FOR WHILE IF IFELSE NOT ADD INVOKE PRINT
 %token END_OF_STATEMENT 
-%token STATEMENT
+%token SETFLAG SETARGS
 
-%type <iaval> argument_list
-%type <numval> eval
-
+%type <strval> role_as_const
+%type <numval> const_as_role
+%type <numval> eval_expression
 %type <numval> role
 %type <numval> member
 %type <numval> argument
+%type <iaval> argument_list
 
 
 %start translation_unit
 
 %%
 translation_unit
-: statement { p(1000);}
-| translation_unit statement { p(1002);}
+: statement { 
+  yd_print("statement");
+}
+| translation_unit statement { 
+	yd_print("translation_unit statement");
+}
 ;
 statement
-: END_OF_STATEMENT {p(101);}
-| expression END_OF_STATEMENT  {p(102);}
-| STATEMENT {p(103);}
+: END_OF_STATEMENT 
+| expression END_OF_STATEMENT
 ;
-controls
+expression
+: control_expression
+| internal_function
+| assignment_expression
+| inherent_expression
+| eval_expression
+{
+	char *rtn;
+	rtn = Eval($1);
+	yd_print(rtn);
+	ParseExpressionFromString(rtn);
+}
+;
+control_expression
 : FOR role role BLOCK
 {
+	yd_print("FOR");
 	int i;
 	for(i=0; i< Sociaty_GetRole($3)->Elements.Length; i++){
 		Sociaty_GetRole($2)->_Value = 
@@ -98,17 +112,42 @@ controls
 		ParseExpressionFromString($4);
 	}
 }
+| WHILE role BLOCK
+{
+	yd_print("WHILE");
+  while(!estrisnull(Sociaty_GetRole($2)->_Value)){
+		estraddeol(&$3);
+    ParseExpressionFromString($3);
+  }
+}
+| WHILE NOT role BLOCK
+{
+	yd_print("WHILE NOT");
+	while(estrisnull(Sociaty_GetRole($3)->_Value)){
+    estraddeol(&$4);
+    ParseExpressionFromString($4);
+  }
+
+}
 | IF role BLOCK
 {
-
+	yd_print("IF");
 	if(!estrisnull(Sociaty_GetRole($2)->_Value)){
 		estraddeol(&$3);
 		ParseExpressionFromString($3);
 	}
-
+}
+| IF NOT role BLOCK
+{
+	yd_print("IF NOT");
+	if(estrisnull(Sociaty_GetRole($3)->_Value)){
+    estraddeol(&$4);
+    ParseExpressionFromString($4);
+  }
 }
 | IFELSE role BLOCK BLOCK
 {
+	yd_print("IF ELSE");
   if(!estrisnull(Sociaty_GetRole($2)->_Value)){
 		estraddeol(&$3);
     ParseExpressionFromString($3);
@@ -118,155 +157,128 @@ controls
 		ParseExpressionFromString($4);
 	}
 }
- 
 ;
-expression
-: controls
+internal_function
+: PRINT argument_list 
+{
+	yd_print("PRINT");
+	int i;
+	for(i=0; i<$2.Length; i++){
+		Sociaty_PutString(Sociaty_GetRole($2.Values[i])->_Value);
+	}
+	IndexArray_DisposeSub(&$2);
+}
+| ADD role const_as_role
+{
+	yd_print("ADD");
+	IndexArray_Add(&Sociaty_GetRole($2)->Elements,
+								 $3);
+}
+| INVOKE role role_as_const
+{
+  yd_print("INVOKE");
+	char *rtn;
+	rtn = EvalString($2, $3);
+  yd_print(rtn);
+	ParseExpressionFromString(rtn);
+}
 | SETFLAG role role
 {
-  p(201);
+	//TODO Argument Parsing
+  yd_print("SETFLAG");
 	Sociaty_GetRole($2)->_Flag = Sociaty_GetRole($3)->_Flag;
 }
 | SETFLAG role CONSTANT
 {
-  p(202);
+	//TODO Argument Parsing
+  yd_print("SETFLAG");
 	Sociaty_GetRole($2)->_Flag = GetFlag($3);
 }
 | SETARGS role argument_list
 {
 	//TODO Argument Parsing
-}
-| SETOUT role 
+} 
+;
+assignment_expression
+: role '=' '[' argument_list ']'
 {
-  p(203);
-	Sociaty_SetOut(Sociaty_GetRole($2)->_Value);
-}
-| SETOUT CONSTANT
-{
-  p(204);
-	Sociaty_SetOut($2);
-}
-| ADD role CONSTANT
-{
-	IndexArray_Add(&Sociaty_GetRole($2)->Elements,
-								 Sociaty_AddConstRole($3));
-}
-| ADD role role
-{
-	IndexArray_Add(&Sociaty_GetRole($2)->Elements,
-								 $3);
-}
-| USE role
-{
-  p(205);
-	char *fpath = estrdup(GetPath(Sociaty_GetRole($2)->_Value));
-	if(Sociaty_SearchUsedFile(fpath) == -1){
-		Sociaty_AddUsedFile(fpath);
-		ParseExpressionFromFile(fpath);
-	}
-	free(fpath);
-}
-| USE CONSTANT
-{
-  p(206);
-//	printf("$2%s\n", $2);
-	char *fpath = estrdup(GetPath($2));
-	if(Sociaty_SearchUsedFile(fpath) == -1){
-//		printf("%s\n", fpath);
-		Sociaty_AddUsedFile(fpath);
-		ParseExpressionFromFile(fpath);
-	}
-	free(fpath);
-}
-| role '=' '[' argument_list ']'
-{
-	p(206);
+	yd_print("ASSIGN ARRAY");
 	IndexArray_PassByValue(&Sociaty_GetRole($1)->Elements, &$4);
-//	free($4.Values);
-	// array TODO
+	IndexArray_DisposeSub(&$4);
 }
-| role '=' CONSTANT 
+| role '=' role_as_const
 { 
-  p(207);
+	yd_print("ASSIGN VALUE");
 	if(Sociaty_GetRole($1)->_Value != NULL) free(Sociaty_GetRole($1)->_Value);
 	Sociaty_GetRole($1)->_Value = estrdup($3);
 }
-| role '=' role
+| role '+' '=' role_as_const
 {
-  p(208);
-	if(Sociaty_GetRole($1)->_Value != NULL) free(Sociaty_GetRole($1)->_Value);
-  Sociaty_GetRole($1)->_Value =
-    estrdup(Sociaty_GetRole($3)->_Value);
-}
-| role '+' '=' CONSTANT
-{
-  p(207);
+	yd_print("CONCAT VALUE");
   estradd(&Sociaty_GetRole($1)->_Value, $4);
-}
-| role '+' '=' role
-{
-	p(207);
-	estradd(&Sociaty_GetRole($1)->_Value, Sociaty_GetRole($4)->_Value);
 }
 | role '=' '&' role
 {
+	yd_print("ASSIGN REF");
 	if(Sociaty_GetRole($1)->_Value != NULL) free(Sociaty_GetRole($1)->_Value);
-
 	Sociaty_GetRole($1)->_Value =
 		Sociaty_GetRole($4)->_Value;
 }
-
-| role ':' role
+;
+inherent_expression
+: role ':' role
 {
-  p(209);
+	yd_print("INHERENT");
   if(Sociaty_SearchPCRelation($1, $3) != 0){
     eerror("cannot inherent");
     exit(1);
   }
   Sociaty_AddPCRelation($3, $1);
 }
-| eval
-{
-  p(210);
-	char *rtn;
-	rtn = Eval($1);
-#ifdef EDEBUG
-	printf("%s\n", rtn);
-#endif
-
-	ParseExpressionFromString(rtn);
-//	Eval(Sociaty_GetValue());
-//	$$ = Expression_Create($1, NULL, Eval); 
-}
 ;
-
-eval
-: role         {   p(301);$$ = $1; }
-| role '(' ')' {  p(302); $$ = $1; }
+eval_expression
+: role {
+	yd_print("EVAL");
+	$$ = $1; 
+}
+| role '(' ')' {  
+	yd_print("EVAL");
+	$$ = $1; 
+}
 | role argument_list
 {
-//TODO
-	p(303); $$ = $1;
 	IndexArray_PassBySymbol(&Sociaty_GetRole($1)->Args, &$2);
+	$$ = $1;
 }
 | role '(' argument_list ')'
 {
-//TODO
-	p(304); $$ = $1;
   IndexArray_PassBySymbol(&Sociaty_GetRole($1)->Args, &$3);
-
+	$$ = $1;
 }
 ;
-
+role_as_const
+: role {
+	$$ = Sociaty_GetRole($1)->_Value;
+}
+| CONSTANT {
+	$$ = $1;
+}
+;
+const_as_role
+: role {
+	$$ = $1;
+}
+| CONSTANT {
+	$$ = Sociaty_AddConstRole($1);
+}
+;
 role
 : member
 {
-  p(401);
   $$ = $1;
 }
 | IDENTIFIER
 {
-  p(402);
 	$$ = Sociaty_AddNewRole($1);	
 }
 /*
@@ -280,7 +292,6 @@ role
 member
 : IDENTIFIER '.' IDENTIFIER
 {
-  p(501);
 	int pi, ci;
 	char *m;
   pi = Sociaty_AddNewRole($1);
@@ -292,7 +303,6 @@ member
 }
 | member '.' IDENTIFIER
 {
-  p(502);
 	int pi, ci;
 	char *m;
 	char *n;
@@ -304,19 +314,9 @@ member
 	$$ = ci;
 }
 ;
-/*
-idunit
-: IDENTIFIER
-| IDENTIFIER '[' CONSTANT ']'
-;
-*/
+
 argument
-: role { $$ = $1; }
-| CONSTANT 
-{
-	$$ = Sociaty_AddConstRole($1);
-}
-| '*' {$$ = 0; }
+: const_as_role {	$$ = $1; }
 ;
 argument_list
 : argument 
@@ -324,7 +324,10 @@ argument_list
 	IndexArray_Create(&$$); 
 	IndexArray_Add(&$$, $1); 
 }
-| argument_list ',' argument { $$ = $1; IndexArray_Add(&$$, $3); }
+| argument_list ',' argument { 
+	$$ = $1; 
+	IndexArray_Add(&$$, $3); 
+}
 ;
 
 %%
@@ -341,13 +344,19 @@ void ParseExpressionFromFile(char *fpath){
   char *content;
   FILE *ifp;
   if(fpath[0]){
-    ifp=fopen(fpath,"r");
-		ParseExpressionFromFp(ifp);
+    if((ifp=fopen(fpath,"r")) != NULL){
+			ParseExpressionFromFp(ifp);
+		}
+		else{
+			eerror("file not exist");
+			exit(1);
+		}
   }
   else{
     eerror("file not exist");
     exit(1);
   }
+	fclose(ifp);
 //  free(fpath);
 }
 

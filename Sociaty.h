@@ -10,6 +10,7 @@
 typedef struct Sociaty{
 	RoleArray Members;
 	Hash UsedFiles;
+	FILE *Out;
 } Sociaty;
 
 void Sociaty_Create();
@@ -32,9 +33,12 @@ void Sociaty_AddPCRelation(Index pi, Index ci);
 void Sociaty_AddSSRelation(Index pi, Index ci);
 void Sociaty_WriteMembers();
 //void Sociaty_EvalExpression(Expression *);
-void Sociaty_PutChar(char);
-void Sociaty_PutString(char*);
-void Sociaty_SetOut(char *);
 
+void Sociaty_PutString(char*);
+void Sociaty_SetOut(char *, char *);
+
+
+
+void Sociaty_PutChar(char);
 
 #endif

@@ -19,6 +19,13 @@ char* estrdup(char *str){
 	}
 	return exp;
 }
+char* estrndup(char *str, int len){
+	char *exp;
+	exp = (char*)malloc(len+1);
+	strncpy(exp, str, len);
+	exp[len]= '\0';
+	return exp;
+}
 char* estrsub(char *big, char *small){
 
 	char *sub;
@@ -135,8 +142,10 @@ char* ereadfile(FILE *fp){
 	long lsize;
 	char *str;
 	size_t result;
+//	printf("ereadfile\n");
 	fseek(fp, 0L, SEEK_END);
 	lsize = ftell(fp);
+//	printf("%d\n", lsize);
 	fseek(fp, 0L, SEEK_SET);
 	str = (char *)malloc(lsize+1);
 	result = fread (str,1,lsize,fp);
@@ -183,5 +192,12 @@ void IndexArray_PassByValue(IndexArray *a, IndexArray *b){
 	}
 }
 
+void IndexArray_Dispose(IndexArray* a){
+	free(a->Values);
+	free(a);
+}
+void IndexArray_DisposeSub(IndexArray* a){
+	free(a->Values);
+}
 
 

@@ -51,9 +51,8 @@ void ParseExpressionFromFile(char *fpath);
 void ParseExpressionFromFp(FILE *fp);
 void ParseExpressionFromString(char *str);
 yyscan_t current_scanner;
- 
 
-#line 57 "Parser.h" /* yacc.c:1915  */
+#line 56 "Parser.h" /* yacc.c:1915  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -64,16 +63,16 @@ yyscan_t current_scanner;
     CONSTANT = 259,
     BLOCK = 260,
     FOR = 261,
-    IF = 262,
-    IFELSE = 263,
-    USE = 264,
-    ADD = 265,
-    SETFLAG = 266,
-    SETOUT = 267,
-    SETARGS = 268,
-    TOKEN_PRINT = 269,
-    END_OF_STATEMENT = 270,
-    STATEMENT = 271
+    WHILE = 262,
+    IF = 263,
+    IFELSE = 264,
+    NOT = 265,
+    ADD = 266,
+    INVOKE = 267,
+    PRINT = 268,
+    END_OF_STATEMENT = 269,
+    SETFLAG = 270,
+    SETARGS = 271
   };
 #endif
 
@@ -86,10 +85,9 @@ union YYSTYPE
 
 	int numval;
 	IndexArray iaval;
-//	IntTuple2 num2val;
 	char *strval;
 
-#line 93 "Parser.h" /* yacc.c:1915  */
+#line 91 "Parser.h" /* yacc.c:1915  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

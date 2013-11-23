@@ -1,8 +1,15 @@
-Use "Common"
-Add a 1
-Add a 2
+ <Common
+add a 1
+add a 2
+add a.b 3
 a= \
 1
-a.Print
-
+invoke a `^$|b[0]|^`
+b :a 
+invoke b `^$$-V^`
+%%a
 /*sadfasdfasd*/
+
+
+
+

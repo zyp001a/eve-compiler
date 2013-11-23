@@ -1,7 +1,3 @@
-Eve.Print = `
-_Print
-@_Value\_EndPrint`
+Eve.Print = `^@|_Value|^`
 
-Eve._Eval = `
-$_Value
-`
+Eve._Eval = `$|_Value|`

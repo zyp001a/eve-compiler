@@ -5,7 +5,7 @@ extern Sociaty ns;
 extern char *eve;
 extern char *const_name;
 extern int const_count;
-extern FILE* out;
+
 
 
 void Sociaty_Create(){
@@ -68,6 +68,7 @@ Index Sociaty_AddNewExpression(char *str){
 Index Sociaty_SearchRole(char *name){
 	return RoleArray_SearchByName(&ns.Members, name);
 }
+
 Role *Sociaty_GetRole(Index i){
 	return ns.Members.Values + i;
 }
@@ -174,21 +175,26 @@ void Sociaty_WriteMembers(){
 
 }
 void Sociaty_PutChar(char c){
-	fprintf(out, "%c", c);
+	fprintf(ns.Out, "%c", c);
 }
 void Sociaty_PutString(char *s){
-  fprintf(out, "%s", s);
+  fprintf(ns.Out, "%s", s);
 }
 
-void Sociaty_SetOut(char *str){
-	if(estrisnull(str)){
-		if(out != stdout && out != NULL) fclose(out);
-		out = stdout;
+void Sociaty_SetOut(char *str, char *op){
+	if(ns.Out != stdout && ns.Out != NULL) fclose(ns.Out);
+	if(estrisnull(str) || !strcmp(str,"stdout")){
+		ns.Out = stdout;
+	}
+	else if(!strcmp(str,"stderr")){
+		ns.Out = stderr;
 	}
 	else{
-		out = fopen(str, "w");
+		ns.Out = fopen(str, op);
 	}
 }
+
+
 /*
 void Sociaty_EvalExpression(Expression *expr){
 	switch (expr->Operation){
