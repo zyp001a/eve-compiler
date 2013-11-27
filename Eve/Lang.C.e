@@ -1,43 +1,29 @@
 Use "Common"
 
 Lang.C._Eval = `
-$$_Value
-_SetOut "a.c"
-_Print
+>a.c
+^
+$|Code|
+^
+>stdout
+~gcc a.c
+~./a.out
 
-$Includes
-
-$Structs
-
-$Functions
-
-$MainDef
-$Main
-$MainEnd
-
-_EndPrint
-_SetOut ""
-_Run gcc a.c
-_Run ./a.out
 `
 
-Lang.C.Includes = `
+EasyC : Lang.C
+EasyC.Code = 
+`
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-`
-
-Lang.C.Structs = ``
-Lang.C.Structs
-
-Lang.C.Functions = ``
-
-Lang.C.MainDef = `
+$|Func|
 main(){
+$|Main|
+}
+
 `
 
-Lang.C.Main = `$_Value`
 
-Lang.C.MainEnd = `}`
 
 
