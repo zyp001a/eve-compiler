@@ -1,0 +1,5 @@
+DataStructure : Entity
+DataStructure.Print = `
+^
+`
+

@@ -6,3 +6,4 @@ lex.yy.c
 y.tab.*
 *.output
 *_old*
+*.log

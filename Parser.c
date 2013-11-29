@@ -86,12 +86,12 @@ int yyerror(yyscan_t scanner, const char *msg){
 #ifdef YACCDEBUG
 #define yd_print(s) \
   {\
-    fprintf(stderr, "--->Match %s\n", s);\
+    fprintf(ns.Err, "--->Match %s\n", s);\
   }
 #else
 #define yd_print(s) 
 #endif
-
+extern Sociaty ns;
  
 
 #line 98 "Parser.c" /* yacc.c:339  */
@@ -1432,7 +1432,7 @@ yyreduce:
     {
   yd_print("INVOKE");
 	char *rtn;
-	rtn = EvalString((yyvsp[-1].numval), (yyvsp[0].strval));
+	rtn = EvalString((yyvsp[-1].numval), (yyvsp[-1].numval), (yyvsp[0].strval));
   yd_print(rtn);
 	ParseExpressionFromString(rtn);
 }

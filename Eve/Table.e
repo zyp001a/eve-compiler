@@ -1,10 +1,18 @@
-Table : Lang.C
-Table.Name = "Table"
-Table.Structs = `
+Table:DataStructure
+Table:BasicStatistics
 
-	 
+Table.Doc = `
+^Column Number: ^$ColumnSet
 `
-Table.Functions = `
-$$Functions
+Table._Eval = ``
+
+Table.Column.Doc = `
+
 `
 
+Table.ColumnType = ``
+
+
+
+Table.ColumnSet
+Table.RowSet

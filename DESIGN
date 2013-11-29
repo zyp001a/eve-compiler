@@ -1,7 +1,8 @@
-$@&||[] internal language
+$@%&||[] internal language
 $ this $$ parent
 @ super @@ super'super
-& the value
+& relative the value
+% 
 
 . access subordinate
 : inherence

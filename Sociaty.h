@@ -11,6 +11,10 @@ typedef struct Sociaty{
 	RoleArray Members;
 	Hash UsedFiles;
 	FILE *Out;
+	FILE *Err;
+	char OutFile[MAX_FILE_NAME];
+	char ProgramFile[MAX_FILE_NAME];
+	int Step;
 } Sociaty;
 
 void Sociaty_Create();

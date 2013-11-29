@@ -1,0 +1,3 @@
+BasicStatistics.Stat = `
+@|_Value|
+`

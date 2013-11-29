@@ -21,12 +21,12 @@ int yyerror(yyscan_t scanner, const char *msg){
 #ifdef YACCDEBUG
 #define yd_print(s) \
   {\
-    fprintf(stderr, "--->Match %s\n", s);\
+    fprintf(ns.Err, "--->Match %s\n", s);\
   }
 #else
 #define yd_print(s) 
 #endif
-
+extern Sociaty ns;
  
 %}
  
@@ -178,7 +178,7 @@ internal_function
 {
   yd_print("INVOKE");
 	char *rtn;
-	rtn = EvalString($2, $3);
+	rtn = EvalString($2, $2, $3);
   yd_print(rtn);
 	ParseExpressionFromString(rtn);
 }

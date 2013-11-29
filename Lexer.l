@@ -14,12 +14,12 @@
 #ifdef LEXDEBUG
 #define ld_print(s1, s2) \
   {\
-    fprintf(stderr, "LINE %d: %s, %s\n", yylineno, s1, s2);\
+    fprintf(ns.Err, "LINE %d: %s, %s\n", yylineno, s1, s2);\
   }
 #else
 #define ld_print(s1, s2) 
 #endif
-
+extern Sociaty ns;
 %}
 
  
@@ -107,12 +107,12 @@ loop:
 	}
 }
 
-">>"\S+ {
+">>".+ {
   ld_print("Append to file", yytext+2);
   Sociaty_SetOut(yytext+2, "a");
 }
 
-">"^>\S+ {
+">".+ {
   ld_print("Write to file", yytext+1);
   Sociaty_SetOut(yytext+1, "w");
 }

@@ -26,33 +26,8 @@ Index Sociaty_AddRole(Role *r){
 	return RoleArray_Add(&ns.Members, r);
 }
 
-Index Sociaty_AddNewRole(char *name){
-	Index i;
-	i = Sociaty_SearchRole(name);
-	if(i == -1){
-		i = RoleArray_AddNew(&ns.Members, name);
-		Sociaty_AddPCRelation(0, i);
-	}
-	return i;
-}
 
-Index Sociaty_AddChildRole(Index pi, char *name){
-	Index i = RoleArray_AddNew(&ns.Members, name);
-	Sociaty_AddPCRelation(pi, i);
-  return i;
-}
 
-Index Sociaty_AddConstRole(char *str){
-	char *nstr;
-	int ri;
-	nstr = (char *)malloc(12);
-	const_count++;
-	sprintf(nstr, "CONST_%d",const_count);
-	ri = Sociaty_AddNewRole(nstr); 
-	Sociaty_GetRole(ri)->_Value = estrdup(str);
-	free(nstr);
-	return ri;
-}
 
 
 /*
@@ -65,9 +40,6 @@ Index Sociaty_AddNewExpression(char *str){
 
 
 
-Index Sociaty_SearchRole(char *name){
-	return RoleArray_SearchByName(&ns.Members, name);
-}
 
 Role *Sociaty_GetRole(Index i){
 	return ns.Members.Values + i;
@@ -79,11 +51,6 @@ char* Sociaty_GetValue(Index i){
   return s;
 }
 
-Index Sociaty_GetRoleByName(char *name){
-	Index i = Sociaty_SearchRole(name);
-  if(i == -1) i = Sociaty_AddNewRole(name);
-	return i;
-}
 
 int Sociaty_SearchPCRelation(Index pi, Index ci){
 //	printf("search %d,%d\n",pi,ci);
@@ -174,6 +141,44 @@ void Sociaty_WriteMembers(){
 	}
 
 }
+Index Sociaty_SearchRole(char *name){
+	return RoleArray_SearchByName(&ns.Members, name);
+}
+/*
+Index Sociaty_GetRoleByName(char *name){
+	Index i = Sociaty_SearchRole(name);
+  if(i == -1) i = Sociaty_AddNewRole(name);
+	return i;
+}
+*/
+Index Sociaty_AddNewRole(char *name){
+	Index i;
+	i = Sociaty_SearchRole(name);
+	if(i == -1){
+		i = RoleArray_AddNew(&ns.Members, name);
+		Sociaty_AddPCRelation(0, i);
+	}
+	return i;
+}
+Index Sociaty_AddChildRole(Index pi, char *name){
+	Index i = RoleArray_AddNew(&ns.Members, name);
+	Sociaty_AddPCRelation(pi, i);
+  return i;
+}
+Index Sociaty_AddConstRole(char *str){
+	char *nstr;
+	int ri;
+	nstr = (char *)malloc(12);
+	const_count++;
+	sprintf(nstr, "CONST_%d",const_count);
+	ri = Sociaty_AddNewRole(nstr); 
+	Sociaty_GetRole(ri)->_Value = estrdup(str);
+	free(nstr);
+	return ri;
+}
+
+
+
 void Sociaty_PutChar(char c){
 	fprintf(ns.Out, "%c", c);
 }
@@ -182,16 +187,40 @@ void Sociaty_PutString(char *s){
 }
 
 void Sociaty_SetOut(char *str, char *op){
-	if(ns.Out != stdout && ns.Out != NULL) fclose(ns.Out);
+	char tmpfile[MAX_FILE_NAME];
+	char step[8];
+	if(ns.Out != stdout && ns.Out != NULL){
+//		fprintf(stderr,"fclose");
+		fclose(ns.Out);
+	}
 	if(estrisnull(str) || !strcmp(str,"stdout")){
 		ns.Out = stdout;
+		return;
 	}
-	else if(!strcmp(str,"stderr")){
+	if(!strcmp(str,"stderr")){
 		ns.Out = stderr;
+		return;
 	}
-	else{
-		ns.Out = fopen(str, op);
+	if(!strncmp(str,"$-P", 3)){
+		strcpy(tmpfile, ns.ProgramFile);
+		sprintf(step, ".%d", ns.Step);
+		strcat(tmpfile, step);
+		strcat(tmpfile, str+3);
+		if(!strcmp(tmpfile, ns.OutFile)){
+			ns.Step ++;
+			strcpy(ns.OutFile, tmpfile);
+			ns.Out = fopen(tmpfile, op);
+		}
+		return;
 	}
+	
+	if(!strcmp(str, ns.OutFile)){
+    strcpy(ns.OutFile, str);
+    ns.Out = fopen(str, op);
+		return;
+	}
+
+
 }
 
 

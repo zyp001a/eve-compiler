@@ -4,14 +4,12 @@
 #include <string.h>
 #include <stdlib.h>
 
-
-
-
-
-
+void a(){
+		printf("aaa\n");
+}
 
 main(){
-
-printf("Hello\n");
+a();
 }
+
 

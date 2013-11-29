@@ -91,7 +91,8 @@ char *estrupper(char *str){
 	rtn[i] = '\0';
 	return rtn;
 }
-char *estrafter(char *str, char c){
+char* estrafter(char *str, char c){
+	if(str == NULL) return "";
 	char *rtn = str;
 	while(str++){
 //		printf("%c\t%c\n", str[0], c);
@@ -104,6 +105,30 @@ char *estrafter(char *str, char c){
 	}
 	return rtn;
 }
+
+char* estrbeforedup(char *str, char c){
+	if(str == NULL) return "";
+	char *stri = &str[0];
+	int i = 0;
+	int ri;
+	char *rtn;
+	while(1){
+//		printf("%c\n", stri[0]);
+		if(stri[0] == c){
+			ri = i;
+		}
+		else if(stri[0] == '\0'){
+			break;
+		}
+		i ++;
+		stri++;
+	}
+	rtn = (char *)malloc(ri+1);
+	strncpy(rtn, str, ri);
+	rtn[ri] = '\0';
+	return rtn;
+}
+
 void* estraddeol(char **str){
 	int slen = strlen(*str);
 	*str=(char *)realloc(*str, slen+2);
