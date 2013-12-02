@@ -3,7 +3,7 @@
 #include "Common.h"
 #include "Role.h"
 #include "Sociaty.h"
-
+/*
 typedef enum OperationType{
 	THIS,
 	PARENT,
@@ -11,7 +11,7 @@ typedef enum OperationType{
 	SUPERIOR2,
 	VALUE
 } OperationType;
-
+*/
 typedef struct Scanner{
 	Role *r; //role
 	Role *cr;

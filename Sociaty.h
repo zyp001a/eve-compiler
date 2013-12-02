@@ -28,13 +28,17 @@ Index Sociaty_AddConstRole(char *str);
 Index Sociaty_SearchRole(char *name);
 Role* Sociaty_GetRole(Index i);
 char* Sociaty_GetValue(Index i);
+void Sociaty_RoleAssignArray(Index i, StringIntArray *a);
+Index Sociaty_RoleAddSubordinate(Index i, char *str);
+Index Sociaty_RoleAddElement(Index i, char *str);
 Index Sociaty_GetRoleByName(char *name);
-
+void Sociaty_ClearArgs(Index pi);
 int Sociaty_SearchPCRelation(Index pi, Index ci);
 int Sociaty_SearchPRelation(Index pi, Index ci, int rtn);
 int Sociaty_SearchCRelation(Index pi, Index ci, int rtn);
-void Sociaty_AddPCRelation(Index pi, Index ci);
-void Sociaty_AddSSRelation(Index pi, Index ci);
+void Sociaty_AddPCRelation(Index pi, Index ci); //parent child
+void Sociaty_AddSSRelation(Index pi, Index ci); //superior subordinate
+void Sociaty_AddSERelation(Index pi, Index ci); //set element
 void Sociaty_WriteMembers();
 //void Sociaty_EvalExpression(Expression *);
 

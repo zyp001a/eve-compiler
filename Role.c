@@ -15,12 +15,13 @@ Role* CreateRole(char *name){
 void Role_Create(Role *v, char *name){
 	v->_Name = estrdup(name);
 	v->_Value = estrdup("");
+	v->_TargetIndex = -1;
 	IndexArray_Create(&v->Subordinates);
 	IndexArray_Create(&v->Superiors);
 	IndexArray_Create(&v->Parents);
 	IndexArray_Create(&v->Children);
 	IndexArray_Create(&v->Elements);
-	IndexArray_Create(&v->Args);
+//	IndexArray_Create(&v->Args);
 }
 
 void Role_Set(Role *v, char *value){

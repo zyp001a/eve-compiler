@@ -78,5 +78,10 @@ main(){
 	char *e = &d[0];
 	itpr(a, &e);
 	printf("%s\n",d);
+
+
+	printf("!0: %d",!0);
+	printf("!1: %d", !1);
+	printf("1<2: %d", 1<2);
 }
 

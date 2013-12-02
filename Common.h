@@ -1,4 +1,3 @@
-
 #ifndef _COMMON
 #define _COMMON
 //#define EDEBUG
@@ -16,11 +15,24 @@ typedef struct IndexArray{
 	Index Length;
 	Index *Values;
 } IndexArray;
-
-typedef struct IntTuple2{
+typedef struct StringArray{
+	Index Length;
+	char **Values;
+} StringArray;
+typedef struct StringInt{
+	char *Str;
+	int Int;
+} StringInt;
+typedef struct StringIntArray{
+	Index Length;
+	int *IntValues;
+	char **StrValues;
+} StringIntArray;
+typedef struct Int2{
 	int Int1;
 	int Int2;
-} IntTuple2;
+} Int2;
+
 char estrisnull(char *str);
 char* estrdup(char *str);
 char* estrndup(char *str, int len);
@@ -39,12 +51,21 @@ char eiss(char c);
 
 void eerror(char *str);
 void ewarn(char *str);
+
+char* ereadfile(FILE *fp);
+
 void IndexArray_Create(IndexArray *a);
 Index IndexArray_Add(IndexArray *a, Index i);
 void IndexArray_PassBySymbol(IndexArray*, IndexArray*);
 void IndexArray_PassByValue(IndexArray*, IndexArray*);
 void IndexArray_Dispose(IndexArray*);
 void IndexArray_DisposeSub(IndexArray*);
-char* ereadfile(FILE *fp);
+void StringArray_Create(StringArray *);
+Index StringArray_Add(StringArray *a, char *);
+void StringArray_DisposeSub(StringArray*);
+void StringIntArray_Create(StringIntArray *);
+Index StringIntArray_Add(StringIntArray *a, char *s, int i);
+void StringIntArray_DisposeSub(StringIntArray*);
+
 
 #endif

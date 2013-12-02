@@ -50,12 +50,19 @@ char* EvalString(Index i, Index ci, char *str){
 	char result_buf[MAX_BLOCK_SIZE];
   char *result = &result_buf[0];
 #ifdef EVALDEBUG
-	fprintf(ns.Err, "\tEval Content: \n========\n%s\n========\n", str);
+	fprintf(ns.Err, "\t---->Eval Content: \n========\n%s\n========\n", str);
 #endif
   InterpretValue(Sociaty_GetRole(i), Sociaty_GetRole(i), str, &result);
   result[0] = '\n';
   result[1] = '\0';
+
+	strcat(result, Sociaty_GetRole(i)->_Name);
+	strcat(result, ".Done = 1\n");
+
   result =  &result_buf[0];
+#ifdef EVALDEBUG
+	fprintf(ns.Err, "\t---->Result: \n========\n%s\n========\n", result);
+#endif
 	return result;
 }
 char GetFlag(char *str){
@@ -170,13 +177,6 @@ char *GetValue(TokenParam *pp){
   char *rpr;
   char *ttitle;
   //_Value, _Name, _Super exception
-#ifdef EVALDEBUG
-  fprintf(ns.Err, "\tTry to Get Value: %s, ", pp->r->_Name);
-  for(i=0; i<pp->len; i++){
-    fprintf(ns.Err, "%c", pp->title[i]);
-  }
-  fprintf(ns.Err, ", %d\n", pp->index);
-#endif
 	
 
   if(!strncmp(pp->title, valuestr, pp->len))
@@ -253,6 +253,7 @@ char* GetValueFromParents2(Role *r, char *title, int len){
 }
 */
 Role* GetRole(char *name, int level){
+//	printf("name %s\tlevel %d\n",name,level);
 	Role *pr, *ppr;
 	char *ni;
 	int len, ind, j;
@@ -262,7 +263,8 @@ Role* GetRole(char *name, int level){
 		ind = Sociaty_SearchRole(name);
 		if(ind != -1){
 			r = Sociaty_GetRole(ind);
-			if(!estrisnull(r->_Value)) return r;
+			return r;
+//			if(!estrisnull(r->_Value)) return r;
 		}
 	}
 	len = strlen(name);
@@ -297,19 +299,22 @@ Role *GetRoleByParam(TokenParam *pp){
 	Role *rtn;
 	int opi;
 	int level;
-//	printf("xxxxxxxx%d\n", pp->len);
-	if(pp->op[0] == '%'){ //absolute name 
+	rtn = NULL;
 
-		strncpy(name, pp->title, pp->len);
-		name[pp->len] = '\0';
-//		printf("xxxxxxxx%s,%d\n", &name[0],pp->len);
-		rtn = GetRole(&name[0], 0);
-
+	if(pp->op[0] == '%'){ //absolute name
+		if(pp->len > 0){
+			strncpy(name, pp->title, pp->len);
+			name[pp->len] = '\0';
+			rtn = GetRole(&name[0], 0);
+		}
 	}
 	else if(pp->op[0] == '&'){ //relative name
-		strcpy(name, pp->cr->_Name);
-		strcat(name, ".");
-		strncat(name, pp->title, pp->len);
+//	printf("xxxxxxxx%d\n", pp->len);
+		strcpy(name, pp->r->_Name);
+		if(pp->len>0){
+			strcat(name, ".");
+			strncat(name, pp->title, pp->len);
+		}
 		rtn = GetRole(&name[0], 0);
 	}
 	else{
@@ -317,19 +322,24 @@ Role *GetRoleByParam(TokenParam *pp){
 		level = 0;
 		while(opi<pp->oplen){
 			if(pp->op[opi] == '$'){
-				strcpy(name, pp->r->_Name);
-				strcat(name, ".");
-				strncat(name, pp->title, pp->len);
+				strcpy(name, pp->cr->_Name);
+				if(pp->len > 0){
+					strcat(name, ".");
+					strncat(name, pp->title, pp->len);
+				}
 				rtn = GetRole(&name[0], level);
 				level ++;
 			}
 			else if(pp->op[opi] == '@'){
 //				printf("%s\n", pp->r->_Name);
-				tmp = estrbeforedup(pp->r->_Name, '.');
-//				printf("%s\n",tmp);
+				tmp = estrbeforedup(pp->cr->_Name, '.');
 				strcpy(name, tmp);
-				strcat(name, ".");
-        strncat(name, pp->title, pp->len);
+
+				if(pp->len>0){
+					strcat(name, ".");
+					strncat(name, pp->title, pp->len);
+				}
+//				printf("%s\n", name);
 				rtn = GetRole(&name[0], level);
 			}
 			opi++;
@@ -342,6 +352,8 @@ char ScanIdentifer(Scanner *ps){
 	int len, len2;
 	char *tmp, *tmp2;
 	Role *rtn;
+//	Role *opr;
+	int see_left = 0;
 	char *val, *indexstr;
 	int index;
 	char c;
@@ -360,13 +372,61 @@ char ScanIdentifer(Scanner *ps){
 		p.oplen++;
 		tmp++;
 	}
-//	printf("%s\n",tmp[-1]);
-// TODO @-V &-V
-	if(p.op[p.oplen-1] == '$' && tmp[0] == '-'){
+//	printf("rtn");
 
+// TODO @@-V $$-V //2 operator is not supported
+	rtn = NULL;	
+	p.len = 0;
+	if(tmp[0] == '|'){
+		see_left =1;
+		tmp ++;
+		p.title = tmp;
+		/*get identifiers*/
+		while(1){
+			/*get title*/
+			if(!eisletter(tmp[0])) return 0;
+			p.len ++;
+			tmp++;
+			while(eiss(tmp[0])){
+//		printf("%c\t%d\n", tmp[0], p.len);
+				p.len ++;
+				tmp++;
+			}
+
+			/*get index
+				index must be digits
+			*/
+			if(tmp[0] == '['){
+				p.len ++;
+				tmp++;
+				while(eisdigit(tmp[0])){ 
+					p.len ++;
+					tmp++;
+				}
+				if(tmp[0] != ']') return 0;
+				p.len ++;
+				tmp++; //skip ]
+			}
+			/*eval para*/
+			if(tmp[0] == '|' || tmp[0] == '-'){	
+//				printf("xxxxx%c\n",p.op[0]);
+				break;
+			}
+			else if(tmp[0] == '.'){
+				p.len++;
+				tmp ++;
+			}
+			else{
+				return 0;
+			}
+		}
+	}
+
+//	fprintf(ns.Err,"---------%c:%s:%s\n",p.op[0],rtn->_Name,rtn->_Value);
+	index = -1;
+	if(tmp[0] == '-'){
 		c = tmp[1];
-		tmp +=2;
-		index = -1;
+		tmp += 2;
 		if(tmp[0] == '['){
       tmp++;
 			tmp2 = tmp;
@@ -381,85 +441,99 @@ char ScanIdentifer(Scanner *ps){
 			index = atoi(indexstr);
 			free(indexstr);
     }
+	}
+	else{
+		c = 'V';
+	}
 
-		switch(c){
-		case 'N': //NAME
-			if(index != -1) return 0;
-			rtn = ps->r;
-			val = ps->r->_Name;
-			break;
-		case 'V': //VALUE
-			if(index != -1) return 0;
-			rtn = ps->r;
-			val = ps->r->_Value;
-			break;
-		case 'A': //ARGV
-			if(ps->r->Args.Length <= index) return 0;
-			rtn = Sociaty_GetRole(ps->r->Args.Values[index]);
-			val =	rtn->_Value;
-			break;
-		case 'E': //Elements
-      if(ps->r->Elements.Length <= index) return 0;
-      rtn = Sociaty_GetRole(ps->r->Elements.Values[index]);
-      val = rtn->_Value;
-      break;
-		case 'P': //Parents
-			break;
-		case 'S': //Superiors
-			break;
-		case 'B': //Subordinates
-			break;
-		}
+	if(see_left){
+		if(tmp[0] != '|') return 0;
+		tmp ++ ;
+	}
+#ifdef EVALDEBUG
+	int i;
+  fprintf(ns.Err, "Parameter, r: %s, cr: %s\n\t, ", 
+					p.r->_Name, p.cr->_Name);
+  for(i=0; i<p.len; i++){
+    fprintf(ns.Err, "%c", p.title[i]);
+  }
+  fprintf(ns.Err, "\t");
+	for(i=0; i<p.oplen; i++){
+    fprintf(ns.Err, "%c", p.op[i]);
+  }
+  fprintf(ns.Err, "\n");
+#endif
 
-		InterpretValue(ps->r, rtn, val, ps->out_curr);
+	rtn = GetRoleByParam(&p);
+	if(rtn == NULL){
 		ps->in_curr = tmp;
 		return 1;
 	}
 
-	
-	
-	if(tmp[0] != '|') return 0; 
-	tmp ++;
-	p.title = tmp;
-	p.len = 0;
-	/*get identifiers*/
-	while(1){
-		/*get title*/
-		if(!eisletter(tmp[0])) return 0;
-		p.len ++;
-		tmp++;
-		while(eiss(tmp[0])){
-//		printf("%c\t%d\n", tmp[0], p.len);
-			p.len ++;
-			tmp++;
-		}
-
-		/*get index
-			index must be digits
-		 */
-		if(tmp[0] == '['){
-			p.len ++;
-			tmp++;
-			while(eisdigit(tmp[0])){ 
-				p.len ++;
-				tmp++;
+	switch(c){
+	case 'V': //VALUE
+		if(index != -1) return 0;
+		int level =1;
+		while(1){
+			Role *tmpr;
+			if(!estrisnull(rtn->_Value) && rtn->_TargetIndex == -1){
+				break;
 			}
-			if(tmp[0] != ']') return 0;
-			p.len ++;
-			tmp++; //skip ]
+			if(rtn->_TargetIndex != -1){
+				rtn = Sociaty_GetRole(rtn->_TargetIndex);
+        break;
+      }
+			tmpr = GetRole(rtn->_Name, level);
+			if(tmpr == NULL) break;
+			rtn = tmpr;
+			level++;
 		}
-		/*eval para*/
-		if(tmp[0] == '|') break;
-		if(tmp[0] != '.') return 0;
-		p.len++;
-		tmp ++;
+		val = rtn->_Value;
+
+		break;
+	case 'E': //Elements
+		if(rtn->Elements.Length <= index) return 0;
+		rtn = Sociaty_GetRole(rtn->Elements.Values[index]);
+		val = rtn->_Value;
+		break;
+	case 'N': //NAME
+		if(index != -1) return 0;
+		sprintf((*ps->out_curr),"%s",rtn->_Name);
+    while((*ps->out_curr)[0] != '\0')
+      (*ps->out_curr)++;
+    ps->in_curr = tmp;
+    return 1;
+		break;
+	case 'L':
+		if(index != -1) return 0;
+		sprintf((*ps->out_curr),"%d",rtn->Elements.Length);
+		while((*ps->out_curr)[0] != '\0') 
+			(*ps->out_curr)++;
+		ps->in_curr = tmp;
+		return 1;
+		break;
+  case 'I':
+		sprintf((*ps->out_curr),"%s._Iterator",rtn->_Name);
+		while((*ps->out_curr)[0] != '\0')
+      (*ps->out_curr)++;
+    ps->in_curr = tmp;
+		return 1;
+		break;
+/*
+	case 'P': //Parents
+		break;
+	case 'S': //Superiors
+		break;
+	case 'B': //Subordinates
+		break;
+*/
+	default:
+		return 0;
 	}
-	rtn = GetRoleByParam(&p);
-	if(rtn == NULL) return 0;
-	InterpretValue(ps->r, rtn, rtn->_Value, ps->out_curr);
-	ps->in_curr = tmp + 1;
+//	fprintf(ns.Err,"ITPR%s\n", val);		
+	InterpretValue(ps->r, rtn, val, ps->out_curr);
+	ps->in_curr = tmp;
 	return 1;
-	
 }
 void InterpretValue(Role *r, Role *cr, char *v, char **out_curr){
 	Scanner s;
@@ -498,8 +572,8 @@ void InterpretValue(Role *r, Role *cr, char *v, char **out_curr){
 		default:
 			;
 		}
-		(*out_curr)[0] = s.in_curr[0];
-		(*out_curr) ++;
+		(*s.out_curr)[0] = s.in_curr[0];
+		(*s.out_curr) ++;
 		s.in_curr++;
 	}
 }

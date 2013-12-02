@@ -1,18 +1,29 @@
+<DataStructure
+<BasicStatistics
 Table:DataStructure
-Table:BasicStatistics
 
-Table.Doc = `
-^Column Number: ^$ColumnSet
-`
-Table._Eval = ``
-
-Table.Column.Doc = `
-
+Table.Stat._Eval = `
+if @-N.ReadDone {
+	 @|Read|
+}
+^Column Number: @|ColumnSet.Length|
+^
 `
 
-Table.ColumnType = ``
+Table.ReadDone = 0
+Table.Read._Eval = `
+if @-N.BasicCheckDone {
+	 @|BasicCheck|
+}
+if @-N.AdvancedCheckDone {
+	 @|AdvancedCheck|
+}
+@-N.BasicCheckDone = 1
+`
 
+Table.BasicCheckDone = 0
+Table.BasicCheck._Eval = `
 
+@-N.BasicCheckDone = 1
+`
 
-Table.ColumnSet
-Table.RowSet

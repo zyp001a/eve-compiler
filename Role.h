@@ -21,12 +21,13 @@ typedef struct Role{
   char* _Value;
 	char _Flag;
 	Index _Index;
+	Index _TargetIndex;
   IndexArray Subordinates; //Fields
   IndexArray Superiors;
   IndexArray Parents;
   IndexArray Children;
 	IndexArray Elements; 
-	IndexArray Args; //Arguments
+//	IndexArray Args; //Arguments
 } Role;
 
 typedef struct RoleArray{

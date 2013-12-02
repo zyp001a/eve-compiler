@@ -61,18 +61,20 @@ yyscan_t current_scanner;
   {
     IDENTIFIER = 258,
     CONSTANT = 259,
-    BLOCK = 260,
-    FOR = 261,
-    WHILE = 262,
-    IF = 263,
-    IFELSE = 264,
-    NOT = 265,
-    ADD = 266,
-    INVOKE = 267,
-    PRINT = 268,
-    END_OF_STATEMENT = 269,
-    SETFLAG = 270,
-    SETARGS = 271
+    INTEGER = 260,
+    BLOCK = 261,
+    FOR = 262,
+    WHILE = 263,
+    IF = 264,
+    ELSE = 265,
+    NOT = 266,
+    ADD = 267,
+    INVOKE = 268,
+    PRINT = 269,
+    VALUE = 270,
+    END_OF_STATEMENT = 271,
+    SETFLAG = 272,
+    SETARGS = 273
   };
 #endif
 
@@ -84,10 +86,11 @@ union YYSTYPE
 #line 52 "Parser.y" /* yacc.c:1915  */
 
 	int numval;
-	IndexArray iaval;
+	StringIntArray arr;
+	StringInt strint;
 	char *strval;
 
-#line 91 "Parser.h" /* yacc.c:1915  */
+#line 94 "Parser.h" /* yacc.c:1915  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

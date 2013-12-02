@@ -135,42 +135,6 @@ loop:
   system(yytext+6);
 }
 
-"**" {
-  ld_print("TOKEN", "for");
-  return FOR; 
-}
-"for" { 
-  ld_print("TOKEN", yytext);
-  return FOR; 
-}
-
-"--" {
-  ld_print("TOKEN", "while");
-  return WHILE;
-}
-"while" {
-  ld_print("TOKEN", yytext);
-  return WHILE;
-}
-
-
-"??" {
-  ld_print("TOKEN", "if");
-  return IF; 
-}
-"if" { 
-  ld_print("TOKEN", yytext);
-  return IF; 
-}
-
-"?:" {
-  ld_print("TOKEN", "ifelse");
-  return IFELSE;
-}
-"ifelse" {
-  ld_print("TOKEN", yytext);
-  return IFELSE; 
-}
 
 "!" {
   ld_print("TOKEN", "not");
@@ -183,32 +147,41 @@ loop:
 
 
 
-
-"%%" {
-  ld_print("TOKEN", "print");
-  return PRINT;
+"for" { 
+  ld_print("TOKEN", yytext);
+  return FOR; 
 }
+"while" {
+  ld_print("TOKEN", yytext);
+  return WHILE;
+}
+"if" { 
+  ld_print("TOKEN", yytext);
+  return IF; 
+}
+"else" {
+  ld_print("TOKEN", yytext);
+  return ELSE; 
+}
+
 "print" {
   ld_print("TOKEN", "print");
   return PRINT;
 }
 
-"+$" {
-  ld_print("TOKEN", "add");
-  return ADD;
-}
 "add" {
   ld_print("TOKEN", "add");
   return ADD; 
 }
 
-"&&" {
-  ld_print("TOKEN", "invoke");
-  return INVOKE; 
-}
 "invoke" {
   ld_print("TOKEN", "invoke");
   return INVOKE; 
+}
+
+"value" {
+	ld_print("TOKEN", "value");
+  return VALUE;
 }
 
 "setargs" { 
@@ -237,10 +210,10 @@ loop:
   yylval->strval = estrdup(yytext); 
   return(CONSTANT); 
 }
-{DIGIT}+{INT_SUFFIX}? { 
+{DIGIT}+ { 
   ld_print("Read int", yytext);
   yylval->strval = estrdup(yytext); 
-  return(CONSTANT); 
+  return(INTEGER); 
 }
 {DIGIT}+{EXP}{FLOAT_SUFFIX}?  { 
   ld_print("Read float1", yytext);

@@ -17,7 +17,7 @@ char *elementstr = "_Element";
 //char *superstr = "_Super";
 char *prefix = "";
 int const_count = 0;
-char version[] = "0.1";
+char version[] = "c0.1";
 //char *const_name = "EveConst";
 
 char path[] = "ignore:./:/zyp/eve/compiler/Eve/";
@@ -32,10 +32,9 @@ int main(int argc, char **argv)
 	char line[32768];
 	int li,c;
 	char errfile[MAX_FILE_NAME];
-
-	
 	
 	Sociaty_Create();
+	
 	if(argc == 1){
 		printf("=======\n");
 		printf("Eve language: a OOP based macro language\n");
@@ -45,14 +44,15 @@ int main(int argc, char **argv)
 		printf("Press Ctrl+D to exit\n");
 		
 		ns.Err = fopen(".eve.log","a");
+		ParseExpressionFromString("<Basic\n");
 		li = 0;
-		printf(">");
+		printf("~");
 		while(c=getchar()){
 			if(c == EOF){
 				break;
 			}
 			else if (c == '\n'){
-				printf(">");
+				printf("~");
 				line[li] = '\n';
 				line[li+1] = '\0';
 				li = 0;
@@ -74,6 +74,7 @@ int main(int argc, char **argv)
 //	char *a = estrafter("asdf.asdDDDe13.dda'",'.');
 //	printf("%s\n",a);
 ///*	
+		ParseExpressionFromString("<Basic\n");
 		ParseExpressionFromFp(fp);
 //	Sociaty_WriteMembers();
 //*/	

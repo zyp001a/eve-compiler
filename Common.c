@@ -187,7 +187,8 @@ char* ereadfile(FILE *fp){
 
 void IndexArray_Create(IndexArray *a){
   a->Length = 0;
-  a->Values = (Index *)malloc(sizeof(Index));
+//	if(a->Values != NULL) free(a->Values);
+	a->Values = (Index *)malloc(sizeof(Index));
 }
 
 Index IndexArray_Add(IndexArray *a, Index i){
@@ -216,7 +217,6 @@ void IndexArray_PassByValue(IndexArray *a, IndexArray *b){
 		a->Values[i] = b->Values[i];
 	}
 }
-
 void IndexArray_Dispose(IndexArray* a){
 	free(a->Values);
 	free(a);
@@ -225,4 +225,54 @@ void IndexArray_DisposeSub(IndexArray* a){
 	free(a->Values);
 }
 
+void StringArray_Create(StringArray *a){
+	int i;
+
+//	if(a->Values != NULL) free(a->Values);
+	a->Length = 0;
+  a->Values = (char**)malloc(sizeof(char*));
+
+}
+Index StringArray_Add(StringArray *a, char *s){
+	int p = a->Length++;
+  a->Values = (char **)realloc(a->Values,
+															 a->Length * sizeof(char *));
+  a->Values[p] = estrdup(s);
+  return p;
+}
+void StringArray_DisposeSub(StringArray *a){
+	int i;
+	for(i=0; i<a->Length; i++)
+		if(a->Values[i] != NULL) free(a->Values[i]);
+	if(a->Values!=NULL) free(a->Values);
+	a->Length = 0;
+	
+}
+void StringIntArray_Create(StringIntArray *a){
+	int i;
+
+//	if(a->Values != NULL) free(a->Values);
+	a->Length = 0;
+  a->StrValues = (char**)malloc(sizeof(char*));
+	a->IntValues = (int*)malloc(sizeof(int));
+}
+Index StringIntArray_Add(StringIntArray *a, char *s, int i){
+	int p = a->Length++;
+  a->StrValues = (char **)realloc(a->StrValues,
+															 a->Length * sizeof(char *));
+  a->IntValues = (int *)realloc(a->IntValues,
+															 a->Length * sizeof(int));
+  a->StrValues[p] = estrdup(s);
+	a->IntValues[p] = i;
+  return p;
+}
+void StringIntArray_DisposeSub(StringIntArray *a){
+	int i;
+	for(i=0; i<a->Length; i++)
+		if(a->StrValues[i] != NULL) free(a->StrValues[i]);
+	if(a->StrValues!=NULL) free(a->StrValues);
+	if(a->IntValues!=NULL) free(a->IntValues);
+	a->Length = 0;
+	
+}
 

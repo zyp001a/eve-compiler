@@ -51,25 +51,29 @@ yyscan_t current_scanner;
  
 %union {
 	int numval;
-	IndexArray iaval;
+	StringIntArray arr;
+	StringInt strint;
 	char *strval;
 }
   
 
 %token <strval> IDENTIFIER 
 %token <strval> CONSTANT 
+%token <strval> INTEGER
 %token <strval> BLOCK
-%token FOR WHILE IF IFELSE NOT ADD INVOKE PRINT
+%token FOR WHILE IF ELSE NOT ADD INVOKE PRINT VALUE
 %token END_OF_STATEMENT 
 %token SETFLAG SETARGS
 
 %type <strval> role_as_const
+%type <strval> const_or_int
 %type <numval> const_as_role
 %type <numval> eval_expression
 %type <numval> role
 %type <numval> member
-%type <numval> argument
-%type <iaval> argument_list
+%type <strint> argument
+%type <numval> boolean_expression
+%type <arr> argument_list
 
 
 %start translation_unit
@@ -98,6 +102,8 @@ expression
 	rtn = Eval($1);
 	yd_print(rtn);
 	ParseExpressionFromString(rtn);
+//	Sociaty_WriteMembers();
+	Sociaty_ClearArgs($1);
 }
 ;
 control_expression
@@ -111,6 +117,20 @@ control_expression
 		estraddeol(&$4);
 		ParseExpressionFromString($4);
 	}
+}
+| FOR role BLOCK
+{
+	yd_print("FOR SIMPLE");
+
+	int i, ii;
+	ii = Sociaty_RoleAddSubordinate($2, "_Iterator");
+	for(i=0; i< Sociaty_GetRole($2)->Elements.Length; i++){
+    Sociaty_GetRole(ii)->_Value =
+      Sociaty_GetRole(Sociaty_GetRole($2)->Elements.Values[i])->_Name;
+//		printf("xxxx%s\nxxx", Sociaty_GetRole(ii)->_Value);
+    estraddeol(&$3);
+    ParseExpressionFromString($3);
+  }
 }
 | WHILE role BLOCK
 {
@@ -129,33 +149,65 @@ control_expression
   }
 
 }
-| IF role BLOCK
+| IF boolean_expression BLOCK
 {
 	yd_print("IF");
-	if(!estrisnull(Sociaty_GetRole($2)->_Value)){
+	if($2){
 		estraddeol(&$3);
 		ParseExpressionFromString($3);
 	}
 }
-| IF NOT role BLOCK
-{
-	yd_print("IF NOT");
-	if(estrisnull(Sociaty_GetRole($3)->_Value)){
-    estraddeol(&$4);
-    ParseExpressionFromString($4);
-  }
-}
-| IFELSE role BLOCK BLOCK
+| IF boolean_expression BLOCK ELSE BLOCK
 {
 	yd_print("IF ELSE");
-  if(!estrisnull(Sociaty_GetRole($2)->_Value)){
+  if($2){
 		estraddeol(&$3);
     ParseExpressionFromString($3);
   }
 	else{
-		estraddeol(&$4);
-		ParseExpressionFromString($4);
+		estraddeol(&$5);
+		ParseExpressionFromString($5);
 	}
+}
+;
+boolean_expression
+: role_as_const 
+{
+	if(!estrisnull($1) && strcmp($1, "0"))
+		$$ = 1;
+	else
+		$$ = 0;
+}
+| role_as_const '=' '=' role_as_const
+{
+	if(!strcmp($1, $4)) $$ = 1;
+	else $$ = 0;
+}
+| role_as_const '!' '=' role_as_const
+{
+	if(strcmp($1, $4)) $$ = 1;
+	else $$ = 0;
+}
+| role_as_const '<' role_as_const
+{
+	$$ = (atoi($1) < atoi($3));
+}
+| role_as_const '>' role_as_const
+{
+	$$ = (atoi($1) >= atoi($3));
+}
+| role_as_const '<' '=' role_as_const
+{
+  $$ = (atoi($1) <= atoi($4));
+}
+| role_as_const '>' '=' role_as_const
+{
+  $$ = (atoi($1) >= atoi($4));
+}
+| NOT boolean_expression
+{
+//	printf("NOT %d", $2);
+	$$ = !$2;
 }
 ;
 internal_function
@@ -164,9 +216,9 @@ internal_function
 	yd_print("PRINT");
 	int i;
 	for(i=0; i<$2.Length; i++){
-		Sociaty_PutString(Sociaty_GetRole($2.Values[i])->_Value);
+		Sociaty_PutString($2.StrValues[i]);
 	}
-	IndexArray_DisposeSub(&$2);
+	StringIntArray_DisposeSub(&$2);
 }
 | ADD role const_as_role
 {
@@ -179,32 +231,41 @@ internal_function
   yd_print("INVOKE");
 	char *rtn;
 	rtn = EvalString($2, $2, $3);
-  yd_print(rtn);
+//  yd_print(rtn);
 	ParseExpressionFromString(rtn);
+}
+| VALUE role_as_const
+{
+	yd_print("VALUE");
+  char pi;
+	pi = Sociaty_SearchRole($2);
+//  yd_print(rtn);
+  ParseExpressionFromString(Sociaty_GetRole(pi)->_Value);
+
 }
 | SETFLAG role role
 {
-	//TODO Argument Parsing
+	//TODO 
   yd_print("SETFLAG");
 	Sociaty_GetRole($2)->_Flag = Sociaty_GetRole($3)->_Flag;
 }
-| SETFLAG role CONSTANT
+| SETFLAG role const_or_int
 {
-	//TODO Argument Parsing
+	//TODO 
   yd_print("SETFLAG");
 	Sociaty_GetRole($2)->_Flag = GetFlag($3);
 }
 | SETARGS role argument_list
 {
-	//TODO Argument Parsing
+	//TODO 
 } 
 ;
 assignment_expression
 : role '=' '[' argument_list ']'
 {
 	yd_print("ASSIGN ARRAY");
-	IndexArray_PassByValue(&Sociaty_GetRole($1)->Elements, &$4);
-	IndexArray_DisposeSub(&$4);
+	Sociaty_RoleAssignArray($1, &$4);
+	StringIntArray_DisposeSub(&$4);
 }
 | role '=' role_as_const
 { 
@@ -247,12 +308,24 @@ eval_expression
 }
 | role argument_list
 {
-	IndexArray_PassBySymbol(&Sociaty_GetRole($1)->Args, &$2);
+	int i;
+	yd_print("EVAL ARGS");
+//	printf("xxx%s\n",Sociaty_GetRole($2.Values[0])->_Value);
+	i = Sociaty_RoleAddSubordinate($1, "_Args");
+	Sociaty_RoleAssignArray(i, &$2);
+	StringIntArray_DisposeSub(&$2);
+//	printf("xxx%s\n",Sociaty_GetRole(Sociaty_GetRole(i)->Elements.Values[0])->_Value);
+//	IndexArray_PassBySymbol(&Sociaty_GetRole($1)->Args, &$2);
 	$$ = $1;
 }
 | role '(' argument_list ')'
 {
-  IndexArray_PassBySymbol(&Sociaty_GetRole($1)->Args, &$3);
+	int i;
+	yd_print("EVAL ARGS");
+  i = Sociaty_RoleAddSubordinate($1, "_Args");
+  Sociaty_RoleAssignArray(i, &$3);
+	StringIntArray_DisposeSub(&$3);
+//  IndexArray_PassBySymbol(&Sociaty_GetRole($1)->Args, &$3);
 	$$ = $1;
 }
 ;
@@ -260,7 +333,7 @@ role_as_const
 : role {
 	$$ = Sociaty_GetRole($1)->_Value;
 }
-| CONSTANT {
+| const_or_int {
 	$$ = $1;
 }
 ;
@@ -268,9 +341,13 @@ const_as_role
 : role {
 	$$ = $1;
 }
-| CONSTANT {
+| const_or_int {
 	$$ = Sociaty_AddConstRole($1);
 }
+;
+const_or_int
+: CONSTANT { $$ = $1; }
+| INTEGER {$$ = $1; }
 ;
 role
 : member
@@ -281,52 +358,46 @@ role
 {
 	$$ = Sociaty_AddNewRole($1);	
 }
-/*
-| role '[' CONSTANT ']'
-{
-	$$ = Sociaty_GetRole($1)->Elements.Values[atoi($3)];	
-}
-*/
 ;
 
 member
 : IDENTIFIER '.' IDENTIFIER
 {
-	int pi, ci;
-	char *m;
+	int pi;
   pi = Sociaty_AddNewRole($1);
-	m = (char *)malloc(strlen($1) + strlen($3) + 3);
-	sprintf(m, "%s.%s", $1, $3);
-	ci = Sociaty_AddNewRole(m);
-	Sociaty_AddSSRelation(pi, ci);
-	$$ = ci;
+	$$ = Sociaty_RoleAddSubordinate(pi, $3);
 }
 | member '.' IDENTIFIER
 {
-	int pi, ci;
-	char *m;
-	char *n;
-	n = Sociaty_GetRole($1)->_Name;
-	m = (char *)malloc(strlen(n) + strlen($3) + 3);
-	sprintf(m, "%s.%s", n, $3);
-	ci = Sociaty_AddNewRole(m);
-	Sociaty_AddSSRelation($1, ci);
-	$$ = ci;
+	$$ = Sociaty_RoleAddSubordinate($1, $3);
+}
+| member '[' INTEGER ']'
+{
+	$$ = Sociaty_RoleAddElement($1, $3);
 }
 ;
 
 argument
-: const_as_role {	$$ = $1; }
+: const_or_int 
+{	
+	$$.Str = $1; 
+	$$.Int = -1;
+}
+| role 
+{
+	$$.Str = Sociaty_GetRole($1)->_Value;
+	$$.Int = $1;
+}
 ;
 argument_list
 : argument 
 { 
-	IndexArray_Create(&$$); 
-	IndexArray_Add(&$$, $1); 
+	StringIntArray_Create(&$$); 
+	StringIntArray_Add(&$$, $1.Str, $1.Int);
 }
 | argument_list ',' argument { 
 	$$ = $1; 
-	IndexArray_Add(&$$, $3); 
+	StringIntArray_Add(&$$, $3.Str, $3.Int); 
 }
 ;
 

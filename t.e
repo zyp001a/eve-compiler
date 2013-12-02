@@ -1,5 +1,5 @@
 <Table
 gene:Table
-gene
-Table.ReadFunction = 
-Table.File = "gene.pos"
+gene.File = "gene.pos"
+gene.Stat
+
