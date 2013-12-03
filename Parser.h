@@ -72,9 +72,10 @@ yyscan_t current_scanner;
     INVOKE = 268,
     PRINT = 269,
     VALUE = 270,
-    END_OF_STATEMENT = 271,
-    SETFLAG = 272,
-    SETARGS = 273
+    READFILE = 271,
+    END_OF_STATEMENT = 272,
+    SETFLAG = 273,
+    SETARGS = 274
   };
 #endif
 
@@ -90,7 +91,7 @@ union YYSTYPE
 	StringInt strint;
 	char *strval;
 
-#line 94 "Parser.h" /* yacc.c:1915  */
+#line 95 "Parser.h" /* yacc.c:1915  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

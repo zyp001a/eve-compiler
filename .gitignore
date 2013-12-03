@@ -7,3 +7,4 @@ y.tab.*
 *.output
 *_old*
 *.log
+*.input

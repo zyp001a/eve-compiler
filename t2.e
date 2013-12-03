@@ -1,2 +1,4 @@
-a=1
-^a^a=2
+<Table.BasicCheck
+gene : Table
+gene.File = "t/Table.t.input"
+gene.BasicCheck

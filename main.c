@@ -21,6 +21,7 @@ char version[] = "c0.1";
 //char *const_name = "EveConst";
 
 char path[] = "ignore:./:/zyp/eve/compiler/Eve/";
+char cincludepath[] = "/zyp/eve/compiler/Eve/C";
 
  
 int main(int argc, char **argv)
@@ -28,10 +29,12 @@ int main(int argc, char **argv)
 	ns.Out = stdout;
 	ns.Step = 1;
 	FILE *fp;
+	Role *r;
 	char *str;
 	char line[32768];
 	int li,c;
 	char errfile[MAX_FILE_NAME];
+	int ri;
 	
 	Sociaty_Create();
 	
@@ -70,13 +73,15 @@ int main(int argc, char **argv)
 		strcpy(errfile, ns.ProgramFile);
 		strcat(errfile, ".log");
 		ns.Err=fopen(errfile, "w");
-	//fclose(fp);
-//	char *a = estrafter("asdf.asdDDDe13.dda'",'.');
-//	printf("%s\n",a);
-///*	
+
 		ParseExpressionFromString("<Basic\n");
+		ri = Sociaty_AddNewRole("CmdArgs");
+		Sociaty_RoleAssignArrayByStringArray(ri, argc-1, argv+1);
+		ri = Sociaty_AddNewRole("CIncludePath");
+		strcpy(Sociaty_GetRole(ri)->_Value, cincludepath);
+
 		ParseExpressionFromFp(fp);
-//	Sociaty_WriteMembers();
+
 //*/	
 	}
 	fclose(ns.Err);

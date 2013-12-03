@@ -59,7 +59,7 @@ INT_SUFFIX    (u|U|l|L)*
   ld_print("Read comment1", yytext);
 }
 
-"//.+" { 
+"//".+ { 
   ld_print("Read comment2", yytext);
 }
 
@@ -96,10 +96,28 @@ loop:
   }
 }
 
+^"<<".+ {
+  char* fpath;
+  char *content;	
+  FILE *fp;
+  fpath=GetPath(yytext+2);
+  if(fpath == NULL){
+    eerror("fail to read file");
+    exit(1);
+  }
+  ld_print("Read file", fpath);
+  fp = fopen(fpath, "r");
+  content = ereadfile(fp);
+  Sociaty_PutString(content);
+}
 
-"<".+ {
+^"<".* {
   char* fpath;
   fpath=GetPath(yytext+1);
+  if(fpath == NULL){
+	  eerror("fail to include file");
+    exit(1);
+  }
   ld_print("Parse file", fpath);
 	if(Sociaty_SearchUsedFile(fpath) == -1){
 		Sociaty_AddUsedFile(fpath);
@@ -107,13 +125,13 @@ loop:
 	}
 }
 
-">>".+ {
-  ld_print("Append to file", yytext+2);
+^">>".* {
+  ld_print("Append to file", yytext);
   Sociaty_SetOut(yytext+2, "a");
 }
 
-">".+ {
-  ld_print("Write to file", yytext+1);
+^">".* {
+  ld_print("Write to file", yytext);
   Sociaty_SetOut(yytext+1, "w");
 }
 
@@ -145,6 +163,10 @@ loop:
   return NOT;
 }
 
+
+"getenv" {
+   Sociaty_WriteMembers();
+}
 
 
 "for" { 
@@ -182,6 +204,10 @@ loop:
 "value" {
 	ld_print("TOKEN", "value");
   return VALUE;
+}
+"readfile" {
+  ld_print("TOKEN", "readfile");
+  return READFILE;
 }
 
 "setargs" { 
@@ -248,6 +274,8 @@ loop:
 "]" { return ']'; }
 ")" { return ')'; }
 "(" { return '('; }
+">" { return '>'; }
+"<" { return '<'; }
 
 
 "\\\n"     { }

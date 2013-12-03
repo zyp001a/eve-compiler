@@ -61,7 +61,7 @@ yyscan_t current_scanner;
 %token <strval> CONSTANT 
 %token <strval> INTEGER
 %token <strval> BLOCK
-%token FOR WHILE IF ELSE NOT ADD INVOKE PRINT VALUE
+%token FOR WHILE IF ELSE NOT ADD INVOKE PRINT VALUE READFILE
 %token END_OF_STATEMENT 
 %token SETFLAG SETARGS
 
@@ -103,30 +103,18 @@ expression
 	yd_print(rtn);
 	ParseExpressionFromString(rtn);
 //	Sociaty_WriteMembers();
+//	printf("clearargs%d\n", $1);
 	Sociaty_ClearArgs($1);
 }
 ;
 control_expression
-: FOR role role BLOCK
+: FOR role BLOCK
 {
 	yd_print("FOR");
-	int i;
-	for(i=0; i< Sociaty_GetRole($3)->Elements.Length; i++){
-		Sociaty_GetRole($2)->_Value = 
-			Sociaty_GetRole(Sociaty_GetRole($3)->Elements.Values[i])->_Value;
-		estraddeol(&$4);
-		ParseExpressionFromString($4);
-	}
-}
-| FOR role BLOCK
-{
-	yd_print("FOR SIMPLE");
-
 	int i, ii;
 	ii = Sociaty_RoleAddSubordinate($2, "_Iterator");
 	for(i=0; i< Sociaty_GetRole($2)->Elements.Length; i++){
-    Sociaty_GetRole(ii)->_Value =
-      Sociaty_GetRole(Sociaty_GetRole($2)->Elements.Values[i])->_Name;
+    Sociaty_GetRole(ii)->_TargetIndex = Sociaty_GetRole($2)->Elements.Values[i];
 //		printf("xxxx%s\nxxx", Sociaty_GetRole(ii)->_Value);
     estraddeol(&$3);
     ParseExpressionFromString($3);
@@ -230,18 +218,9 @@ internal_function
 {
   yd_print("INVOKE");
 	char *rtn;
-	rtn = EvalString($2, $2, $3);
+	rtn = EvalString($2, $3);
 //  yd_print(rtn);
 	ParseExpressionFromString(rtn);
-}
-| VALUE role_as_const
-{
-	yd_print("VALUE");
-  char pi;
-	pi = Sociaty_SearchRole($2);
-//  yd_print(rtn);
-  ParseExpressionFromString(Sociaty_GetRole(pi)->_Value);
-
 }
 | SETFLAG role role
 {
@@ -281,9 +260,7 @@ assignment_expression
 | role '=' '&' role
 {
 	yd_print("ASSIGN REF");
-	if(Sociaty_GetRole($1)->_Value != NULL) free(Sociaty_GetRole($1)->_Value);
-	Sociaty_GetRole($1)->_Value =
-		Sociaty_GetRole($4)->_Value;
+	Sociaty_GetRole($1)->_TargetIndex = $4;
 }
 ;
 inherent_expression
@@ -310,12 +287,10 @@ eval_expression
 {
 	int i;
 	yd_print("EVAL ARGS");
-//	printf("xxx%s\n",Sociaty_GetRole($2.Values[0])->_Value);
+
 	i = Sociaty_RoleAddSubordinate($1, "_Args");
 	Sociaty_RoleAssignArray(i, &$2);
 	StringIntArray_DisposeSub(&$2);
-//	printf("xxx%s\n",Sociaty_GetRole(Sociaty_GetRole(i)->Elements.Values[0])->_Value);
-//	IndexArray_PassBySymbol(&Sociaty_GetRole($1)->Args, &$2);
 	$$ = $1;
 }
 | role '(' argument_list ')'
@@ -335,6 +310,26 @@ role_as_const
 }
 | const_or_int {
 	$$ = $1;
+}
+| VALUE role_as_const
+{
+	yd_print("VALUE");
+  char pi;
+	pi = Sociaty_SearchRole($2);
+//  yd_print(rtn);
+  $$ = Sociaty_GetRole(pi)->_Value;
+}
+| READFILE role_as_const
+{
+	char* fpath;
+  FILE *fp;
+  fpath=GetPath($2);
+  if(fpath == NULL){
+		$$ = "";
+  }
+
+  fp = fopen(fpath, "r");
+  $$ = ereadfile(fp);
 }
 ;
 const_as_role
@@ -366,6 +361,14 @@ member
 	int pi;
   pi = Sociaty_AddNewRole($1);
 	$$ = Sociaty_RoleAddSubordinate(pi, $3);
+}
+| IDENTIFIER '[' INTEGER ']'
+{
+	int pi;
+  pi = Sociaty_AddNewRole($1);
+//	printf("xxx%s\n",Sociaty_GetRole(pi)->_Name);
+	$$ = Sociaty_RoleAddElement(pi, $3);
+//	printf("xxxx%s\n",Sociaty_GetRole($$)->_Name);
 }
 | member '.' IDENTIFIER
 {

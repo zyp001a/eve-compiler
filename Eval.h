@@ -14,7 +14,7 @@ typedef enum OperationType{
 */
 typedef struct Scanner{
 	Role *r; //role
-	Role *cr;
+//	Role *cr;
 //	char *in_tmp; //tmp poiner
 	char *in_curr; //input poiner 
 	char **out_curr; //output pointer
@@ -22,36 +22,31 @@ typedef struct Scanner{
 
 typedef struct TokenParam{
 	Role *r; // invoke role
-	Role *cr; //current role
+//	Role *cr; //current role
 	char *title;//|title|
-	int len;
-	char *op;// $$ @@ & %
-	int oplen;
-
+	int len; //title len
+	char *op;// %$$ &@@ & %
+	int oplen; //op len
+	char c; //'V' 'N' 'E' in &-E[0]
+	int index; // 0 in &-E[0]
 } TokenParam;
 
 char* Eval(Index i);
-char* EvalString(Index i, Index ci, char *str);
+char* EvalString(Index i, char *str);
 
 char* GetPath(char *);
 //Lang GetLang(char *);
 char GetFlag(char *);
-/*
-char* GetTitleName(Role *r);
+char *GetParentName(Role *r);
+char ExistValue(Role *r);
+char *GetValue(Role *r);
+char* GetValueDeep(char *name);
 
-char* GetValue(TokenParam *);
-char *GetValueRecursive(TokenParam *);
-char* GetValueByName(TokenParam *);
-char* GetValueFromSuperiors(TokenParam *);
-char* GetValueFromParents(TokenParam *);
-char* GetValueFromParents2(TokenParam *);
-
-char* GetEvalValue(Role *r);
-*/
-Role* GetRole(char *name, int level);
-Role* GetRoleByParam(TokenParam *pp);
+char* GetDymValue(char *name); //for any name return a value
+//Role* GetRole(char *name);
+char EvalParam(TokenParam *pp, Scanner *ps);
 char ScanIdentifer(Scanner *ps);
-void InterpretValue(Role *r, Role *cr, char *v, char **out_curr);
+void InterpretValue(Role *r, char *v, char **out_curr);
 
 
 #endif

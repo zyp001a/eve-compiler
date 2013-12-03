@@ -10,49 +10,28 @@ extern char *elementstr;
 
 #define EVALDEBUG
 char* Eval(Index i){
-//	TokenParam p;
-/*
-	p.r = Sociaty_GetRole(i);
-	p.cr = p.r;
-	p.title = GetTitleName(p.r);
-	p.len = strlen(p.title);
-*/
-//	p.index = -1;
-
-//if not null and has superiors
-/*
-	if(estrisnull(p.r->_Value) && strcmp(p.r->_Name, p.title)){		
-		p.r->_Value = GetValueFromSuperiors(&p);
-#ifdef EVALDEBUG
-		fprintf(ns.Err,"\tEval Set NewValue: %s\n", p.r->_Value);
-#endif
-	}
-*/
 
 	char str[255];
-	Role *r;
+//	Role *r;
+	char *eval;
 	strcpy(str, Sociaty_GetRole(i)->_Name);
 	strcat(str,".");
 	strcat(str, evalstr);
 //	p.title = evalstr;
 //	p.len = strlen(evalstr);
-	r = GetRole(str, 0);
-	if(r == NULL){
-		fprintf(ns.Err, "The method is not exist: %s\n", str);
-		return "\n";
-	}
-	else{
-		return EvalString(i, i, r->_Value);
-	}
+//	Sociaty_AddNewRole(str);
+	eval = GetDymValue(str);
+//	printf("xxx%s\n", str);
+	return EvalString(i, eval);
 
 }
-char* EvalString(Index i, Index ci, char *str){
+char* EvalString(Index i, char *str){
 	char result_buf[MAX_BLOCK_SIZE];
   char *result = &result_buf[0];
 #ifdef EVALDEBUG
 	fprintf(ns.Err, "\t---->Eval Content: \n========\n%s\n========\n", str);
 #endif
-  InterpretValue(Sociaty_GetRole(i), Sociaty_GetRole(i), str, &result);
+  InterpretValue(Sociaty_GetRole(i), str, &result);
   result[0] = '\n';
   result[1] = '\0';
 
@@ -81,7 +60,7 @@ char* GetPath(char *id){
 	while ( token = strtok(NULL, ":") ){
 		strcpy(fname, token);
 		strcat(fname, id);
-		//	printf("%s\n", fname);
+//			printf("%s\n", fname);
 		tfp = fopen(fname, "r");
 		if(tfp != NULL){
 			fclose(tfp);
@@ -108,244 +87,191 @@ char* GetPath(char *id){
 	}	
 	return NULL;
 }
-/*
-char* GetTitleName(Role *r){
-	return estrafter(r->_Name, '.');
+char ExistValue(Role *r){
+	if(!estrisnull(r->_Value)) return 1;
+	if(r->_TargetIndex != -1) return 1;
+	return 0;
 }
-
-Role *GetRoleRecursive(TokenParam *pp){
-	Role *pr;
-  char *ttitle;
-	int j;
-	for(j=0; j<pp->r->Subordinates.Length; j++){
-    pr = Sociaty_GetRole(pp->r->Subordinates.Values[j]);
-		ttitle = GetTitleName(pr);
-		if(strlen(ttitle) < pp->len) continue;
-		if(strncmp(pp->title, ttitle, pp->len)) continue;
-		if(pp->index == -1){
-      if(!estrisnull(pr->_Value)) return pr;
-    }
-    else{
-      if(pp->index > pr->Elements.Length) continue;
-      return Sociaty_GetRole(pr->Elements.Values[pp->index]);
-    }
-	}
+char *GetParentName(Role *r){
+	if(r->Parents.Length == 0) return NULL;
+	return Sociaty_GetRole(r->Parents.Values[r->Parents.Length-1])->_Name;
 }
-char *GetValueRecursive(TokenParam *pp){
-	Role *pr;
-	char *ttitle;
-	char *v;
-	int j;
-	TokenParam p;
-	for(j=0; j<pp->r->Subordinates.Length; j++){
-		pr = Sociaty_GetRole(pp->r->Subordinates.Values[j]);
+char* GetDymValue(char *name){
+	int ind;
+	Role *r;
 #ifdef EVALDEBUG
-		fprintf(ns.Err, "\t\tCheck Subordinate %d, %s\n", j, pr->_Name);
+  fprintf(ns.Err,"GetDymValue %s\n", name);
 #endif
-		ttitle = GetTitleName(pr);
-		if(strlen(ttitle) < pp->len) continue;
-		if(strncmp(pp->title, ttitle, pp->len)) continue;
-#ifdef EVALDEBUG
-    fprintf(ns.Err, "\t\t\tFIND!!!");
-#endif
-		if(pp->index == -1){
-			if(!estrisnull(pr->_Value)) return pr->_Value;			
-		}
-		else{
-			if(pp->index > pr->Elements.Length) continue;
-			return Sociaty_GetRole(pr->Elements.Values[pp->index])->_Value;
-		}
-		
+
+	ind = Sociaty_SearchRole(name);
+	if(ind == -1){
+		return GetValueDeep(name);
 	}
-
-	for(j=pp->r->Parents.Length; j>0; --j){
-		pr = Sociaty_GetRole(pp->r->Parents.Values[j-1]);
-#ifdef EVALDEBUG
-    fprintf(ns.Err, "\t\tCheck Parent %d, %s\n", j-1, pr->_Name);
-#endif
-		p = *pp;
-		p.r = pr;
-		v = GetValueRecursive(&p);
-		if(!estrisnull(v)) return v;
+	r = Sociaty_GetRole(ind);
+	if(ExistValue(r)){
+		return GetValue(r);
 	}
-	return NULL;
-}
-
-char *GetValue(TokenParam *pp){
-	int i,j;
-  Role *pr,* psr;
-  char *rpr;
-  char *ttitle;
-  //_Value, _Name, _Super exception
-	
-
-  if(!strncmp(pp->title, valuestr, pp->len))
-		return pp->r->_Value;
-	if(!strncmp(pp->title, namestr, pp->len)) 
-		return pp->r->_Name;
-	if(!strncmp(pp->title, elementstr, pp->len) && pp->index != -1)
-		return Sociaty_GetRole(pp->r->Elements.Values[pp->index])->_Value;
-	if(!strncmp(pp->title, argsstr, pp->len))
-		return Sociaty_GetRole(pp->r->Args.Values[pp->index])->_Value;
-  
-  rpr = GetValueRecursive(pp);
-	if(!estrisnull(rpr)) return rpr;
-
-  return "";
-}
-char* GetValueByName(TokenParam *pp){
-	char *n = estrndup(pp->title,pp->len);
-	char *r = Sociaty_GetRole(Sociaty_SearchRole(n))->_Value;
-	free(n);
-	if(!estrisnull(r)) return r;
-	return "";
-}
-char* GetValueFromSuperiors(TokenParam *pp){
-	Role *sr;
-	char *rpr;
-	int i;
-	TokenParam p;
-	for(i=pp->r->Superiors.Length; i>0; --i){
-		sr = Sociaty_GetRole(pp->r->Superiors.Values[i-1]);
-#ifdef EVALDEBUG
-		fprintf(ns.Err, "\tFrom Superior %d, %s\n", i-1, sr->_Name);
-#endif		
-		p = *pp;
-		p.r = sr;
-    rpr = GetValue(&p);
-    if(!estrisnull(rpr)) return rpr;
+	else{
+		return GetValueDeep(name);
 	}
 	return "";
 }
-char* GetValueFromParents(TokenParam *pp){
-	Role *sr;
-	char *rpr;
-	int i;
-	TokenParam p;
-	for(i=pp->r->Parents.Length; i>0; --i){
-		sr = Sociaty_GetRole(pp->r->Parents.Values[i-1]);
-#ifdef EVALDEBUG
-		fprintf(ns.Err, "\tFrom Parents %d, %s\n", i-1, sr->_Name);
-#endif
-		p = *pp;
-    p.r = sr;
-    rpr = GetValue(&p);
-    if(!estrisnull(rpr)) return rpr;
-	}
+char* GetValue(Role *r){
+	if(!estrisnull(r->_Value)) return r->_Value;
+	if(r->_TargetIndex != -1)
+		return Sociaty_GetRole(r->_TargetIndex)->_Value;
 	return "";
 }
-char* GetValueFromParents2(Role *r, char *title, int len){
-	Role *pr, *ppr;
-  char *rpr;
-  int i,j;
-
-  for(i=r->Parents.Length; i>0; --i){
-    pr = Sociaty_GetRole(r->Parents.Values[i-1]);
-		for(j=pr->Parents.Length; j>0; --j){
-			ppr = Sociaty_GetRole(pr->Parents.Values[j-1]);
-			rpr = GetValue(ppr, title, len);
-			if(!estrisnull(rpr)){
-				return rpr;
-			}
-		}
-	}
-	return "";
-}
-*/
-Role* GetRole(char *name, int level){
+char* GetValueDeep(char *name){
 //	printf("name %s\tlevel %d\n",name,level);
+#ifdef EVALDEBUG
+	fprintf(ns.Err,"GetValueDeep %s\n", name);
+#endif
 	Role *pr, *ppr;
 	char *ni;
 	int len, ind, j;
 	char name2[255], pre[255], suf[255];
 	Role *r;
-	if(level==0){
-		ind = Sociaty_SearchRole(name);
-		if(ind != -1){
-			r = Sociaty_GetRole(ind);
-			return r;
+	char *rtn;
+/*
+	ind = Sociaty_SearchRole(name);
+	if(ind != -1){
+		r = Sociaty_GetRole(ind);
+		return r;
 //			if(!estrisnull(r->_Value)) return r;
-		}
 	}
+*/
 	len = strlen(name);
 	ni = &name[len];
 	while(len){
 		len --;
 		ni --;
 		if(ni[0] == '.'){
-			level --;
-			if(level>0) continue;
+//			level --;
+//			if(level>0) continue;
 			strcpy(suf, ni +1);
 			strncpy(pre, name, len);
 			pre[len] = '\0';
 			ind = Sociaty_SearchRole(pre);
 			if(ind == -1) continue;
-			pr = Sociaty_GetRole(ind);
+			pr = Sociaty_GetFinalRole(ind);
+
 			for(j=pr->Parents.Length; j>0; --j){
-				ppr = Sociaty_GetRole(pr->Parents.Values[j-1]);
+				ppr = Sociaty_GetFinalRole(pr->Parents.Values[j-1]);
 				strcpy(name2, ppr->_Name);
 				strcat(name2, ".");
 				strcat(name2, suf);
-				r = GetRole(name2, 0);
-				if(r != NULL) return r;
+				
+				rtn = GetDymValue(name2);
+				if(!estrisnull(rtn)) return rtn;
 			}
 		}
 	}
-	return NULL;
+	return "";
 }
-Role *GetRoleByParam(TokenParam *pp){
-	char name[255];
+char EvalParam(TokenParam *pp, Scanner *ps){
+	char name[255], *tmpname;
 	char *tmp;
-	Role *rtn;
+	Role *r;
 	int opi;
-	int level;
-	rtn = NULL;
+	int ind;
 
+	tmp = &pp->op[0];
+	opi = pp->oplen;
 	if(pp->op[0] == '%'){ //absolute name
-		if(pp->len > 0){
+		tmp ++;
+    opi --;
+		if(pp->len > 0 ){
 			strncpy(name, pp->title, pp->len);
 			name[pp->len] = '\0';
-			rtn = GetRole(&name[0], 0);
+		}
+		else{
+			return 0;
 		}
 	}
 	else if(pp->op[0] == '&'){ //relative name
-//	printf("xxxxxxxx%d\n", pp->len);
+		tmp ++;
+		opi --;
 		strcpy(name, pp->r->_Name);
-		if(pp->len>0){
-			strcat(name, ".");
-			strncat(name, pp->title, pp->len);
-		}
-		rtn = GetRole(&name[0], 0);
 	}
 	else{
-		opi = 0;
-		level = 0;
-		while(opi<pp->oplen){
-			if(pp->op[opi] == '$'){
-				strcpy(name, pp->cr->_Name);
-				if(pp->len > 0){
-					strcat(name, ".");
-					strncat(name, pp->title, pp->len);
-				}
-				rtn = GetRole(&name[0], level);
-				level ++;
-			}
-			else if(pp->op[opi] == '@'){
-//				printf("%s\n", pp->r->_Name);
-				tmp = estrbeforedup(pp->cr->_Name, '.');
-				strcpy(name, tmp);
-
-				if(pp->len>0){
-					strcat(name, ".");
-					strncat(name, pp->title, pp->len);
-				}
-//				printf("%s\n", name);
-				rtn = GetRole(&name[0], level);
-			}
-			opi++;
-		}
+		strcpy(name, pp->r->_Name);
 	}
-	return rtn;
+	
+	while(opi>0){
+		switch(tmp[0]){
+		case '$':
+			ind = Sociaty_SearchRole(name);
+			if(ind == -1) return 0;
+			tmpname = GetParentName(Sociaty_GetRole(ind));
+			if(tmpname == NULL) return 0;
+			strcpy(name, tmpname);
+			break;
+		case '@':
+			tmpname = estrbeforedup(name, '.');
+			strcpy(name, tmpname);
+			free(tmpname);
+			break;
+		default:
+			return 0;
+		}
+		opi--;
+		tmp++;
+	}
+
+	if(estrisnull(name))
+		return 1;
+	if(pp->op[0] != '%' && pp->len>0){
+		strcat(name, ".");
+		strncat(name, pp->title, pp->len);
+	}
+
+
+	ind = Sociaty_AddNewRole(name);	
+	r = Sociaty_GetRole(ind);
+	switch(pp->c){
+	case 'V': //VALUE
+		if(pp->index != -1) return 1;
+		InterpretValue(r, GetDymValue(name), ps->out_curr);
+		break;
+	case 'E': //Elements
+		if(pp->index == -1) return 1;
+		if(r->Elements.Length <= pp->index) return 0;
+		r = Sociaty_GetRole(r->Elements.Values[pp->index]);
+		InterpretValue(r, r->_Value, ps->out_curr);
+		break;
+	case 'N': //NAME
+		if(pp->index != -1) return 1;
+		sprintf((*ps->out_curr),"%s",r->_Name);
+    while((*ps->out_curr)[0] != '\0')
+      (*ps->out_curr)++;
+		break;
+	case 'L':
+		if(pp->index != -1) return 1;
+		sprintf((*ps->out_curr),"%d",r->Elements.Length);
+		while((*ps->out_curr)[0] != '\0') 
+			(*ps->out_curr)++;
+		break;
+  case 'I':
+		if(pp->index != -1) return 1;
+		sprintf((*ps->out_curr),"%s._Iterator",r->_Name);
+		while((*ps->out_curr)[0] != '\0')
+      (*ps->out_curr)++;
+		break;
+/*
+	case 'P': //Parents
+		break;
+	case 'S': //Superiors
+		break;
+	case 'B': //Subordinates
+		break;
+*/
+	default:
+		return 0;
+	}
+
+
+	return 1;
 }
 
 char ScanIdentifer(Scanner *ps){
@@ -354,27 +280,20 @@ char ScanIdentifer(Scanner *ps){
 	Role *rtn;
 //	Role *opr;
 	int see_left = 0;
+	int see_dash = 0;
 	char *val, *indexstr;
-	int index;
 	char c;
 	TokenParam p;
 	p.r = ps->r;
-	p.cr = ps->cr;
 
-
-	tmp = ps->in_curr;
-//	printf("xxxx, %c%c\n", tmp[0], tmp[1]);
-	
-  /* get op*/
 	p.op = ps->in_curr;
-	p.oplen = 0;
-	while(tmp[0] == '$' || tmp[0] == '@' || tmp[0] == '%'|| tmp[0] == '&'){
+	tmp = ps->in_curr+1;
+	p.oplen = 1;
+	while(tmp[0] == '$' || tmp[0] == '@'){
 		p.oplen++;
 		tmp++;
 	}
-//	printf("rtn");
 
-// TODO @@-V $$-V //2 operator is not supported
 	rtn = NULL;	
 	p.len = 0;
 	if(tmp[0] == '|'){
@@ -392,7 +311,6 @@ char ScanIdentifer(Scanner *ps){
 				p.len ++;
 				tmp++;
 			}
-
 			/*get index
 				index must be digits
 			*/
@@ -423,9 +341,10 @@ char ScanIdentifer(Scanner *ps){
 	}
 
 //	fprintf(ns.Err,"---------%c:%s:%s\n",p.op[0],rtn->_Name,rtn->_Value);
-	index = -1;
+	p.index = -1;
 	if(tmp[0] == '-'){
-		c = tmp[1];
+		see_dash = 1;
+		p.c = tmp[1];
 		tmp += 2;
 		if(tmp[0] == '['){
       tmp++;
@@ -438,136 +357,67 @@ char ScanIdentifer(Scanner *ps){
       if(tmp[0] != ']') return 0;
       tmp++; //skip ]
 			indexstr = estrndup(tmp2, len2);
-			index = atoi(indexstr);
+			p.index = atoi(indexstr);
 			free(indexstr);
     }
 	}
 	else{
-		c = 'V';
+		p.c = 'V';
 	}
 
 	if(see_left){
 		if(tmp[0] != '|') return 0;
 		tmp ++ ;
 	}
+	if(!see_left && !see_dash) return 0;
 #ifdef EVALDEBUG
 	int i;
-  fprintf(ns.Err, "Parameter, r: %s, cr: %s\n\t, ", 
-					p.r->_Name, p.cr->_Name);
+  fprintf(ns.Err, "Parameter, r: %s\n\t",	p.r->_Name);
   for(i=0; i<p.len; i++){
     fprintf(ns.Err, "%c", p.title[i]);
   }
-  fprintf(ns.Err, "\t");
+  fprintf(ns.Err, "\top ");
 	for(i=0; i<p.oplen; i++){
     fprintf(ns.Err, "%c", p.op[i]);
   }
-  fprintf(ns.Err, "\n");
+  fprintf(ns.Err, "\tindex %d\tchar %c\n", p.index, p.c);
 #endif
 
-	rtn = GetRoleByParam(&p);
-	if(rtn == NULL){
-		ps->in_curr = tmp;
-		return 1;
-	}
+	if(!EvalParam(&p, ps)) return 0;
 
-	switch(c){
-	case 'V': //VALUE
-		if(index != -1) return 0;
-		int level =1;
-		while(1){
-			Role *tmpr;
-			if(!estrisnull(rtn->_Value) && rtn->_TargetIndex == -1){
-				break;
-			}
-			if(rtn->_TargetIndex != -1){
-				rtn = Sociaty_GetRole(rtn->_TargetIndex);
-        break;
-      }
-			tmpr = GetRole(rtn->_Name, level);
-			if(tmpr == NULL) break;
-			rtn = tmpr;
-			level++;
-		}
-		val = rtn->_Value;
-
-		break;
-	case 'E': //Elements
-		if(rtn->Elements.Length <= index) return 0;
-		rtn = Sociaty_GetRole(rtn->Elements.Values[index]);
-		val = rtn->_Value;
-		break;
-	case 'N': //NAME
-		if(index != -1) return 0;
-		sprintf((*ps->out_curr),"%s",rtn->_Name);
-    while((*ps->out_curr)[0] != '\0')
-      (*ps->out_curr)++;
-    ps->in_curr = tmp;
-    return 1;
-		break;
-	case 'L':
-		if(index != -1) return 0;
-		sprintf((*ps->out_curr),"%d",rtn->Elements.Length);
-		while((*ps->out_curr)[0] != '\0') 
-			(*ps->out_curr)++;
-		ps->in_curr = tmp;
-		return 1;
-		break;
-  case 'I':
-		sprintf((*ps->out_curr),"%s._Iterator",rtn->_Name);
-		while((*ps->out_curr)[0] != '\0')
-      (*ps->out_curr)++;
-    ps->in_curr = tmp;
-		return 1;
-		break;
-/*
-	case 'P': //Parents
-		break;
-	case 'S': //Superiors
-		break;
-	case 'B': //Subordinates
-		break;
-*/
-	default:
-		return 0;
-	}
-//	fprintf(ns.Err,"ITPR%s\n", val);		
-	InterpretValue(ps->r, rtn, val, ps->out_curr);
 	ps->in_curr = tmp;
 	return 1;
 }
-void InterpretValue(Role *r, Role *cr, char *v, char **out_curr){
+void InterpretValue(Role *r, char *v, char **out_curr){
 	Scanner s;
 	char c;
 	s.r = r;
-	s.cr = cr;
 	s.in_curr = v;
 	s.out_curr = out_curr;
 	while (1){
-//		printf("%c\n", s.in_curr[0]);
 
 		switch(s.in_curr[0]){
 		case '\0':
-//			printf("END\n");
 			return;
 		case '\\':
 			c = s.in_curr[1];
-			if(c == '$'  || c == '@'  || c == '%'  || c == '&' ||
-				 c == '|'  || c == '['  || c == ']'  ||
+			if(c == '$'  || c == '@'  || c == '%'  || c == '&'  ||
+				 c == '|'  || c == '['  || c == ']'  || c == '\\' ||
 				 c == '\'' || c == '"'  || c == '`'  ){
 				s.in_curr ++;
 			}
 			break;
-	  case '$':
-			if(ScanIdentifer(&s)) continue;
-			break;
-		case '@':
-			if(ScanIdentifer(&s)) continue;
-      break;
 		case '%':
       if(ScanIdentifer(&s)) continue;
       break;
 		case '&':
 			if(ScanIdentifer(&s)) continue;
+      break;
+		case '@':
+      if(ScanIdentifer(&s)) continue;
+      break;
+    case '$':
+      if(ScanIdentifer(&s)) continue;
       break;
 		default:
 			;

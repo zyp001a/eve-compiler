@@ -44,6 +44,7 @@ char* estrupper(char *);
 char* estrafter(char *, char);
 char* estrbeforedup(char *, char);
 void* estraddeol(char **);
+int estrstat(char *, char);
 
 char eisletter(char c);
 char eisdigit(char c);

@@ -41,16 +41,33 @@ Index Sociaty_RoleAddSubordinate(Index pi, char *str){
 Index Sociaty_RoleAddElement(Index pi, char *str){ 
 	int ci, i; 
   char *m; 
-   char *n; 
-   n = Sociaty_GetRole(i)->_Name; 
-   m = (char *)malloc(strlen(n) + strlen(str) + 3); 
-		 i = atoi(str); 
-   sprintf(m, "%s[%d]", n, i); 
-   ci = Sociaty_AddNewRole(m); 
-   Sociaty_AddSERelation(pi, ci);
-   return ci; 
- } 
+	char *n; 
+	n = Sociaty_GetRole(pi)->_Name; 
+	m = (char *)malloc(strlen(n) + strlen(str) + 3); 
+	i = atoi(str); 
+	sprintf(m, "%s[%d]", n, i); 
+	ci = Sociaty_AddNewRole(m); 
+	Sociaty_AddSERelation(pi, ci);
+	return ci; 
+} 
 
+void Sociaty_RoleAssignArrayByStringArray(Index pi, int len, char **a){
+ 	int i,li; 
+	Role *r; 
+	char tmpname[255]; 
+//	printf("assign com1\n");
+	r = Sociaty_GetRole(pi); 
+	r->Elements.Length = len;
+	r->Elements.Values = (Index *)realloc(r->Elements.Values,
+																			  len * sizeof(Index));
+//	printf("assign com2\n");
+	for(i=0; i<r->Elements.Length; i++){
+		sprintf(tmpname, "%s[%d]", r->_Name, i); 
+		li = Sociaty_AddNewRole(tmpname);
+		Sociaty_GetRole(li)->_Value = a[i];
+		r->Elements.Values[i] = li;
+	}
+}
 void Sociaty_RoleAssignArray(Index pi, StringIntArray *a){ 
  	int i,li; 
 	Role *r; 
@@ -88,6 +105,15 @@ Index Sociaty_AddNewExpression(char *str){
 Role *Sociaty_GetRole(Index i){ 
  	return ns.Members.Values + i; 
 }
+Role *Sociaty_GetFinalRole(Index i){
+	Role *r;
+	r=ns.Members.Values + i;
+	while(r->_TargetIndex != -1){
+		r = Sociaty_GetRole(r->_TargetIndex);
+	}
+  return r;
+}
+
  
 char* Sociaty_GetValue(Index i){ 
  	int ci = i; 
@@ -147,13 +173,20 @@ int Sociaty_SearchCRelation(Index pi, Index ci, int rtn){
 }
 void Sociaty_ClearArgs(Index pi){
 	Role *r, *argr, *tmpr;
+	int see= 0;
 	int i;
+//	printf("x%d",pi);
 	r= Sociaty_GetRole(pi);
+//	printf("xx%d",r->Subordinates.Length);
 	for(i=0; i<r->Subordinates.Length; i++){
 		argr = Sociaty_GetRole(r->Subordinates.Values[i]);
-		if(!strcmp(estrafter(argr->_Name, '.'),"_Args"))
+		if(!strcmp(estrafter(argr->_Name, '.'),"_Args")){
+			see =1;
 			break;
+		}
 	}
+	if(!see) return;
+//	printf("xxxx%d", argr->Elements.Length);
 	for(i=0; i<argr->Elements.Length; i++){
 		tmpr = Sociaty_GetRole(argr->Elements.Values[i]);
 		strcmp(tmpr->_Value, "");
@@ -248,86 +281,37 @@ Index Sociaty_AddConstRole(char *str){
 void Sociaty_PutChar(char c){
 	fprintf(ns.Out, "%c", c);
 }
+
 void Sociaty_PutString(char *s){
   fprintf(ns.Out, "%s", s);
 }
 
 void Sociaty_SetOut(char *str, char *op){
 	char tmpfile[MAX_FILE_NAME];
-	char step[8];
+	char step[8];	
+//	printf("1fopen%s\n", str);
 	if(ns.Out != stdout && ns.Out != NULL){
 //		fprintf(stderr,"fclose");
 		fclose(ns.Out);
 	}
+//	printf("2fopen%s\n", str);
 	if(estrisnull(str) || !strcmp(str,"stdout")){
 		ns.Out = stdout;
 		return;
 	}
+//	printf("3fopen%s\n", str);
 	if(!strcmp(str,"stderr")){
 		ns.Out = stderr;
 		return;
 	}
-	if(!strncmp(str,"$-P", 3)){
-		strcpy(tmpfile, ns.ProgramFile);
-		sprintf(step, ".%d", ns.Step);
-		strcat(tmpfile, step);
-		strcat(tmpfile, str+3);
-		if(!strcmp(tmpfile, ns.OutFile)){
-			ns.Step ++;
-			strcpy(ns.OutFile, tmpfile);
-			ns.Out = fopen(tmpfile, op);
-		}
-		return;
-	}
-	
-	if(!strcmp(str, ns.OutFile)){
+//	printf("4fopen%s\n", str);
+	if(strcmp(str, ns.OutFile)){
     strcpy(ns.OutFile, str);
     ns.Out = fopen(str, op);
 		return;
 	}
-
+//	printf("5fopen%s\n", str);
 
 }
 
 
-/*
-void Sociaty_EvalExpression(Expression *expr){
-	switch (expr->Operation){
-	case Value:
-		Sociaty_Output(Sociaty_GetRole(expr->Role1)->_Value);
-		return;
-	case Set:
-		Sociaty_GetRole(expr->Role1)->_Value = 
-			estrdup(Sociaty_GetRole(expr->Role2)->_Value);
-		return;
-	case Gen:
-		Sociaty_AddPCRelation(expr->Role1, 
-													expr->Role2);
-		return;		
-  case Hire:
-    Sociaty_AddSSRelation(expr->Role1, 
-													expr->Role2);
-    return;
-	case Include:
-		//Include
-	case Eval:
-		//Evaluate
-		return;
-	default:
-		eerror("Expression_Eval: unknown operation");
-	}
-}
-*/
-
-/*
-main(){
-	Sociaty_Create();
-	printf("Sociaty Created\n");
-	Sociaty_AddSSRelation("a","b");
-	Sociaty_AddPCRelation("c","b");
-	Sociaty_AddPCRelation("a","c");
-
-	Sociaty_SearchPCRelation(2,1);
-	Sociaty_Write();
-}
-*/

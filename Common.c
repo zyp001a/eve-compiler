@@ -3,8 +3,8 @@
 
 char estrisnull(char *str){
 	if(str == NULL || str[0] == '\0')
-		return '1';
-	return '\0';
+		return 1;
+	return 0;
 }
 
 char* estrdup(char *str){
@@ -110,7 +110,7 @@ char* estrbeforedup(char *str, char c){
 	if(str == NULL) return "";
 	char *stri = &str[0];
 	int i = 0;
-	int ri;
+	int ri = -1;
 	char *rtn;
 	while(1){
 //		printf("%c\n", stri[0]);
@@ -123,9 +123,14 @@ char* estrbeforedup(char *str, char c){
 		i ++;
 		stri++;
 	}
-	rtn = (char *)malloc(ri+1);
-	strncpy(rtn, str, ri);
-	rtn[ri] = '\0';
+	if(ri != -1){
+		rtn = (char *)malloc(ri+1);
+		strncpy(rtn, str, ri);
+		rtn[ri] = '\0';
+	}
+	else{
+		rtn =estrdup("");
+	}
 	return rtn;
 }
 
@@ -134,6 +139,18 @@ void* estraddeol(char **str){
 	*str=(char *)realloc(*str, slen+2);
 	(*str)[slen] = '\n';
 	(*str)[slen+1] = '\0';
+}
+int estrstat(char *str, char c){
+	int i = 0;
+	char *stri;
+	stri = &str[0];
+	while(stri[0] != '\0'){
+//		printf("%c\n",str[0]);
+		if(stri[0] == c)
+			i ++;
+		stri++;
+	}
+	return i;
 }
 
 char eisletter(char c){

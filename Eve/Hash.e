@@ -1,3 +1,4 @@
-Hash:DataStructure
+Hash : DataStructure
 Hash._Eval=`
+
 `
