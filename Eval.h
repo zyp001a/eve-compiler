@@ -3,6 +3,7 @@
 #include "Common.h"
 #include "Role.h"
 #include "Sociaty.h"
+#include "Platform.h"
 /*
 typedef enum OperationType{
 	THIS,
@@ -32,8 +33,8 @@ typedef struct TokenParam{
 } TokenParam;
 
 char* Eval(Index i);
-char* EvalString(Index i, char *str);
-
+char* EvalString(Role *r, char *str, char);
+char* UseFile(char *str);
 char* GetPath(char *);
 //Lang GetLang(char *);
 char GetFlag(char *);
@@ -41,7 +42,7 @@ char *GetParentName(Role *r);
 char ExistValue(Role *r);
 char *GetValue(Role *r);
 char* GetValueDeep(char *name);
-
+char* GetDefaultValue(char *name);
 char* GetDymValue(char *name); //for any name return a value
 //Role* GetRole(char *name);
 char EvalParam(TokenParam *pp, Scanner *ps);

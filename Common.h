@@ -38,7 +38,7 @@ char* estrdup(char *str);
 char* estrndup(char *str, int len);
 char* estrsub(char *big, char *small);
 char* estrcent(char *);
-void estradd(char**, char *);
+void estrcat(char**, char *);
 char* estrlower(char *);
 char* estrupper(char *);
 char* estrafter(char *, char);

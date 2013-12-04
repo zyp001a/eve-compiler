@@ -5,11 +5,11 @@
 #define MIN_ADJ_ROW 5
 #define MIN_CHECK_ROW 1000
 #define MAX_STAT_ELEMENT_SIZE 40
-#define MAX_CHAR_ELEMENT_SIZE 15
+#define MAX_CHAR_ELEMENT_SIZE @@|Config.MaxCharArraySize|
 #define AS_CATEGORY_CCHAR_CUT_LOW 8
-#define AS_CATEGORY_CCHAR_CUT 15
+#define AS_CATEGORY_CCHAR_CUT @@|Config.MaxCharArraySize|
 #define AS_CATEGORY_CNOTNUM_CUT 8
-#define SEP '\t'
+#define SEP @@|Sep|
 
 typedef enum TypeV{
 	TCATEGORY,
@@ -22,11 +22,11 @@ typedef enum TypeV{
 } TypeV;
 char* TypeVNames[] = {
 	"char",
-	"int", //	"unsigned int",
-	"int",
+	"long", //	"unsigned int",
+	"long",
 	"double", //	"unsigned double",
 	"double",
-	"char[15]", //MAX_CHAR_ELEMENT_SIZE
+	"char", //
 	"char*"
 };
 
@@ -336,11 +336,18 @@ int main(int argc, char **argv){
 	printf("@@-N.HeadStartOffset =  %ld\n", thead);
 	printf("@@-N.DataStartOffset =  %ld\n", tstart);
 	int coli;
-	
+	printf("@@-N.DraftStruct.Name = \'@@-TLine\'\n");
+//	printf("\\^Include\n\\^\n");
 	for(coli=0; coli<ccol; coli++){
-		printf("%s %s;\n",
-					 TypeVNames[colstat[coli].type],
-					 colstat[coli].name);
+		printf("@@-N.DraftStruct.Definitions[%d]:C.Definition\n", coli);
+		printf("@@-N.DraftStruct.Definitions[%d].Type.Name = \'%s\'\n", 
+					 coli, TypeVNames[colstat[coli].type]);
+		printf("@@-N.DraftStruct.Definitions[%d].Name = \'%s\'\n",
+           coli, colstat[coli].name);
+		if(colstat[coli].type == TWORD)
+			printf("@@-N.DraftStruct.Definitions[%d].Type.Size = @@|Config.MaxCharArraySize|\n", coli);
+
 	}
+
 	return 0;
 }

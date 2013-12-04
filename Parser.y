@@ -61,7 +61,12 @@ yyscan_t current_scanner;
 %token <strval> CONSTANT 
 %token <strval> INTEGER
 %token <strval> BLOCK
-%token FOR WHILE IF ELSE NOT ADD INVOKE PRINT VALUE READFILE
+%token FOR WHILE IF ELSE 
+%token USE LOAD ADD INVOKE PRINT 
+%token <strval> PUTSTR
+%token VALUE READFILE
+%token NOT ISFILE ISDIR
+
 %token END_OF_STATEMENT 
 %token SETFLAG SETARGS
 
@@ -90,6 +95,14 @@ translation_unit
 statement
 : END_OF_STATEMENT 
 | expression END_OF_STATEMENT
+| expression PUTSTR
+{
+	Sociaty_PutString($2);
+}
+| PUTSTR 
+{
+	Sociaty_PutString($1);
+}
 ;
 expression
 : control_expression
@@ -120,6 +133,7 @@ control_expression
     ParseExpressionFromString($3);
   }
 }
+/*
 | WHILE role BLOCK
 {
 	yd_print("WHILE");
@@ -137,6 +151,7 @@ control_expression
   }
 
 }
+*/
 | IF boolean_expression BLOCK
 {
 	yd_print("IF");
@@ -197,9 +212,28 @@ boolean_expression
 //	printf("NOT %d", $2);
 	$$ = !$2;
 }
+| ISFILE role_as_const
+{
+	$$ = eisfile($2);
+}
+| ISDIR role_as_const
+{
+  $$ = eisdir($2);
+}
 ;
 internal_function
-: PRINT argument_list 
+: USE role_as_const
+{
+	char *fpath;
+  fpath = UseFile($2);
+		if(fpath != NULL)
+			ParseExpressionFromFile(fpath);
+}
+| LOAD role_as_const
+{
+	ParseExpressionFromFile($2);
+}
+| PRINT argument_list 
 {
 	yd_print("PRINT");
 	int i;
@@ -218,7 +252,7 @@ internal_function
 {
   yd_print("INVOKE");
 	char *rtn;
-	rtn = EvalString($2, $3);
+	rtn = EvalString(Sociaty_GetFinalRole($2), $3, 0);
 //  yd_print(rtn);
 	ParseExpressionFromString(rtn);
 }
@@ -255,7 +289,7 @@ assignment_expression
 | role '+' '=' role_as_const
 {
 	yd_print("CONCAT VALUE");
-  estradd(&Sociaty_GetRole($1)->_Value, $4);
+  estrcat(&Sociaty_GetRole($1)->_Value, $4);
 }
 | role '=' '&' role
 {
@@ -268,10 +302,13 @@ inherent_expression
 {
 	yd_print("INHERENT");
   if(Sociaty_SearchPCRelation($1, $3) != 0){
+		printf("EXIST%sxxxx%dxxxx%s\n",Sociaty_GetRole($1)->_Name,Sociaty_SearchPCRelation($1, $3),Sociaty_GetRole($3)->_Name);
     eerror("cannot inherent");
-    exit(1);
+//    exit(1);
   }
-  Sociaty_AddPCRelation($3, $1);
+	else{
+		Sociaty_AddPCRelation($3, $1);
+	}
 }
 ;
 eval_expression
@@ -306,7 +343,9 @@ eval_expression
 ;
 role_as_const
 : role {
-	$$ = Sociaty_GetRole($1)->_Value;
+	Role *r = Sociaty_GetRole($1);
+  $$ = EvalString(r, GetDymValue(r->_Name),0);
+//	printf("\nxxxxxxxx%s\t%s\neeeeee\n", r->_Name, $$);
 }
 | const_or_int {
 	$$ = $1;

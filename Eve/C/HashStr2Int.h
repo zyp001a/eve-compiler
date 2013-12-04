@@ -50,7 +50,7 @@ extern "C"
 #define MAX_KEY_LENGTH 20
 #define DEFAULT_CAPACITY 128
 	
-typedef struct StrIntMap StrIntMap;
+typedef struct sihash sihash;
 
 /*
  * This callback function is called once per key-value when iterating over
@@ -69,7 +69,7 @@ typedef struct StrIntMap StrIntMap;
  *
  * Return value: None.
  */
-	typedef void(*sim_enum_func)(const char *key, const int value);
+	typedef void(*sihash_enum_func)(const char *key, const int value);
 
 /*
  * Creates a string map.
@@ -82,7 +82,7 @@ typedef struct StrIntMap StrIntMap;
  * Return value: A pointer to a string map object, 
  * or null if a new string map could not be allocated.
  */
-StrIntMap * sim_new(unsigned int capacity);
+sihash * sihash_new(unsigned int capacity);
 
 /*
  * Releases all memory held by a string map object.
@@ -95,7 +95,7 @@ StrIntMap * sim_new(unsigned int capacity);
  *
  * Return value: None.
  */
-void sim_delete(StrIntMap *map);
+void sihash_delete(sihash *map);
 
 /*
  * Returns the value associated with the supplied key.
@@ -110,7 +110,7 @@ void sim_delete(StrIntMap *map);
  * Return value: value, if NULL return 0
  */
 
-	int sim_get(const StrIntMap *map, const char *key);
+	int sihash_get(const sihash *map, const char *key);
 
 /*
  * Queries the existence of a key.
@@ -124,7 +124,7 @@ void sim_delete(StrIntMap *map);
  *
  * Return value: 1 if the key exists, 0 otherwise.
  */
-int sim_exists(const StrIntMap *map, const char *key);
+int sihash_exists(const sihash *map, const char *key);
 
 /*
  * Associates a value with the supplied key. If the key is already
@@ -144,7 +144,7 @@ int sim_exists(const StrIntMap *map, const char *key);
  *
  * Return value: 1 if the association succeeded, 0 otherwise.
  */
-void sim_put(StrIntMap *map, const char *key, int value);
+void sihash_put(sihash *map, const char *key, int value);
 
 /*
  * Returns the number of associations between keys and values.
@@ -154,7 +154,7 @@ void sim_put(StrIntMap *map, const char *key, int value);
  * map: A pointer to a string map. This parameter cannot be null.
  *
  */
-int sim_get_count(const StrIntMap *map);
+int sihash_get_count(const sihash *map);
 
 /*
  * An enumerator over all associations between keys and values.
@@ -173,7 +173,7 @@ int sim_get_count(const StrIntMap *map);
  *
  * Return value: 1 if enumeration completed, 0 otherwise.
  */
-	int sim_enum(const StrIntMap *map, sim_enum_func enum_func);
+	int sihash_enum(const sihash *map, sihash_enum_func enum_func);
 
 #ifdef __cplusplus
 }
@@ -200,7 +200,7 @@ struct Bucket {
 	Pair *pairs;
 };
 
-struct StrIntMap {
+struct sihash {
 	unsigned int count;
 	Bucket *buckets;
 };
@@ -208,11 +208,11 @@ struct StrIntMap {
 static Pair * get_pair(Bucket *bucket, const char *key);
 static unsigned long hash(const char *str);
 
-StrIntMap * sim_new(unsigned int capacity)
+sihash * sihash_new(unsigned int capacity)
 {
-	StrIntMap *map;
+	sihash *map;
 	
-	map = malloc(sizeof(StrIntMap));
+	map = malloc(sizeof(sihash));
 	if (map == NULL) {
 		return NULL;
 	}
@@ -226,7 +226,7 @@ StrIntMap * sim_new(unsigned int capacity)
 	return map;
 }
 
-void sim_delete(StrIntMap *map)
+void sihash_delete(sihash *map)
 {
 	unsigned int i, j, n, m;
 	Bucket *bucket;
@@ -258,7 +258,7 @@ void sim_delete(StrIntMap *map)
 	free(map);
 }
 
-int sim_get(const StrIntMap *map, const char *key)
+int sihash_get(const sihash *map, const char *key)
 {
 	unsigned int index;
 	Bucket *bucket;
@@ -279,7 +279,7 @@ int sim_get(const StrIntMap *map, const char *key)
 	return pair->value;
 }
 
-int sim_exists(const StrIntMap *map, const char *key)
+int sihash_exists(const sihash *map, const char *key)
 {
 	unsigned int index;
 	Bucket *bucket;
@@ -299,14 +299,14 @@ int sim_exists(const StrIntMap *map, const char *key)
 	}
 	return 1;
 }
-void sim_incr(StrIntMap *map, const char *key){
+void sihash_incr(sihash *map, const char *key){
 	unsigned int key_len, value_len, index;
   Bucket *bucket;
   Pair *tmp_pairs, *pair;
   char *tmp_value;
 	index = hash(key) % map->count;
   bucket = &(map->buckets[index]);
-  /* Check if we can handle insertion by simply replacing
+  /* Check if we can handle insertion by sihashply replacing
    * an existing value in a key-value pair in the bucket.
    */
   if ((pair = get_pair(bucket, key)) != NULL) {
@@ -345,7 +345,7 @@ void sim_incr(StrIntMap *map, const char *key){
 
 }
 
-void sim_put(StrIntMap *map, const char *key, const int value)
+void sihash_put(sihash *map, const char *key, const int value)
 {
 	unsigned int key_len, value_len, index;
 	Bucket *bucket;
@@ -363,7 +363,7 @@ void sim_put(StrIntMap *map, const char *key, const int value)
 	/* Get a pointer to the bucket the key string hashes to */
 	index = hash(key) % map->count;
 	bucket = &(map->buckets[index]);
-	/* Check if we can handle insertion by simply replacing
+	/* Check if we can handle insertion by sihashply replacing
 	 * an existing value in a key-value pair in the bucket.
 	 */
 	if ((pair = get_pair(bucket, key)) != NULL) {
@@ -402,7 +402,7 @@ void sim_put(StrIntMap *map, const char *key, const int value)
 	pair->value = value;
 }
 
-int sim_get_count(const StrIntMap *map)
+int sihash_get_count(const sihash *map)
 {
 	unsigned int i, j, n, m;
 	unsigned int count;
@@ -431,7 +431,7 @@ int sim_get_count(const StrIntMap *map)
 	return count;
 }
 
-int sim_enum(const StrIntMap *map, sim_enum_func enum_func)
+int sihash_enum(const sihash *map, sihash_enum_func enum_func)
 {
 	unsigned int i, j, n, m;
 	Bucket *bucket;

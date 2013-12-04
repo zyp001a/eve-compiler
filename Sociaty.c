@@ -46,8 +46,9 @@ Index Sociaty_RoleAddElement(Index pi, char *str){
 	m = (char *)malloc(strlen(n) + strlen(str) + 3); 
 	i = atoi(str); 
 	sprintf(m, "%s[%d]", n, i); 
-	ci = Sociaty_AddNewRole(m); 
-	Sociaty_AddSERelation(pi, ci);
+	ci = Sociaty_AddNewRole(m);
+	if(Sociaty_SearchIndexArray(&Sociaty_GetRole(pi)->Elements, ci) == -1)
+		Sociaty_AddSERelation(pi, ci);
 	return ci; 
 } 
 
@@ -134,7 +135,7 @@ int Sociaty_SearchPCRelation(Index pi, Index ci){
  	rtn = 0; 
  	rtn = Sociaty_SearchCRelation(pi, ci, rtn); 
 	//	printf("crtn %d\n", rtn); 
- 	return rtn;	 
+ 	return rtn;
 } 
 int Sociaty_SearchPRelation(Index pi, Index ci, int rtn){ 
  	Role *child; 
@@ -161,7 +162,9 @@ int Sociaty_SearchCRelation(Index pi, Index ci, int rtn){
 	rtn --;
   child = ns.Members.Values + ci;
   for(i=0; i<child->Children.Length; i++){
+
 		subi = child->Children.Values[i];
+
     if(pi == subi)
 			return rtn;
     subrtn = Sociaty_SearchCRelation(pi, subi, rtn);
@@ -255,7 +258,6 @@ Index Sociaty_AddNewRole(char *name){
 	i = Sociaty_SearchRole(name);
 	if(i == -1){
 		i = RoleArray_AddNew(&ns.Members, name);
-		Sociaty_AddPCRelation(0, i);
 	}
 	return i;
 }

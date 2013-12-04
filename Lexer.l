@@ -103,6 +103,7 @@ loop:
   fpath=GetPath(yytext+2);
   if(fpath == NULL){
     eerror("fail to read file");
+    eerror(yytext+2);
     exit(1);
   }
   ld_print("Read file", fpath);
@@ -112,18 +113,21 @@ loop:
 }
 
 ^"<".* {
-  char* fpath;
-  fpath=GetPath(yytext+1);
-  if(fpath == NULL){
-	  eerror("fail to include file");
-    exit(1);
-  }
-  ld_print("Parse file", fpath);
-	if(Sociaty_SearchUsedFile(fpath) == -1){
-		Sociaty_AddUsedFile(fpath);
-		ParseExpressionFromFile(fpath);
-	}
+  char *fpath;
+  fpath = UseFile(yytext+1);
+  if(fpath != NULL)
+		ParseExpressionFromFile(fpath);	
 }
+"use" {
+  ld_print("TOKEN", yytext);
+  return USE;
+}
+"load" {
+  ld_print("TOKEN", yytext);
+  return LOAD;
+}
+
+
 
 ^">>".* {
   ld_print("Append to file", yytext);
@@ -137,10 +141,14 @@ loop:
 
 \^(\\.|[^\\\^])*\^ { 
   ld_print("Print string", yytext);
-  char *str =  estrcent(yytext); 
-  Sociaty_PutString(str);
-  free(str); 
-
+  yylval->strval =  estrcent(yytext); 
+//  Sociaty_PutString(str);
+//  free(str); 
+  return PUTSTR;
+}
+"print" {
+  ld_print("TOKEN", "print");
+  return PRINT;
 }
 
 
@@ -161,6 +169,14 @@ loop:
 "not" {
   ld_print("TOKEN", yytext);
   return NOT;
+}
+"isfile" {
+  ld_print("TOKEN", yytext);
+  return ISFILE;
+}
+"isdir" {
+  ld_print("TOKEN", yytext);
+  return ISDIR;
 }
 
 
@@ -186,10 +202,6 @@ loop:
   return ELSE; 
 }
 
-"print" {
-  ld_print("TOKEN", "print");
-  return PRINT;
-}
 
 "add" {
   ld_print("TOKEN", "add");

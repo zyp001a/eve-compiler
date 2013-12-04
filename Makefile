@@ -1,6 +1,6 @@
 # Makefile
 
-FILES   = Parser.o Lexer.o Common.o Role.o Sociaty.o Eval.o Hash.o main.o
+FILES   = Parser.o Lexer.o Common.o Role.o Sociaty.o Eval.o Hash.o Platform.o main.o
 CC      = gcc
 CFLAGS  = -g
 OUTFILE = eve

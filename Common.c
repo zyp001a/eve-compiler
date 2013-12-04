@@ -69,7 +69,7 @@ char *estrlower(char *str){
 	return rtn;
 }
 
-void estradd(char **a, char *b){
+void estrcat(char **a, char *b){
 	if(b==NULL) return;
 	int lena;
 	if(*a==NULL){

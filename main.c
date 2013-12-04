@@ -73,7 +73,7 @@ int main(int argc, char **argv)
 		strcpy(errfile, ns.ProgramFile);
 		strcat(errfile, ".log");
 		ns.Err=fopen(errfile, "w");
-
+		
 		ParseExpressionFromString("<Basic\n");
 		ri = Sociaty_AddNewRole("CmdArgs");
 		Sociaty_RoleAssignArrayByStringArray(ri, argc-1, argv+1);
@@ -85,5 +85,6 @@ int main(int argc, char **argv)
 //*/	
 	}
 	fclose(ns.Err);
+
 	return 0;
 }
