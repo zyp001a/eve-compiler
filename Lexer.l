@@ -96,14 +96,14 @@ loop:
   }
 }
 
-^"<<".+ {
+^"<<<".+ {
   char* fpath;
   char *content;	
   FILE *fp;
-  fpath=GetPath(yytext+2);
+  fpath=GetPath(yytext+3);
   if(fpath == NULL){
     eerror("fail to read file");
-    eerror(yytext+2);
+    eerror(yytext+3);
     exit(1);
   }
   ld_print("Read file", fpath);
@@ -111,7 +111,10 @@ loop:
   content = ereadfile(fp);
   Sociaty_PutString(content);
 }
-
+^"<<".* {
+  char *fpath;
+	Sociaty_SetIn(yytext+2, "r");
+}
 ^"<".* {
   char *fpath;
   fpath = UseFile(yytext+1);

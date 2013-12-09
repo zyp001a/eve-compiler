@@ -27,6 +27,8 @@ char cincludepath[] = "/zyp/eve/compiler/Eve/C";
 int main(int argc, char **argv)
 {
 	ns.Out = stdout;
+//	ns.In = stdin;
+//	ns.Err = stderr;
 	ns.Step = 1;
 	FILE *fp;
 	Role *r;
@@ -45,8 +47,8 @@ int main(int argc, char **argv)
 		printf("Original designed by setupX\n");
 		printf("=======\n");
 		printf("Press Ctrl+D to exit\n");
-		
-		ns.Err = fopen(".eve.log","a");
+		strcpy(ns.ErrFile,".eve.log");
+		ns.Err = fopen(ns.ErrFile,"a");
 		ParseExpressionFromString("<Basic\n");
 		li = 0;
 		printf("~");
@@ -70,9 +72,9 @@ int main(int argc, char **argv)
 		strcpy(ns.ProgramFile, argv[1]);
 		
 		fp = fopen(ns.ProgramFile, "r");
-		strcpy(errfile, ns.ProgramFile);
-		strcat(errfile, ".log");
-		ns.Err=fopen(errfile, "w");
+		strcpy(ns.ErrFile, ns.ProgramFile);
+		strcat(ns.ErrFile, ".log");
+		ns.Err=fopen(ns.ErrFile, "w");
 		
 		ParseExpressionFromString("<Basic\n");
 		ri = Sociaty_AddNewRole("CmdArgs");

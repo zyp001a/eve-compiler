@@ -287,7 +287,23 @@ void Sociaty_PutChar(char c){
 void Sociaty_PutString(char *s){
   fprintf(ns.Out, "%s", s);
 }
+void Sociaty_SetIn(char *str, char *op){
+  char tmpfile[MAX_FILE_NAME];
+  char step[8];
+	if(ns.In != stdin && ns.In != NULL){
+		fclose(ns.In);
+	}
+	if(estrisnull(str) || !strcmp(str,"stdout")){
+    ns.In = stdin;
+    return;
+  }
+	if(strcmp(str, ns.InFile)){
+    strcpy(ns.InFile, str);
+    ns.In = fopen(str, op);
+    return;
+  }
 
+};
 void Sociaty_SetOut(char *str, char *op){
 	char tmpfile[MAX_FILE_NAME];
 	char step[8];	
