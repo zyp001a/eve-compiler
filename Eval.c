@@ -24,7 +24,7 @@ char* Eval(Index i){
 //	Sociaty_AddNewRole(str);
 	eval = GetDymValue(str);
 //	printf("xxx%s\n", str);
-	return EvalString(r, eval, 1);
+	return EvalString(r, eval, 2);
 
 }
 char* EvalString(Role *r, char *str, char adddone){
@@ -34,13 +34,18 @@ char* EvalString(Role *r, char *str, char adddone){
 	fprintf(ns.Err, "\t---->Eval Content: \n========\n%s\n========\n", str);
 #endif
   InterpretValue(r, str, &result);
-	if(adddone){
+	switch(adddone){
+	case 2:
 		result[0] = '\n';
 		result[1] = '\0';
 		strcat(result, r->_Name);
 		strcat(result, ".Done = 1\n");
-	}
-	else{
+		break;
+	case 1:
+		result[0] = '\n';
+    result[1] = '\0';
+		break;
+	default:
 		result[0] = '\0';
 	}
   result =  &result_buf[0];
@@ -176,6 +181,7 @@ char* GetValueDeep(char *name){
 	char name2[255], pre[255], suf[255];
 	Role *r;
 	char *rtn;
+
 /*
 	ind = Sociaty_SearchRole(name);
 	if(ind != -1){
@@ -225,13 +231,37 @@ char* GetValueDeep(char *name){
 	return "";
 
 }
+char* PrintArray(IndexArray *a, char *sep, char *end, char* format){
+	int i;
+	char v[MAX_BLOCK_SIZE];
+	char *p;
+	int seplen = strlen(sep);
+	if(a->Length == 0) return;
+//	printf("sep %s, end %s, format %s\n",sep, end, format);
+	sprintf(v, format, Sociaty_GetFinalRole(a->Values[0])->_Value);
+//	printf("xxxxx%s\n",v);
+	p = &v[strlen(v)];
+	for(i=1; i<a->Length; i++){
+		sprintf(p, sep);
+		p+=seplen;
+		sprintf(p, format,  Sociaty_GetFinalRole(a->Values[i])->_Value);
+		p = &v[strlen(v)];
+	}
+	sprintf(p, end);
+	p = &v[0];
+
+	return p;
+}
+char* PrintHash(IndexArray *a, char *sep, char *kvsep, char *end, char format){
+	return NULL;
+}
 char EvalParam(TokenParam *pp, Scanner *ps){
 	char name[255], *tmpname;
 	char *tmp;
 	Role *r;
 	int opi;
 	int ind;
-
+	char *sep, *kvsep, *end, *format;
 	tmp = &pp->op[0];
 	opi = pp->oplen;
 	if(pp->op[0] == '%'){ //absolute name
@@ -295,51 +325,47 @@ char EvalParam(TokenParam *pp, Scanner *ps){
 	r = Sociaty_GetFinalRole(ind);
 	switch(pp->c){
 	case 'V': //VALUE
-		if(pp->index != -1) return 1;
 		if(pp->op[0] != '%'){
 			InterpretValue(r, GetDymValue(name), ps->out_curr);
 		}
 		else{
 			InterpretValue(pp->r, GetDymValue(name), ps->out_curr);
 		}
+		return 1;
 		break;
-/*
-	case 'E': //Elements
-		if(pp->index == -1) return 1;
-		if(r->Elements.Length <= pp->index) return 0;
-		r = Sociaty_GetFinalRole(r->Elements.Values[pp->index]);
-		InterpretValue(r, r->_Value, ps->out_curr);
+	case 'a':
+		sep = (pp->argc>0 && strlen(pp->argv[0])>0)?pp->argv[0]:",";
+		end = (pp->argc>1 && strlen(pp->argv[1])>0)?pp->argv[1]:"";
+		format = (pp->argc>2 && strlen(pp->argv[2])>0)?pp->argv[2]:"%s";
+		sprintf((*ps->out_curr),"%s",PrintArray(&r->Elements, sep ,end, format));
 		break;
-*/
+	case 'h':
+		sep = pp->argc>0?pp->argv[0]:",";
+		kvsep = pp->argc>1?pp->argv[1]:"=";
+		end = pp->argc>2?pp->argv[2]:"";
+		format = pp->argc>3?pp->argv[3]:"%s";
+		break;
+
+
 	case 'N': //NAME
-		if(pp->index != -1) return 1;
 		sprintf((*ps->out_curr),"%s",r->_Name);
-    while((*ps->out_curr)[0] != '\0')
-      (*ps->out_curr)++;
 		break;
 	case 'T':
-		if(pp->index != -1) return 1;
     sprintf((*ps->out_curr),"%s",estrafter(r->_Name,'.'));
-    while((*ps->out_curr)[0] != '\0')
-      (*ps->out_curr)++;
     break;
 	case 'L':
-		if(pp->index != -1) return 1;
 		sprintf((*ps->out_curr),"%d",r->Elements.Length);
-		while((*ps->out_curr)[0] != '\0') 
-			(*ps->out_curr)++;
 		break;
+	case 'i':
+    sprintf((*ps->out_curr),"%s._Index",r->_Name);
+    break;
   case 'I':
-		if(pp->index != -1) return 1;
 		sprintf((*ps->out_curr),"%s._Iterator",r->_Name);
-		while((*ps->out_curr)[0] != '\0')
-      (*ps->out_curr)++;
 		break;
+	case 'A':
+		sprintf((*ps->out_curr),"%s._Args",r->_Name);
 	case 'P':
-		if(pp->index != -1) return 1;
 		sprintf((*ps->out_curr),"^%s.Print^",r->_Name);
-		while((*ps->out_curr)[0] != '\0')
-      (*ps->out_curr)++;
 		break;
 /*
 	case 'P': //Parents
@@ -352,8 +378,8 @@ char EvalParam(TokenParam *pp, Scanner *ps){
 	default:
 		return 0;
 	}
-
-
+	while((*ps->out_curr)[0] != '\0')
+		(*ps->out_curr)++;
 	return 1;
 }
 
@@ -368,8 +394,8 @@ char ScanIdentifer(Scanner *ps){
 	char c;
 	TokenParam p;
 	p.r = ps->r;
-
 	p.op = ps->in_curr;
+	p.argc = 0;
 	tmp = ps->in_curr+1;
 	p.oplen = 1;
 	while(tmp[0] == '$' || tmp[0] == '@'){
@@ -424,25 +450,58 @@ char ScanIdentifer(Scanner *ps){
 	}
 
 //	fprintf(ns.Err,"---------%c:%s:%s\n",p.op[0],rtn->_Name,rtn->_Value);
-	p.index = -1;
+//	p.index = -1;
 	if(tmp[0] == '-'){
 		see_dash = 1;
 		p.c = tmp[1];
 		tmp += 2;
-		if(tmp[0] == '['){
+
+		if(tmp[0] == '('){
       tmp++;
-			tmp2 = tmp;
+//			tmp2 = tmp;
 			len2= 0;
-      while(eisdigit(tmp[0])){
+      while(1){
+				if(tmp[0] == ')'){
+					p.argv[p.argc][len2]='\0';
+					if(len2){
+						p.argc++;
+					}
+					tmp++;
+					break;
+				}
+				if(tmp[0] == ','){
+					p.argv[p.argc][len2]='\0';
+					len2=0;
+					p.argc++;
+					tmp++;
+					continue;
+				}
+				if(tmp[0] == '\\'){
+					switch(tmp[1]){
+					case ',':
+						tmp++;
+						break;
+					case 't':
+						p.argv[p.argc][len2] = '\t';
+						len2++;
+						tmp+=2;
+						continue;
+						break;
+					case 'n':
+						p.argv[p.argc][len2] = '\n';
+            len2++;
+            tmp+=2;						
+            continue;
+            break;
+					}					
+				}
+
+				p.argv[p.argc][len2] = tmp[0];
 				len2++;
         tmp++;
       }
-      if(tmp[0] != ']') return 0;
-      tmp++; //skip ]
-			indexstr = estrndup(tmp2, len2);
-			p.index = atoi(indexstr);
-			free(indexstr);
     }
+
 	}
 	else{
 		p.c = 'V';
@@ -463,7 +522,11 @@ char ScanIdentifer(Scanner *ps){
 	for(i=0; i<p.oplen; i++){
     fprintf(ns.Err, "%c", p.op[i]);
   }
-  fprintf(ns.Err, "\tindex %d\tchar %c\n", p.index, p.c);
+  fprintf(ns.Err, "\tchar %c\n", p.c);
+	for(i=0; i<p.argc; i++){
+    fprintf(ns.Err, "%s,", p.argv[i]);
+  }
+	fprintf(ns.Err, "\n");
 #endif
 
 	if(!EvalParam(&p, ps)) return 0;
@@ -484,9 +547,7 @@ void InterpretValue(Role *r, char *v, char **out_curr){
 			return;
 		case '\\':
 			c = s.in_curr[1];
-			if(c == '$'  || c == '@'  || c == '%'  || c == '&'  ||
-				 c == '|'  || c == '['  || c == ']'  || c == '\\' ||
-				 c == '\'' || c == '"'  || c == '`'  || c == '^' ){
+			if(c == '$'  || c == '@'  || c == '%'  || c == '&' ){
 				s.in_curr ++;
 			}
 			break;

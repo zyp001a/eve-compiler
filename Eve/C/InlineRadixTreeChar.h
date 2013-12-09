@@ -2,14 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
-#define SEP '\t'
-#define SEPSTR "\t"
-#define __START_OFFSET 0
-#define egetc _IO_getc_unlocked
-#define MAX_LINE_SIZE 32768
-#define COL_NUM 7
-#define GETCHAR "egetc(fp)"
-#define RETURN_STATEMENT "linedump.chromosome=%d;"
 
 typedef struct irtree irtree;
 struct irtree{

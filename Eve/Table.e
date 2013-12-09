@@ -1,9 +1,10 @@
 <DataStructure
 <_Table.BasicCheck
 <_Table.AdvancedCheck
+<_Table.Read
 <_Table.Column
 Table:DataStructure
-Table.Sep = `'\t'`
+Table.Sep = '\t'
 Table.Config.MaxCharArraySize = 15
 
 Table.Stat._Eval = `
@@ -14,11 +15,7 @@ DataStartOffset: @|DataStartOffset-P|
 ^
 `
 
-Table.Read._Eval = `
-@-N.BasicCheck.Run.CheckDone
-@-N.AdvancedCheck.Run.CheckDone
-`
 
-Table.DraftStruct : C.Struct
+
 Table.Struct : C.Struct
 

@@ -15,9 +15,18 @@ C.Struct.Print._Eval = `
 struct @|Name|{
 ^
 for @|Definitions-N| {
-^	^@|Definitions-I|.Print
+^	^&-I.Print
 }
 ^};
 ^
+`
+
+
+C.Function.Code = `
+void @-N(){
+  @|Block|
+}
+`
+C.Process.Invoke._Eval = `
 `
 

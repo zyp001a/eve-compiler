@@ -1,7 +1,7 @@
 <ProgrammingLanguage
 <_C.Grammar
 <_C.Hash
-
+<_C.Code
 
 C:ProgrammingLanguage
 
@@ -33,4 +33,8 @@ C.Run._Eval = `
 ~./@|ExecuteFile| > @|OutputFile|
 <@|OutputFile|
 
+`
+C.Exec._Eval = `
+@-N.Compile.CheckDone
+~./@|ExecuteFile|
 `

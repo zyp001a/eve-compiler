@@ -20,7 +20,7 @@ int const_count = 0;
 char version[] = "c0.1";
 //char *const_name = "EveConst";
 
-char path[] = "ignore:./:/zyp/eve/compiler/Eve/";
+char path[] = "ignore:./:/zyp/eve/compiler/Eve/:/zyp/eve/compile/MachineLearning/:/zyp/eve/compiler/Biology/";
 char cincludepath[] = "/zyp/eve/compiler/Eve/C";
 
  

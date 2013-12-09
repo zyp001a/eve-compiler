@@ -39,7 +39,7 @@ INT_SUFFIX    (u|U|l|L)*
 
 
 %%
-\'(\\.|[^\\'])+\' { 
+\'(\\.|[^\\'])*\' { 
   ld_print("Read string1", yytext);
   yylval->strval = estrcent(yytext); 
   return(CONSTANT); 
@@ -189,6 +189,8 @@ loop:
   ld_print("TOKEN", yytext);
   return FOR; 
 }
+
+
 "while" {
   ld_print("TOKEN", yytext);
   return WHILE;
@@ -196,6 +198,10 @@ loop:
 "if" { 
   ld_print("TOKEN", yytext);
   return IF; 
+}
+"elsif" {
+  ld_print("TOKEN", yytext);
+  return ELSIF; 
 }
 "else" {
   ld_print("TOKEN", yytext);
@@ -276,26 +282,34 @@ loop:
   return(END_OF_STATEMENT); 
 }
 
+
+
 "+" { return '+'; }
 ":" { return ':'; }
 "." { return '.'; } 
 "," { return ','; }
 "=" { return '='; }
 "&" { return '&'; }
+"%" { return '%'; }
+"$" { return '$'; }
+"@" { return '@'; }
 "[" { return '['; }
 "]" { return ']'; }
 ")" { return ')'; }
 "(" { return '('; }
 ">" { return '>'; }
 "<" { return '<'; }
-
+"|" { return '|'; }
 
 "\\\n"     { }
 [ \t\v\r]  { }
 
 
 
-.     { ld_print("Unmatched text", yytext); }
+.     { 
+  ld_print("Unmatched text", yytext); 
+	fprintf(stderr, "Unmatched text %s\n", yytext); 
+}
 
 %%
 

@@ -9,7 +9,7 @@
 #define AS_CATEGORY_CCHAR_CUT_LOW 8
 #define AS_CATEGORY_CCHAR_CUT @@|Config.MaxCharArraySize|
 #define AS_CATEGORY_CNOTNUM_CUT 8
-#define SEP @@|Sep|
+#define SEP '@@|Sep|'
 
 typedef enum TypeV{
 	TCATEGORY,
@@ -336,8 +336,8 @@ int main(int argc, char **argv){
 	printf("@@-N.HeadStartOffset =  %ld\n", thead);
 	printf("@@-N.DataStartOffset =  %ld\n", tstart);
 	int coli;
-	printf("@@-N.DraftStruct.Name = \'@@-TLine\'\n");
-//	printf("\\^Include\n\\^\n");
+//	printf("@@-N.DraftStruct.Name = \'@@-TLine\'\n");
+//	printf("\^Include\n\^\n");
 	for(coli=0; coli<ccol; coli++){
 		printf("@@-N.DraftStruct.Definitions[%d]:C.Definition\n", coli);
 		printf("@@-N.DraftStruct.Definitions[%d].Type.Name = \'%s\'\n", 

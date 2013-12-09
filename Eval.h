@@ -29,7 +29,9 @@ typedef struct TokenParam{
 	char *op;// %$$ &@@ & %
 	int oplen; //op len
 	char c; //'V' 'N' 'E' in &-E[0]
-	int index; // 0 in &-E[0]
+//	int index; // 0 in &-E[0]
+	char argv[7][255];
+	char argc;
 } TokenParam;
 
 char* Eval(Index i);

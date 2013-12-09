@@ -61,7 +61,7 @@ yyscan_t current_scanner;
 %token <strval> CONSTANT 
 %token <strval> INTEGER
 %token <strval> BLOCK
-%token FOR WHILE IF ELSE 
+%token FOR WHILE IF ELSIF ELSE 
 %token USE LOAD ADD INVOKE PRINT 
 %token <strval> PUTSTR
 %token VALUE READFILE
@@ -78,6 +78,7 @@ yyscan_t current_scanner;
 %type <numval> member
 %type <strint> argument
 %type <numval> boolean_expression
+%type <strval> else_expression
 %type <arr> argument_list
 
 
@@ -124,34 +125,20 @@ control_expression
 : FOR role BLOCK
 {
 	yd_print("FOR");
-	int i, ii;
-	ii = Sociaty_RoleAddSubordinate($2, "_Iterator");
+	int i, ii, it;
+	char str[8];
+	it = Sociaty_RoleAddSubordinate($2, "_Iterator");
+	ii = Sociaty_RoleAddSubordinate($2, "_Index");
 	for(i=0; i< Sociaty_GetRole($2)->Elements.Length; i++){
-    Sociaty_GetRole(ii)->_TargetIndex = Sociaty_GetRole($2)->Elements.Values[i];
+    Sociaty_GetRole(it)->_TargetIndex = Sociaty_GetRole($2)->Elements.Values[i];
+		sprintf(str, "%d", i);
+		Sociaty_GetRole(ii)->_Value = estrdup(str);
 //		printf("xxxx%s\nxxx", Sociaty_GetRole(ii)->_Value);
-    estraddeol(&$3);
-    ParseExpressionFromString($3);
+		char *rtn;
+		rtn = EvalString(Sociaty_GetFinalRole($2), $3, 1);
+    ParseExpressionFromString(rtn);
   }
 }
-/*
-| WHILE role BLOCK
-{
-	yd_print("WHILE");
-  while(!estrisnull(Sociaty_GetRole($2)->_Value)){
-		estraddeol(&$3);
-    ParseExpressionFromString($3);
-  }
-}
-| WHILE NOT role BLOCK
-{
-	yd_print("WHILE NOT");
-	while(estrisnull(Sociaty_GetRole($3)->_Value)){
-    estraddeol(&$4);
-    ParseExpressionFromString($4);
-  }
-
-}
-*/
 | IF boolean_expression BLOCK
 {
 	yd_print("IF");
@@ -160,7 +147,7 @@ control_expression
 		ParseExpressionFromString($3);
 	}
 }
-| IF boolean_expression BLOCK ELSE BLOCK
+| IF boolean_expression BLOCK ELSE else_expression
 {
 	yd_print("IF ELSE");
   if($2){
@@ -171,6 +158,22 @@ control_expression
 		estraddeol(&$5);
 		ParseExpressionFromString($5);
 	}
+}
+;
+else_expression
+: BLOCK
+{
+	$$ = $1;
+}
+| IF boolean_expression BLOCK
+{
+	if($2) $$ = $3;
+	else $$ = estrdup("");
+}
+| IF boolean_expression BLOCK ELSE else_expression
+{
+	if($2) $$ = $3;
+  else $$ = $5;
 }
 ;
 boolean_expression
@@ -186,7 +189,7 @@ boolean_expression
 	if(!strcmp($1, $4)) $$ = 1;
 	else $$ = 0;
 }
-| role_as_const '!' '=' role_as_const
+| role_as_const NOT '=' role_as_const
 {
 	if(strcmp($1, $4)) $$ = 1;
 	else $$ = 0;
@@ -220,6 +223,18 @@ boolean_expression
 {
   $$ = eisdir($2);
 }
+| '(' boolean_expression ')'
+{
+	$$ = $2;
+}
+| '(' boolean_expression '&' '&' boolean_expression ')'
+{
+	$$ = $2 && $5;
+}
+| '(' boolean_expression '|' '|' boolean_expression ')'
+{
+  $$ = $2 || $5;
+}
 ;
 internal_function
 : USE role_as_const
@@ -252,7 +267,7 @@ internal_function
 {
   yd_print("INVOKE");
 	char *rtn;
-	rtn = EvalString(Sociaty_GetFinalRole($2), $3, 0);
+	rtn = EvalString(Sociaty_GetFinalRole($2), $3, 1);
 //  yd_print(rtn);
 	ParseExpressionFromString(rtn);
 }
