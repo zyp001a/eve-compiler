@@ -40,9 +40,10 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 33 "Parser.y" /* yacc.c:1915  */
+#line 32 "Parser.y" /* yacc.c:1915  */
 
 #include "Common.h"  
+#include "Role.h"
 #ifndef YY_TYPEDEF_YY_SCANNER_T
 #define YY_TYPEDEF_YY_SCANNER_T
 	typedef void* yyscan_t;
@@ -52,7 +53,7 @@ void ParseExpressionFromFp(FILE *fp);
 void ParseExpressionFromString(char *str);
 yyscan_t current_scanner;
 
-#line 56 "Parser.h" /* yacc.c:1915  */
+#line 57 "Parser.h" /* yacc.c:1915  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -63,25 +64,26 @@ yyscan_t current_scanner;
     CONSTANT = 259,
     INTEGER = 260,
     BLOCK = 261,
-    FOR = 262,
-    WHILE = 263,
-    IF = 264,
-    ELSIF = 265,
-    ELSE = 266,
-    USE = 267,
-    LOAD = 268,
-    ADD = 269,
-    INVOKE = 270,
-    PRINT = 271,
-    PUTSTR = 272,
-    VALUE = 273,
-    READFILE = 274,
-    NOT = 275,
-    ISFILE = 276,
-    ISDIR = 277,
-    END_OF_STATEMENT = 278,
-    SETFLAG = 279,
-    SETARGS = 280
+    ADDRESS = 262,
+    FOR = 263,
+    WHILE = 264,
+    IF = 265,
+    ELSIF = 266,
+    ELSE = 267,
+    USE = 268,
+    LOAD = 269,
+    ADD = 270,
+    INVOKE = 271,
+    PRINT = 272,
+    PUTSTR = 273,
+    VALUE = 274,
+    READFILE = 275,
+    NOT = 276,
+    ISFILE = 277,
+    ISDIR = 278,
+    END_OF_STATEMENT = 279,
+    SETFLAG = 280,
+    SETARGS = 281
   };
 #endif
 
@@ -92,12 +94,13 @@ union YYSTYPE
 {
 #line 52 "Parser.y" /* yacc.c:1915  */
 
+	Role* roleval;
 	int numval;
-	StringIntArray arr;
+	RoleArray* rolearr;
 	StringInt strint;
-	char *strval;
+	char* strval;
 
-#line 101 "Parser.h" /* yacc.c:1915  */
+#line 104 "Parser.h" /* yacc.c:1915  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

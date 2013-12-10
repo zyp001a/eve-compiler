@@ -16,6 +16,7 @@ Macro Test
 Global   %
 \%|CmdArgs[0]|:     %|CmdArgs[0]|
 \%|CmdArgs[0]-V|:   %|CmdArgs[0]-V|
+\%|CmdArgs[0]-v|:   %|CmdArgs[0]-v|
 \%|CmdArgs[0]-N|:   %|CmdArgs[0]-N|
 \%|CmdArgs[0]-L|:   %|CmdArgs[0]-L|
 Local    &

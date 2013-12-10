@@ -240,16 +240,6 @@ void sihash_delete(sihash *map)
 	i = 0;
 	while (i < n) {
 		m = bucket->count;
-/*
-		pair = bucket->pairs;
-		j = 0;
-		while(j < m) {
-//			free(pair->key);
-//			free(pair->value);
-			pair++;
-			j++;
-		}
-*/
 		free(bucket->pairs);
 		bucket++;
 		i++;

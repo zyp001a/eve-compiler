@@ -36,8 +36,8 @@ int main(int argc, char **argv)
 	char line[32768];
 	int li,c;
 	char errfile[MAX_FILE_NAME];
-	int ri;
-	
+	int i;
+	RoleArray *ra;
 	Sociaty_Create();
 	
 	if(argc == 1){
@@ -75,12 +75,22 @@ int main(int argc, char **argv)
 		strcpy(ns.ErrFile, ns.ProgramFile);
 		strcat(ns.ErrFile, ".log");
 		ns.Err=fopen(ns.ErrFile, "w");
+//		ns.Err = stderr;
 		
 		ParseExpressionFromString("<Basic\n");
-		ri = Sociaty_AddNewRole("CmdArgs");
-		Sociaty_RoleAssignArrayByStringArray(ri, argc-1, argv+1);
-		ri = Sociaty_AddNewRole("CIncludePath");
-		strcpy(Sociaty_GetRole(ri)->_Value, cincludepath);
+		r = Sociaty_RoleEmploy(ns.Root, "CmdArgs");
+		RoleArray_Init(&ra);
+		ra->Length = ra->Size = argc-1;
+		ra->Values = (Role**)malloc(ra->Size*sizeof(Role*));
+		for(i=0; i<ra->Length; i++){
+			ra->Values[i] = Role_New();
+			ra->Values[i]->_Value = argv[i+1];
+		}
+		Sociaty_RoleSetElements(r, ra);
+
+
+		r = Sociaty_RoleEmploy(ns.Root, "CIncludePath");
+		r->_Value = estrdup(cincludepath);
 
 		ParseExpressionFromFp(fp);
 

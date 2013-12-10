@@ -54,6 +54,12 @@ INT_SUFFIX    (u|U|l|L)*
   yylval->strval = estrcent(yytext); 
   return(CONSTANT); 
 }
+\#{DIGIT}+\# {
+  ld_print("Read address", yytext);
+  yylval->strval = estrcent(yytext);
+  return(ADDRESS);
+}
+
 
 "#".+ { 
   ld_print("Read comment1", yytext);

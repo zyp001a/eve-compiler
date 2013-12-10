@@ -1,5 +1,5 @@
-#ifndef _COMMON
-#define _COMMON
+#ifndef _ECOMMON
+#define _ECOMMON
 //#define EDEBUG
 #include <stdio.h>
 #include <stdlib.h>
