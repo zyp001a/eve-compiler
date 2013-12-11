@@ -19,6 +19,7 @@ typedef struct Scanner{
 //	char *in_tmp; //tmp poiner
 	char *in_curr; //input poiner 
 	char **out_curr; //output pointer
+	char is_read;
 } Scanner;
 
 typedef struct TokenParam{
@@ -42,9 +43,11 @@ char* GetPath(char *);
 char* GetDefaultValue(Role *r);
 char* GetNoDefaultValue(Role *r);
 char* GetDymValue(Role *r); //for any name return a value
+char DoReadParam(TokenParam *pp, Scanner *ps, Role *r);
+char DoWriteParam(TokenParam *pp, Scanner *ps, Role *r);
 char EvalParam(TokenParam *pp, Scanner *ps);
 char ScanIdentifer(Scanner *ps);
-void InterpretValue(Role *r, char *v, char **out_curr);
+void InterpretValue(Role *r, char *v, char **out_curr, char);
 
 
 //Lang GetLang(char *);

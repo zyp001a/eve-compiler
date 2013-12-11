@@ -378,13 +378,14 @@ role_as_const
 */
 | READFILE role_as_const
 {
+	yd_print("READFILE");
 	char* fpath;
   FILE *fp;
   fpath=GetPath($2);
   if(fpath == NULL){
 		$$ = "";
   }
-
+	yd_print(fpath);
   fp = fopen(fpath, "r");
   $$ = ereadfile(fp);
 }

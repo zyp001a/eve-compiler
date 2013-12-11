@@ -28,7 +28,7 @@ char* Eval(Role *r){
 char* EvalString(Role *r, char *str, char adddone){
 	char result_buf[MAX_BLOCK_SIZE];
   char *result = &result_buf[0];
-  InterpretValue(r, str, &result);
+  InterpretValue(r, str, &result, 0);
 	switch(adddone){
 	case 2:
 		result[0] = '\n';
@@ -449,22 +449,32 @@ Role *GetRoleParam(TokenParam *pp, Scanner *ps){
 	return r;	
 }
 char EvalParam(TokenParam *pp, Scanner *ps){
-	char *tmpname;
 	Role *r;
+	r = GetRoleParam(pp, ps);
+	if(ps->is_read)
+		return DoReadParam(pp, ps, r);
+	else
+		return DoWriteParam(pp, ps, r);
+}
+char DoReadParam(TokenParam *pp, Scanner *ps, Role *r){
+	return 0;
+}
+char DoWriteParam(TokenParam *pp, Scanner *ps, Role *r){
+	char *tmpname;
 	int ind;
 	char *sep, *kvsep, *end, *format;
 	char *name;
 	char *v;
-	r = GetRoleParam(pp, ps);
+
 	switch(pp->c){
 	case 'v': //VALUE
 		v = GetDymValue(r);
 		if(v == NULL) return 1;
 		if(pp->op[0] != '%'){
-			InterpretValue(r, v, ps->out_curr);
+			InterpretValue(r, v, ps->out_curr, 0);
 		}
 		else{
-			InterpretValue(ps->r, v, ps->out_curr);
+			InterpretValue(ps->r, v, ps->out_curr, 0);
 		}
 		return 1;
 		break;
@@ -698,13 +708,13 @@ char ScanIdentifer(Scanner *ps){
 	ps->in_curr = tmp;
 	return 1;
 }
-void InterpretValue(Role *r, char *v, char **out_curr){
+void InterpretValue(Role *r, char *v, char **out_curr, char is_read){
 #ifdef EVALDEBUG
 	fprintf(ns.Err, "\t---->Eval Content: \n========\n%s\n========\n", v);
 #endif
-
 	Scanner s;
 	char c;
+	s.is_read = is_read;
 	s.r = r;
 	s.in_curr = v;
 	s.out_curr = out_curr;

@@ -12,6 +12,9 @@ C.OutputFile = "%|CmdArgs[0]|.@-N.output"
 
 C.Write._Eval = `
 >@|CodeFile|
+if @-N.TemplateFile {
+@-N.Code = readfile @-N.TemplateFile
+}
 @-N.Code.Print
 >stdout
 `

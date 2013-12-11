@@ -482,8 +482,8 @@ static const yytype_uint16 yyrline[] =
      113,   114,   115,   129,   150,   158,   172,   176,   181,   188,
      195,   200,   205,   209,   213,   217,   221,   225,   229,   233,
      237,   241,   247,   254,   275,   304,   309,   314,   319,   326,
-     333,   337,   341,   349,   358,   366,   379,   403,   404,   407,
-     411,   415,   422,   428,   434,   438,   445,   450,   456,   461
+     333,   337,   341,   349,   358,   366,   379,   404,   405,   408,
+     412,   416,   423,   429,   435,   439,   446,   451,   457,   462
 };
 #endif
 
@@ -1617,7 +1617,7 @@ yyreduce:
 #line 310 "Parser.y" /* yacc.c:1661  */
     { 
 	yd_print("ASSIGN VALUE");
-	(yyvsp[-2].roleval)->_Value = estrdup((yyvsp[0].strval));
+	Role_SetValue((yyvsp[-2].roleval), estrdup((yyvsp[0].strval)));
 }
 #line 1623 "Parser.c" /* yacc.c:1661  */
     break;
@@ -1714,128 +1714,129 @@ yyreduce:
   case 46:
 #line 380 "Parser.y" /* yacc.c:1661  */
     {
+	yd_print("READFILE");
 	char* fpath;
   FILE *fp;
   fpath=GetPath((yyvsp[0].strval));
   if(fpath == NULL){
 		(yyval.strval) = "";
   }
-
+	yd_print(fpath);
   fp = fopen(fpath, "r");
   (yyval.strval) = ereadfile(fp);
 }
-#line 1728 "Parser.c" /* yacc.c:1661  */
+#line 1729 "Parser.c" /* yacc.c:1661  */
     break;
 
   case 47:
-#line 403 "Parser.y" /* yacc.c:1661  */
+#line 404 "Parser.y" /* yacc.c:1661  */
     { (yyval.strval) = (yyvsp[0].strval); }
-#line 1734 "Parser.c" /* yacc.c:1661  */
+#line 1735 "Parser.c" /* yacc.c:1661  */
     break;
 
   case 48:
-#line 404 "Parser.y" /* yacc.c:1661  */
+#line 405 "Parser.y" /* yacc.c:1661  */
     {(yyval.strval) = (yyvsp[0].strval); }
-#line 1740 "Parser.c" /* yacc.c:1661  */
+#line 1741 "Parser.c" /* yacc.c:1661  */
     break;
 
   case 49:
-#line 408 "Parser.y" /* yacc.c:1661  */
+#line 409 "Parser.y" /* yacc.c:1661  */
     {
   (yyval.roleval) = (yyvsp[0].roleval);
 }
-#line 1748 "Parser.c" /* yacc.c:1661  */
+#line 1749 "Parser.c" /* yacc.c:1661  */
     break;
 
   case 50:
-#line 412 "Parser.y" /* yacc.c:1661  */
+#line 413 "Parser.y" /* yacc.c:1661  */
     {
 	(yyval.roleval) = Sociaty_RoleEmploy(ns.Curr, (yyvsp[0].strval));
 }
-#line 1756 "Parser.c" /* yacc.c:1661  */
+#line 1757 "Parser.c" /* yacc.c:1661  */
     break;
 
   case 51:
-#line 416 "Parser.y" /* yacc.c:1661  */
+#line 417 "Parser.y" /* yacc.c:1661  */
     {
 	(yyval.roleval) = (Role*)atol((yyvsp[0].strval));
 }
-#line 1764 "Parser.c" /* yacc.c:1661  */
+#line 1765 "Parser.c" /* yacc.c:1661  */
     break;
 
   case 52:
-#line 423 "Parser.y" /* yacc.c:1661  */
+#line 424 "Parser.y" /* yacc.c:1661  */
     {
 	Role *r;
 	r = Sociaty_RoleEmploy(ns.Curr, (yyvsp[-2].strval));
 	(yyval.roleval) = Sociaty_RoleEmploy(r, (yyvsp[0].strval));
 }
-#line 1774 "Parser.c" /* yacc.c:1661  */
+#line 1775 "Parser.c" /* yacc.c:1661  */
     break;
 
   case 53:
-#line 429 "Parser.y" /* yacc.c:1661  */
+#line 430 "Parser.y" /* yacc.c:1661  */
     {
 	Role *r;
   r = Sociaty_RoleEmploy(ns.Curr, (yyvsp[-3].strval));
 	(yyval.roleval) = Sociaty_RoleExpend(r, atoi((yyvsp[-1].strval)));
 }
-#line 1784 "Parser.c" /* yacc.c:1661  */
+#line 1785 "Parser.c" /* yacc.c:1661  */
     break;
 
   case 54:
-#line 435 "Parser.y" /* yacc.c:1661  */
+#line 436 "Parser.y" /* yacc.c:1661  */
     {
 	(yyval.roleval) = Sociaty_RoleEmploy((yyvsp[-2].roleval), (yyvsp[0].strval));
 }
-#line 1792 "Parser.c" /* yacc.c:1661  */
+#line 1793 "Parser.c" /* yacc.c:1661  */
     break;
 
   case 55:
-#line 439 "Parser.y" /* yacc.c:1661  */
+#line 440 "Parser.y" /* yacc.c:1661  */
     {
 	(yyval.roleval) = Sociaty_RoleExpend((yyvsp[-3].roleval), atoi((yyvsp[-1].strval)));
 }
-#line 1800 "Parser.c" /* yacc.c:1661  */
+#line 1801 "Parser.c" /* yacc.c:1661  */
     break;
 
   case 56:
-#line 446 "Parser.y" /* yacc.c:1661  */
+#line 447 "Parser.y" /* yacc.c:1661  */
     {	
 	(yyval.roleval) = Role_New();
 	(yyval.roleval)->_Value = (yyvsp[0].strval);
 }
-#line 1809 "Parser.c" /* yacc.c:1661  */
+#line 1810 "Parser.c" /* yacc.c:1661  */
     break;
 
   case 57:
-#line 451 "Parser.y" /* yacc.c:1661  */
+#line 452 "Parser.y" /* yacc.c:1661  */
     {
 	(yyval.roleval) = (yyvsp[0].roleval);
 }
-#line 1817 "Parser.c" /* yacc.c:1661  */
+#line 1818 "Parser.c" /* yacc.c:1661  */
     break;
 
   case 58:
-#line 457 "Parser.y" /* yacc.c:1661  */
+#line 458 "Parser.y" /* yacc.c:1661  */
     { 
 	RoleArray_Init(&(yyval.rolearr)); 
 	RoleArray_Add((yyval.rolearr), (yyvsp[0].roleval));
 }
-#line 1826 "Parser.c" /* yacc.c:1661  */
+#line 1827 "Parser.c" /* yacc.c:1661  */
     break;
 
   case 59:
-#line 461 "Parser.y" /* yacc.c:1661  */
+#line 462 "Parser.y" /* yacc.c:1661  */
     { 
 	RoleArray_Add((yyvsp[-2].rolearr), (yyvsp[0].roleval));
 	(yyval.rolearr) = (yyvsp[-2].rolearr);
 }
-#line 1835 "Parser.c" /* yacc.c:1661  */
+#line 1836 "Parser.c" /* yacc.c:1661  */
     break;
 
 
-#line 1839 "Parser.c" /* yacc.c:1661  */
+#line 1840 "Parser.c" /* yacc.c:1661  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2063,7 +2064,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 467 "Parser.y" /* yacc.c:1906  */
+#line 468 "Parser.y" /* yacc.c:1906  */
 
 
 	//void ParseExpressionFromString(Expression *expr, char *str){
