@@ -38,25 +38,25 @@ void Role_Free(Role *r){
 	RoleArray_Free(r->_Elements);
 	free(r);
 }
-void Role_SetName(Role *r, char *name){
-	if(r->_Name == NULL) 
-		free(r->_Name);
-	r->_Name = estrdup(name);
+void Role_Set(Role *r, Role *t){
+	if(r->_Value != NULL) 
+		free(r->_Value);
+	r->_Value = t->_Value;
+	r->_Target = t->_Target;
 }
-void Role_SetKey(Role *r, char *key){
-	if(r->Key == NULL) 
-		free(r->Key);
-	r->Key = estrdup(key);
+void Role_SetName(Role *r, char *name){
+	if(r->_Name != NULL) 
+		free(r->_Name);
+	r->_Name = name;
 }
 void Role_SetValue(Role *r, char *value){
-	if(r->_Value == NULL) 
+	if(r->_Value != NULL) 
 		free(r->_Value);
-	r->_Value = estrdup(value);
+	r->_Value = value;
 }
 void Role_SetTarget(Role *r, Role* t){
   r->_Target = t;
 }
-
 
 
 Role* Role_GetSup(Role *r, char level){
@@ -66,12 +66,6 @@ Role* Role_GetSup(Role *r, char level){
 		return r->Sup;
 	else
 		return Role_GetSup(r->Sup, level-1);
-}
-char* Role_GetFinalValue(Role *r){
-	Role *tr = r;
-	while(tr->_Target != NULL)
-		tr = r->_Target;
-	return tr->_Value;
 }
 
 

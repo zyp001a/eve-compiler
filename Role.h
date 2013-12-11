@@ -56,15 +56,13 @@ struct Bucket {
 
 
 Role* Role_New();
+void Role_Set(Role *r, Role *t);
+
 void Role_SetValue(Role *r, char *value);
-void Role_SetName(Role *r, char *);
-void Role_SetKey(Role *r, char *);
 void Role_SetTarget(Role *r, Role* t);
-void Role_SetSup(Role* r, Role* t);
+//void Role_SetElements(Role* r, RoleArray *ra);
 
 Role* Role_GetSup(Role *r, char level);
-char* Role_GetFinalValue(Role *r);
-
 
 void Role_AddSub(Role* r, char* key, Role* t);
 void Role_AddPrt(Role* r, Role* t);

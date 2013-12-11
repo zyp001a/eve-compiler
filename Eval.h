@@ -50,9 +50,6 @@ void InterpretValue(Role *r, char *v, char **out_curr);
 //Lang GetLang(char *);
 char GetFlag(char *);
 char *GetParentName(Role *r);
-char ExistValue(Role *r);
-char *GetValue(Role *r);
-char* GetValueDeep(char *name);
 //Role* GetRole(char *name);
 
 

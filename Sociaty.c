@@ -28,15 +28,16 @@ Index Sociaty_SearchUsedFile(char *f){
 }
 //add suboridnate
 Role* Sociaty_RoleEmploy(Role *r, char *key){
-	char name[255];
+	static char name[255];
 	Role *t = RoleHash_GetOrPut(r->Subs, key);
 	if(r != ns.Root){
 		sprintf(name, "%s.%s", r->_Name, key);
-		t->_Name = estrdup(name);
-
+		if(t->_Name == NULL)
+			t->_Name = estrdup(name);
 	}
 	else{
-		t->_Name = estrdup(key);
+		if(t->_Name == NULL)
+			t->_Name = estrdup(key);
 	}
 	if(t->Depth == -1) t->Depth = r->Depth +1;
 	if(t->Key == NULL) t->Key = key;
@@ -45,73 +46,66 @@ Role* Sociaty_RoleEmploy(Role *r, char *key){
 //	Role_Print(t);
 	return t;
 }
+static void Sociaty_RoleInitElement(Role **pr, Role *r, Index i){
+	static char name[255];
+	(*pr)->Sup = r->Sup;
+	(*pr)->Key = r->Key;
+	(*pr)->Index = i;
+	sprintf(name,"%s[%d]",r->_Name,i);
+	if((*pr)->_Name == NULL)
+		(*pr)->_Name = estrdup(name);						
+}
+
 //add element
 Role* Sociaty_RoleExpend(Role *r, Index ind){
 	Role *t;
-	char name[255];
+	static char name[255];
 	Index i;
 	if(ind >= r->_Elements->Length){
 		r->_Elements->Length = ind + 1;
-		if(r->_Elements->Size == 0)
+		if(r->_Elements->Size == 0){
 			r->_Elements->Values =
 				(Role**)malloc(r->_Elements->Size*sizeof(Role*));
-		else if(r->_Elements->Length > r->_Elements->Size){
-				r->_Elements->Size = r->_Elements->Length;
-				r->_Elements->Values =
-					(Role**)realloc(r->_Elements->Values, 
-													r->_Elements->Size*sizeof(Role*));
-		}
-		
-		for(i=0; i<r->_Elements->Length; i++){
-			sprintf(name,"%s[%d]",r->_Name,i);			
-			if(r->_Elements->Values[i] == NULL){
-				t = Role_New();
-				r->_Elements->Values[i] = t;
-				t->_Name=estrdup(name);
-				t->Key = r->Key;
-				t->Sup = r->Sup;
-				t->Index = i;			
+			for(i=0; i<r->_Elements->Length; i++){
+				r->_Elements->Values[i] = Role_New();
+        Sociaty_RoleInitElement(&r->_Elements->Values[i], r, i);				
 			}
-			
 		}
+		else if(r->_Elements->Length > r->_Elements->Size){
+			r->_Elements->Values =
+					(Role**)realloc(r->_Elements->Values, 
+													r->_Elements->Length*sizeof(Role*));
+			for(i=r->_Elements->Size; i<r->_Elements->Length; i++){
+        r->_Elements->Values[i] = Role_New();
+        Sociaty_RoleInitElement(&r->_Elements->Values[i], r, i);
+      }
+		}
+		r->_Elements->Size = r->_Elements->Length;
 	}
 	return r->_Elements->Values[ind];
 }
 void Sociaty_RoleSetElements(Role *r, RoleArray *a){
 	int i;
 	Role *t;
-	char name[255];
+	static char name[255];
+	int old_size;
 	if(r->_Elements->Size == 0){
 		r->_Elements = a;
-		for(i=0; i<a->Length; i++){
-			t = r->_Elements->Values[i];
-			t->Key = r->Key;
-			t->Sup = r->Sup;
-			t->Index = i;			
-			sprintf(name,"%s[%d]",r->_Name,i);
-			t->_Name = estrdup(name);			
-		}
-
+		for(i=0; i<a->Length; i++)
+			Sociaty_RoleInitElement(&r->_Elements->Values[i], r, i);
 	}
 	else {
 		if(r->_Elements->Size < a->Length){
-			r->_Elements->Size = a->Length;
 			r->_Elements->Values = 
 				(Role**)realloc(r->_Elements->Values,
-												r->_Elements->Size*sizeof(Role*));
-
-		}
-		for(i=0; i<a->Length; i++){
-			t = r->_Elements->Values[i];
-			r->_Value = a->Values[i]->_Value;
-			printf("%s\n", a->Values[i]->_Value);
-			if(t->Key == NULL) t->Key = r->Key;
-			if(t->Sup == NULL) t->Sup = r->Sup;
-			if(t->Index == -1) t->Index = i;			
-			if(t->_Name == NULL){
-				sprintf(name,"%s[%d]",r->_Name,i);
-				t->_Name = estrdup(name);			
+												a->Length*sizeof(Role*));
+			for(i=r->_Elements->Size; i<a->Length; i++){
+				r->_Elements->Values[i] = Role_New();
+				Sociaty_RoleInitElement(&r->_Elements->Values[i], r, i);
 			}
+		}																											  			
+		for(i=0; i<a->Length; i++){
+			Role_Set(r->_Elements->Values[i], a->Values[i]);
 			free(a->Values[i]);
 		}
 		free(a->Values);

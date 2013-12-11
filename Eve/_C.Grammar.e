@@ -15,7 +15,7 @@ C.Struct.Print._Eval = `
 struct @|Name|{
 ^
 for @|Definitions-N| {
-^	^&-I.Print
+^	^\&-I.Print
 }
 ^};
 ^

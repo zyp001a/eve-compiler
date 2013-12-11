@@ -140,8 +140,10 @@ control_expression
 		sprintf(str, "%d", i);
 		Role_SetValue(ri, estrdup(str));
 ////////////////
-		rtn = EvalString($2, $3, 1);
-    ParseExpressionFromString(rtn);
+		if($3!=NULL){
+			rtn = EvalString($2, $3, 1);
+			ParseExpressionFromString(rtn);
+		}
 ///////////////
   }
 }
@@ -218,7 +220,6 @@ boolean_expression
 }
 | NOT boolean_expression
 {
-//	printf("NOT %d", $2);
 	$$ = !$2;
 }
 | ISFILE role_as_const
@@ -308,7 +309,7 @@ assignment_expression
 | role '=' role_as_const
 { 
 	yd_print("ASSIGN VALUE");
-	$1->_Value = $3;
+	Role_SetValue($1, estrdup($3));
 }
 | role '+' '=' role_as_const
 {
@@ -356,8 +357,10 @@ eval_expression
 role_as_const
 : role {
 //////////////////////////////////////////////////////
-//  $$ = EvalString($1, GetDymValue(r), 0);
-	$$ = Role_GetFinalValue($1);
+	char *v=GetDymValue($1);
+	if(v == NULL) $$ = NULL;
+	else $$ = EvalString($1, v, 0);
+
 ////////////////
 }
 | const_or_int {

@@ -104,7 +104,7 @@ void stat_val(){
 					if(\&-I.Type.Size){
 						^l=strlen(token);
 						\%|iname-P|_max = l > \%|iname-P|_max ? l : \%|iname-P|_max;
-						\%|iname-P|_min = l < \%|iname-P|_min ? l : \%|iname-P|_max;
+						\%|iname-P|_min = l < \%|iname-P|_min ? l : \%|iname-P|_min;
 						^
 					}else{
 						^sihash_incr(\%|iname-P|_hash, token);
@@ -113,7 +113,7 @@ void stat_val(){
 				}else if(\&-I.Type.Name == 'long' || \&-I.Type.Name == 'double') {
 					^l=atol(token);
 					\%|iname-P|_max = l > \%|iname-P|_max ? l : \%|iname-P|_max;
-					\%|iname-P|_min = l < \%|iname-P|_min ? l : \%|iname-P|_max;
+					\%|iname-P|_min = l < \%|iname-P|_min ? l : \%|iname-P|_min;
 					^;
 				}
 			}

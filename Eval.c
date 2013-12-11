@@ -28,9 +28,6 @@ char* Eval(Role *r){
 char* EvalString(Role *r, char *str, char adddone){
 	char result_buf[MAX_BLOCK_SIZE];
   char *result = &result_buf[0];
-#ifdef EVALDEBUG
-	fprintf(ns.Err, "\t---->Eval Content: \n========\n%s\n========\n", str);
-#endif
   InterpretValue(r, str, &result);
 	switch(adddone){
 	case 2:
@@ -92,57 +89,174 @@ char* UseFile(char *str){
   }
 	return NULL;
 }
-char* GetDymValue(Role *r){
-	char *v = Role_GetFinalValue(r);
-	if(v == NULL) v = GetNoDefaultValue(r);
-	if(v == NULL) v = GetDefaultValue(r);
-  return v;
+/*
+getdymvalue criteria:
+1. value or target->value GetValue
+2. each level, each SupPrts, search Role GetDeepValue
+
+each SupPrts
+1. sup->parents
+2. sup->parents->target
+3. sup->target->parents
+4. sup->target->parents->target
+5. ns.Root
+
+search Role
+ */
+
+static char* GetValue(Role *r){
+	if(r== NULL) return NULL;
+  Role *tr = r;
+	if(tr->_Value !=NULL) return tr->_Value;
+  while(tr->_Target != NULL){
+    tr = tr->_Target;
+		if(tr->_Value !=NULL) return tr->_Value;
+	}
+  return NULL;
+}
+static Role* GetRoleKeyIndex(Role *p, Role *r, int level){
+	Role *t, *t2;
+	t2 = Role_GetSup(r, level);
+	t = RoleHash_Get(p->Subs, t2->Key);
+	if(t2->Index != -1){
+		if(t->_Elements->Length <= t2->Index) return NULL;
+		t = t->_Elements->Values[t2->Index];
+	}
+	if(t != NULL)
+		return t;
+	return NULL;
 }
 
-char* GetDefaultValue(Role *r){
-	Role *t, *p, *t2;
+static char* GetValueSub(Role *p, Role *r, int level){
 	char *v;
+	int i;
+	Role *t = p;
+	Role *t2, *t3;
+	RoleArray *ra;
+	int pi;
+#ifdef EVALDEBUG
+	fprintf(ns.Err, "GetValueSub %s %s %d\n", t->_Name, r->_Name, level);
+#endif
+	//make sure walk to end
+	for(i=level; i>=0; i--){
+		t2 = GetRoleKeyIndex(t, r, i);
+		if(t2 == NULL){
+			if(t!=ns.Root){
+				ra = t->Prts;
+				for(pi = ra->Length-1; pi>=0; pi--){
+					t3 = ra->Values[pi];
+					v = GetValueSub(t3, r, i);
+					if(v!=NULL) return v;
+				}
+				t3 = t;
+				if(t3->_Target != NULL){
+					t3 = t3->_Target;
+					v = GetValueSub(t3, r, i);
+					if(v!=NULL) return v;
+				}
+			}
+			return NULL;
+		}
+		t = t2;
+	}
+	return GetValue(t);
+/*
+	if(t != NULL){
+		v = GetValue(t);
+		if(v != NULL) return v;
+	
+		if(p != ns.Root){
+			ra = t->Prts;
+			for(pi = ra->Length-1; pi>=0; pi--){
+				t2 = ra->Values[pi];
+				v = GetValueSub(t2, r, level);
+				if(v!=NULL) return v;
+			}
+			
+			while(t->_Target != NULL){
+				t = t->_Target;
+				v = GetValueSub(t, r, level);
+				if(v!=NULL) return v;
+				ra = t->Prts;
+				for(pi = ra->Length-1; pi>=0; pi--){
+					t = ra->Values[pi];
+					v = GetValueSub(t, r, level);
+					if(v!=NULL) return v;
+				}
+			}
+		}
+	}
+*/
+	return NULL;
+}
+char* GetDymValue(Role *r){
+	char *v;
+	v = GetValue(r);
+#ifdef EVALDEBUG
+  fprintf(ns.Err, "GetValue %s", v);
+#endif
+	if(v == NULL) v = GetNoDefaultValue(r);
+#ifdef EVALDEBUG
+  fprintf(ns.Err, "GetNoDefaultValue %s", v);
+#endif
+	if(v == NULL) v = GetDefaultValue(r);
+#ifdef EVALDEBUG
+	fprintf(ns.Err, "GetDefaltValue %s\n%s\n", r->_Name, v);
+#endif
+
+  return v;
+}
+			
+
+char* GetDefaultValue(Role *r){
+	Role *t, *sup;
+	char *v;
+	
 	int i, level;
 //	Role_Print(r);
 //	Role_Print(ns.Root);
-	for(level=0; level<r->Depth; level++){
+	level=0;
+	while(1){
+		sup = Role_GetSup(r, level+1);
+		if(sup == ns.Root) break;
 //		printf("level %d\n", level);
-		t = ns.Root;
-		for(i=level; i>=0; i--){
-//			printf("%d: supkey %s\n",i,Role_GetSup(r, i)->Key);
-			t = RoleHash_Get(t->Subs, Role_GetSup(r, i)->Key);
-			if(t == NULL) break;
-		}
-		if(t != NULL){
-			v = Role_GetFinalValue(t);
-			if(v != NULL) return v;
-		}
+		v = GetValueSub(ns.Root, r, level);
+		if(v != NULL) return v;
+		level ++;
 	}
 	return NULL;
 }
 char* GetNoDefaultValue(Role *r){
-	Role *t, *p, *t2;
+	Role *t, *sup;
 	char *v;
 	int pi, i, level;
 	RoleArray *ra;
 //	Role_Print(r);
 //	Role_Print(ns.Root);
-	for(level=0; level<r->Depth-1; level++){
-//		printf("level %d\n", level);
-		ra = Role_GetSup(r, level+1)->Prts;
+	level=0;
+	while(1){
+		sup = Role_GetSup(r, level+1);
+		if(sup == ns.Root) break;
+		ra = sup->Prts;
 		for(pi = ra->Length-1; pi>=0; pi--){
-			t = ra->Values[pi];
-		
-			for(i=level; i>=0; i--){
-//			printf("%d: supkey %s\n",i,Role_GetSup(r, i)->Key);
-				t = RoleHash_Get(t->Subs, Role_GetSup(r, i)->Key);
-				if(t == NULL) break;
-			}
-			if(t != NULL){
-				v = Role_GetFinalValue(t);
-				if(v != NULL) return v;
-			}
+			t = ra->Values[pi];			
+			v = GetValueSub(t, r, level);
+			if(v != NULL) return v;
 		}
+		t = sup;
+		while(t->_Target != NULL){
+			t=t->_Target;
+			v = GetValueSub(t, r, level);
+			if(v!=NULL) return v;
+			ra = t->Prts;
+			for(pi = ra->Length-1; pi>=0; pi--){
+				t = ra->Values[pi];
+				v = GetValueSub(t, r, level);
+				if(v!=NULL) return v;
+			}
+		}		
+
+		level ++;		
 	}
 	return NULL;
 }
@@ -270,13 +384,13 @@ static char* PrintArray(Role *a, char *sep, char *end, char* format){
 	int seplen = strlen(sep);
 	if(a->_Elements->Length == 0) return;
 //	printf("sep %s, end %s, format %s\n",sep, end, format);
-	sprintf(v, format, Role_GetFinalValue(a->_Elements->Values[0]));
+	sprintf(v, format, GetValue(a->_Elements->Values[0]));
 //	printf("xxxxx%s\n",v);
 	p = &v[strlen(v)];
 	for(i=1; i<a->_Elements->Length; i++){
 		sprintf(p, sep);
 		p+=seplen;
-		sprintf(p, format, Role_GetFinalValue(a->_Elements->Values[i]));
+		sprintf(p, format, GetValue(a->_Elements->Values[i]));
 		p = &v[strlen(v)];
 	}
 	sprintf(p, end);
@@ -347,7 +461,6 @@ char EvalParam(TokenParam *pp, Scanner *ps){
 		v = GetDymValue(r);
 		if(v == NULL) return 1;
 		if(pp->op[0] != '%'){
-			
 			InterpretValue(r, v, ps->out_curr);
 		}
 		else{
@@ -586,6 +699,10 @@ char ScanIdentifer(Scanner *ps){
 	return 1;
 }
 void InterpretValue(Role *r, char *v, char **out_curr){
+#ifdef EVALDEBUG
+	fprintf(ns.Err, "\t---->Eval Content: \n========\n%s\n========\n", v);
+#endif
+
 	Scanner s;
 	char c;
 	s.r = r;
