@@ -5,6 +5,7 @@
 #include "Sociaty.h"
 #include "Parser.h"
 #include "Lexer.h" 
+#include "Database.h"
 #include <signal.h>
 //#define EDEBUG
 Sociaty ns;

@@ -75,15 +75,16 @@ yyscan_t current_scanner;
     ADD = 270,
     INVOKE = 271,
     PRINT = 272,
-    PUTSTR = 273,
-    VALUE = 274,
-    READFILE = 275,
-    NOT = 276,
-    ISFILE = 277,
-    ISDIR = 278,
-    END_OF_STATEMENT = 279,
-    SETFLAG = 280,
-    SETARGS = 281
+    PARSEFILE = 273,
+    PUTSTR = 274,
+    VALUE = 275,
+    READFILE = 276,
+    NOT = 277,
+    ISFILE = 278,
+    ISDIR = 279,
+    END_OF_STATEMENT = 280,
+    SETFLAG = 281,
+    SETARGS = 282
   };
 #endif
 
@@ -100,7 +101,7 @@ union YYSTYPE
 	StringInt strint;
 	char* strval;
 
-#line 104 "Parser.h" /* yacc.c:1915  */
+#line 105 "Parser.h" /* yacc.c:1915  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

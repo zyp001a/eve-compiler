@@ -71,6 +71,7 @@ void Role_AddElements(Role* r, Role* t);
 void Role_Free(Role *);
 void Role_Print(Role *r);
 void RoleArray_Init(RoleArray **a);
+void RoleArray_Print(RoleArray *a);
 RoleArray* RoleArray_New();
 RoleArray* RoleArray_NewStringArray(StringArray *a);
 Index RoleArray_Add(RoleArray *a, Role *r);

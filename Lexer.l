@@ -236,6 +236,10 @@ loop:
   ld_print("TOKEN", "readfile");
   return READFILE;
 }
+"parsefile" {
+  ld_print("TOKEN", yytext);
+  return PARSEFILE;
+}
 
 "setargs" { 
   ld_print("TOKEN", yytext);

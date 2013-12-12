@@ -13,17 +13,24 @@ typedef enum OperationType{
 	VALUE
 } OperationType;
 */
+typedef struct ReadParam{
+	RoleArray *ra;
+	StringArray *sa;
+	IndexArray *ia;
+	char buf[255];
+} ReadParam;
 typedef struct Scanner{
 	Role *r; //role
 //	Role *cr;
 //	char *in_tmp; //tmp poiner
 	char *in_curr; //input poiner 
+	char *id_end_pos; //id end poiner 
 	char **out_curr; //output pointer
 	char is_read;
+	ReadParam *read_param;
 } Scanner;
 
 typedef struct TokenParam{
-
 	char **keys;
 	char *issubs;
 	int steplen;
@@ -47,8 +54,9 @@ char DoReadParam(TokenParam *pp, Scanner *ps, Role *r);
 char DoWriteParam(TokenParam *pp, Scanner *ps, Role *r);
 char EvalParam(TokenParam *pp, Scanner *ps);
 char ScanIdentifer(Scanner *ps);
-void InterpretValue(Role *r, char *v, char **out_curr, char);
-
+void InterpretValue(Scanner *ps);
+Scanner* Scanner_New(Role *r, char *v, char **out_curr);
+ReadParam* ReadParam_New();
 
 //Lang GetLang(char *);
 char GetFlag(char *);

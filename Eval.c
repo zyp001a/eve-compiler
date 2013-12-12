@@ -25,10 +25,26 @@ char* Eval(Role *r){
 		return EvalString(r, eval, 2);
 	return NULL;
 }
+Scanner* Scanner_New(Role *r, char *v, char **out_curr){
+	Scanner* ps = (Scanner*)malloc(sizeof(Scanner));
+	ps->r = r;
+  ps->in_curr = v;
+  ps->out_curr = out_curr;
+	ps->is_read = 0;
+	return ps;
+}
+ReadParam* ReadParam_New(){
+	ReadParam *p;
+	p = (ReadParam*)malloc(sizeof(ReadParam));
+	p->ia = IndexArray_New();
+	p->sa = StringArray_New();
+	p->ra = RoleArray_New();
+	return p;
+}
 char* EvalString(Role *r, char *str, char adddone){
 	char result_buf[MAX_BLOCK_SIZE];
   char *result = &result_buf[0];
-  InterpretValue(r, str, &result, 0);
+  InterpretValue(Scanner_New(r, str, &result));
 	switch(adddone){
 	case 2:
 		result[0] = '\n';
@@ -102,7 +118,7 @@ each SupPrts
 5. ns.Root
 
 search Role
- */
+*/
 
 static char* GetValue(Role *r){
 	if(r== NULL) return NULL;
@@ -260,123 +276,7 @@ char* GetNoDefaultValue(Role *r){
 	}
 	return NULL;
 }
-/*
-char ExistValue(Role *r){
-	if(!estrisnull(r->_Value)) return 1;
-	if(r->_TargetIndex != -1) return 1;
-	return 0;
-}
-char *GetParentName(Role *r){
-	if(r->Parents.Length == 0) return NULL;
-	return Sociaty_GetRole(r->Parents.Values[r->Parents.Length-1])->_Name;
-}
-char* GetValue(Role *r){
-	if(!estrisnull(r->_Value)) return r->_Value;
-	if(r->_TargetIndex != -1)
-		return Sociaty_GetRole(r->_TargetIndex)->_Value;
-	return "";
-}
-char* GetFinalValue(Role *r){
-	if(!estrisnull(r->_Value)) return r->_Value;
-	Role *tmpr = r;
-	while(tmpr->_TargetIndex != -1)
-		 tmpr = Sociaty_GetRole(tmpr->_TargetIndex);
-	return tmpr->_Value;
-}
-char* GetDymValueNoEve(char *name){
-	int ind;
-	Role *r;
-	char *val;
-#ifdef EVALDEBUG
-  fprintf(ns.Err,"GetDymValue %s\n", name);
-#endif
 
-	ind = Sociaty_SearchRole(name);
-	if(ind != -1){
-		r = Sociaty_GetRole(ind);
-		if(ExistValue(r)){
-			val = GetFinalValue(r);
-			if(!estrisnull(val)) return val;
-		}
-	}
-	return GetValueDeep(name);
-
-}
-
-char* GetNoDefaultValue(Role *r){
-  Role *t, *p, *t2;
-  char *v;
-  int i, level, pi, plen;
-  for(level=0; level<r->Depth; level++){
-		plen = Role_GetSup(r, level)->Prts->Length;
-		if(!plen) continue;
-    for(pi=Role_GetSup(r, level)->Prts->Length
-    for(i=level; level>=0; level--){
-      t = RoleHash_Get(t, Role_GetSup(r, i)->Key);
-      if(t == NULL) break;
-    }
-    if(t != NULL){
-      v = Role_GetFinalValue(t);
-      if(v != NULL) return v;
-    }
-  }
-}
-
-char* GetValueDeep(char *name){
-//	printf("name %s\tlevel %d\n",name,level);
-#ifdef EVALDEBUG
-	fprintf(ns.Err,"GetValueDeep %s\n", name);
-#endif
-	Role *pr, *ppr;
-	char *ni;
-	int len, ind, j;
-	char name2[255], pre[255], suf[255];
-	Role *r;
-	char *rtn;
-
-
-	int slen = strlen(name);
-	len = 0; 
-	ni = &name[0];
-	while(len++ < slen){
-		ni ++;
-		if(ni[0] == '.'){
-
-//			level --;
-//			if(level>0) continue;
-			strcpy(suf, ni +1); //dump suffix
-
-			strncpy(pre, name, len);
-			pre[len] = '\0';
-//			printf("see. %c  %d  %s   %s\n",ni[0],len,pre,suf);
-			ind = Sociaty_SearchRole(pre);
-			if(ind == -1) continue;
-			pr = Sociaty_GetRole(ind); //get apprent role from prefix
-			if(pr->_TargetIndex != -1){ //if a pointer do eval
-				pr = Sociaty_GetFinalRole(ind);
-				strcpy(name2, pr->_Name);
-        strcat(name2, ".");
-        strcat(name2, suf);
-
-        rtn = GetDymValueNoEve(name2);
-        if(!estrisnull(rtn)) return rtn;
-			}
-			
-			for(j=pr->Parents.Length; j>0; --j){
-				ppr = Sociaty_GetFinalRole(pr->Parents.Values[j-1]);
-				strcpy(name2, ppr->_Name);
-				strcat(name2, ".");
-				strcat(name2, suf);
-				
-				rtn = GetDymValueNoEve(name2);
-				if(!estrisnull(rtn)) return rtn;
-			}
-		}
-	}	
-	return "";
-
-}
-*/
 static char* PrintArray(Role *a, char *sep, char *end, char* format){
 	int i;
 	char v[MAX_BLOCK_SIZE];
@@ -451,12 +351,22 @@ Role *GetRoleParam(TokenParam *pp, Scanner *ps){
 char EvalParam(TokenParam *pp, Scanner *ps){
 	Role *r;
 	r = GetRoleParam(pp, ps);
+
 	if(ps->is_read)
 		return DoReadParam(pp, ps, r);
 	else
 		return DoWriteParam(pp, ps, r);
 }
 char DoReadParam(TokenParam *pp, Scanner *ps, Role *r){
+	Role *t;
+//	printf("read\n");
+	switch(pp->c){
+  case 'v': //VALUE
+		RoleArray_Add(ps->read_param->ra, r);
+
+		return 1;
+    break;
+	}
 	return 0;
 }
 char DoWriteParam(TokenParam *pp, Scanner *ps, Role *r){
@@ -471,10 +381,10 @@ char DoWriteParam(TokenParam *pp, Scanner *ps, Role *r){
 		v = GetDymValue(r);
 		if(v == NULL) return 1;
 		if(pp->op[0] != '%'){
-			InterpretValue(r, v, ps->out_curr, 0);
+			InterpretValue(Scanner_New(r, v, ps->out_curr));
 		}
 		else{
-			InterpretValue(ps->r, v, ps->out_curr, 0);
+			InterpretValue(Scanner_New(ps->r, v, ps->out_curr));
 		}
 		return 1;
 		break;
@@ -702,52 +612,62 @@ char ScanIdentifer(Scanner *ps){
   }
 	fprintf(ns.Err, "\n");
 #endif
-
+	ps->id_end_pos = tmp;
 	if(!EvalParam(&p, ps)) return 0;
 
 	ps->in_curr = tmp;
+	if(ps->is_read){
+		(*ps->out_curr)[0] = '\0';
+		*ps->out_curr = &ps->read_param->buf[0];
+//		printf("buf:%s\n",ps->read_param->buf);
+		IndexArray_Add(ps->read_param->ia, strlen(ps->read_param->buf));
+		StringArray_Add(ps->read_param->sa, estrdup(ps->read_param->buf));
+	}
 	return 1;
 }
-void InterpretValue(Role *r, char *v, char **out_curr, char is_read){
+void InterpretValue(Scanner *ps){
 #ifdef EVALDEBUG
-	fprintf(ns.Err, "\t---->Eval Content: \n========\n%s\n========\n", v);
+	fprintf(ns.Err, "\t---->Eval Content: \n========\n%s\n========\n", ps->in_curr);
 #endif
-	Scanner s;
+
+
 	char c;
-	s.is_read = is_read;
-	s.r = r;
-	s.in_curr = v;
-	s.out_curr = out_curr;
 	while (1){
 
-		switch(s.in_curr[0]){
+		switch(ps->in_curr[0]){
 		case '\0':
+			if(ps->is_read){
+				(*ps->out_curr)[0] = '\0';
+				IndexArray_Add(ps->read_param->ia, strlen(ps->read_param->buf));
+				StringArray_Add(ps->read_param->sa, estrdup(ps->read_param->buf));
+			}
 			return;
 		case '\\':
-			c = s.in_curr[1];
+			c = ps->in_curr[1];
 			if(c == '$'  || c == '@'  || c == '%'  || c == '&' ){
-				s.in_curr ++;
+				ps->in_curr ++;
 			}
 			break;
 		case '%':
-      if(ScanIdentifer(&s)) continue;
-      break;
+			if(ScanIdentifer(ps)) continue;
+			break;
 		case '&':
-			if(ScanIdentifer(&s)) continue;
-      break;
+			if(ScanIdentifer(ps)) continue;
+			break;
 		case '@':
-      if(ScanIdentifer(&s)) continue;
-      break;
-    case '$':
-      if(ScanIdentifer(&s)) continue;
-      break;
+			if(ScanIdentifer(ps)) continue;
+			break;
+		case '$':
+			if(ScanIdentifer(ps)) continue;
+			break;
 		default:
 			;
 		}
-		(*s.out_curr)[0] = s.in_curr[0];
-		(*s.out_curr) ++;
-		s.in_curr++;
+		(*ps->out_curr)[0] = ps->in_curr[0];
+		(*ps->out_curr) ++;
+		ps->in_curr++;		
 	}
+
 }
 
 

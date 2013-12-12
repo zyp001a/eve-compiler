@@ -10,7 +10,7 @@
 #include "Eval.h"
 #include "Parser.h"
 #include "Lexer.h"
-
+#include "Database.h"
 int yyparse(yyscan_t scanner);
 int yyerror(yyscan_t scanner, const char *msg){
 		printf("yyerror, %s\n",msg);
@@ -64,7 +64,7 @@ yyscan_t current_scanner;
 %token <strval> BLOCK
 %token <strval> ADDRESS
 %token FOR WHILE IF ELSIF ELSE 
-%token USE LOAD ADD INVOKE PRINT 
+%token USE LOAD ADD INVOKE PRINT PARSEFILE
 %token <strval> PUTSTR
 %token VALUE READFILE
 %token NOT ISFILE ISDIR
@@ -279,6 +279,11 @@ internal_function
 	rtn = EvalString($2, $3, 1);
 //  yd_print(rtn);
 	ParseExpressionFromString(rtn);
+}
+| PARSEFILE role
+{
+	yd_print("PARSEFILE");
+	ParseFileAndSendToDatabase($2);
 }
 
 /*

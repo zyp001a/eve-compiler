@@ -185,6 +185,7 @@ char* ereadfile(FILE *fp){
 	char *str;
 	size_t result;
 //	printf("ereadfile\n");
+	if(fp == NULL) eerror("readfile error");
 	fseek(fp, 0L, SEEK_END);
 	lsize = ftell(fp);
 //	printf("%d\n", lsize);
@@ -201,6 +202,13 @@ char* ereadfile(FILE *fp){
 	return str;
 }
 
+IndexArray *IndexArray_New(){
+	IndexArray *a;
+	a=malloc(sizeof(IndexArray));
+  a->Length = 0;
+//  if(a->Values != NULL) free(a->Values);
+  a->Values = (Index *)malloc(sizeof(Index));
+}
 
 void IndexArray_Create(IndexArray *a){
   a->Length = 0;
@@ -241,7 +249,12 @@ void IndexArray_Dispose(IndexArray* a){
 void IndexArray_DisposeSub(IndexArray* a){
 	free(a->Values);
 }
-
+StringArray *StringArray_New(){
+	StringArray *a;
+	a = malloc(sizeof(StringArray));
+	a->Length = 0;
+  a->Values = (char**)malloc(sizeof(char*));
+}
 void StringArray_Create(StringArray *a){
 	int i;
 

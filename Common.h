@@ -55,12 +55,14 @@ void ewarn(char *str);
 
 char* ereadfile(FILE *fp);
 
+IndexArray *IndexArray_New();
 void IndexArray_Create(IndexArray *a);
 Index IndexArray_Add(IndexArray *a, Index i);
 void IndexArray_PassBySymbol(IndexArray*, IndexArray*);
 void IndexArray_PassByValue(IndexArray*, IndexArray*);
 void IndexArray_Dispose(IndexArray*);
 void IndexArray_DisposeSub(IndexArray*);
+StringArray *StringArray_New();
 void StringArray_Create(StringArray *);
 Index StringArray_Add(StringArray *a, char *);
 void StringArray_DisposeSub(StringArray*);
