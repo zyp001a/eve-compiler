@@ -241,6 +241,9 @@ loop:
   return PARSEFILE;
 }
 
+
+
+
 "setargs" { 
   ld_print("TOKEN", yytext);
   return SETARGS; 
@@ -321,13 +324,13 @@ loop:
 
 .     { 
   ld_print("Unmatched text", yytext); 
-	fprintf(stderr, "Unmatched text %s\n", yytext); 
+//	fprintf(stderr, "Unmatched text %s\n", yytext); 
 }
 
 %%
 
 /*
 int yyerror(const char *msg) {
-    fprintf(stderr,"Error:%s\n", msg); return 0;
+//    fprintf(stderr,"Error:%s\n", msg); return 0;
 }
 */

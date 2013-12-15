@@ -1298,7 +1298,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 244 "Lexer.l"
+#line 247 "Lexer.l"
 { 
   ld_print("TOKEN", yytext);
   return SETARGS; 
@@ -1306,7 +1306,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 248 "Lexer.l"
+#line 251 "Lexer.l"
 { 
   ld_print("TOKEN", yytext);
   return SETFLAG; 
@@ -1314,7 +1314,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 255 "Lexer.l"
+#line 258 "Lexer.l"
 { 
   ld_print("Read identifier", yytext);
   yylval->strval = estrdup(yytext); 
@@ -1323,7 +1323,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 260 "Lexer.l"
+#line 263 "Lexer.l"
 { 
   ld_print("Read hex", yytext);
   yylval->strval = estrdup(yytext); 
@@ -1332,7 +1332,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 265 "Lexer.l"
+#line 268 "Lexer.l"
 { 
   ld_print("Read oct", yytext);
   yylval->strval = estrdup(yytext); 
@@ -1341,7 +1341,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 270 "Lexer.l"
+#line 273 "Lexer.l"
 { 
   ld_print("Read int", yytext);
   yylval->strval = estrdup(yytext); 
@@ -1350,7 +1350,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 275 "Lexer.l"
+#line 278 "Lexer.l"
 { 
   ld_print("Read float1", yytext);
   yylval->strval = estrdup(yytext); 
@@ -1359,7 +1359,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 280 "Lexer.l"
+#line 283 "Lexer.l"
 { 
   ld_print("Read float2", yytext);
   yylval->strval = estrdup(yytext); 
@@ -1368,7 +1368,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 285 "Lexer.l"
+#line 288 "Lexer.l"
 { 
   ld_print("Read float3", yytext);
   yylval->strval = estrdup(yytext); 
@@ -1378,7 +1378,7 @@ YY_RULE_SETUP
 case 44:
 /* rule 44 can match eol */
 YY_RULE_SETUP
-#line 293 "Lexer.l"
+#line 296 "Lexer.l"
 { 
   ld_print("TOKEN", "END_OF_STATEMENT");
   return(END_OF_STATEMENT); 
@@ -1386,106 +1386,106 @@ YY_RULE_SETUP
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 300 "Lexer.l"
+#line 303 "Lexer.l"
 { return '+'; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 301 "Lexer.l"
+#line 304 "Lexer.l"
 { return ':'; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 302 "Lexer.l"
+#line 305 "Lexer.l"
 { return '.'; } 
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 303 "Lexer.l"
+#line 306 "Lexer.l"
 { return ','; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 304 "Lexer.l"
+#line 307 "Lexer.l"
 { return '='; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 305 "Lexer.l"
+#line 308 "Lexer.l"
 { return '&'; }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 306 "Lexer.l"
+#line 309 "Lexer.l"
 { return '%'; }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 307 "Lexer.l"
+#line 310 "Lexer.l"
 { return '$'; }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 308 "Lexer.l"
+#line 311 "Lexer.l"
 { return '@'; }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 309 "Lexer.l"
+#line 312 "Lexer.l"
 { return '['; }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 310 "Lexer.l"
+#line 313 "Lexer.l"
 { return ']'; }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 311 "Lexer.l"
+#line 314 "Lexer.l"
 { return ')'; }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 312 "Lexer.l"
+#line 315 "Lexer.l"
 { return '('; }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 313 "Lexer.l"
+#line 316 "Lexer.l"
 { return '>'; }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 314 "Lexer.l"
+#line 317 "Lexer.l"
 { return '<'; }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 315 "Lexer.l"
+#line 318 "Lexer.l"
 { return '|'; }
 	YY_BREAK
 case 61:
 /* rule 61 can match eol */
 YY_RULE_SETUP
-#line 317 "Lexer.l"
+#line 320 "Lexer.l"
 { }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 318 "Lexer.l"
+#line 321 "Lexer.l"
 { }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 322 "Lexer.l"
+#line 325 "Lexer.l"
 { 
   ld_print("Unmatched text", yytext); 
-	fprintf(stderr, "Unmatched text %s\n", yytext); 
+//	fprintf(stderr, "Unmatched text %s\n", yytext); 
 }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 327 "Lexer.l"
+#line 330 "Lexer.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
 #line 1492 "Lexer.c"
@@ -2666,13 +2666,13 @@ void yyfree (void * ptr , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
-#line 327 "Lexer.l"
+#line 330 "Lexer.l"
 
 
 
 /*
 int yyerror(const char *msg) {
-    fprintf(stderr,"Error:%s\n", msg); return 0;
+//    fprintf(stderr,"Error:%s\n", msg); return 0;
 }
 */
 

@@ -4,4 +4,5 @@
 #define egetc _IO_getc_unlocked
 char eisdir(char *);
 char eisfile(char *);
+char isfrompipe(void);
 #endif

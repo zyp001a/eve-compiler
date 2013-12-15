@@ -12,9 +12,11 @@
 #include "Lexer.h"
 #include "Database.h"
 int yyparse(yyscan_t scanner);
+
 int yyerror(yyscan_t scanner, const char *msg){
-		printf("yyerror, %s\n",msg);
-	}
+//		printf("yyerror, %s\n",msg);
+}
+
 
 #define YACCDEBUG
 #ifdef YACCDEBUG
@@ -38,7 +40,8 @@ extern Sociaty ns;
 #endif
 void ParseExpressionFromFile(char *fpath);
 void ParseExpressionFromFp(FILE *fp);
-void ParseExpressionFromString(char *str);
+char ParseExpressionFromString(char *str, char istry);
+void ParseExpressionFromStdin(char* starter);
 yyscan_t current_scanner;
 }
  
@@ -118,7 +121,7 @@ expression
 	rtn = Eval($1);
 	if(rtn != NULL){
 		yd_print(rtn);
-		ParseExpressionFromString(rtn);
+		ParseExpressionFromString(rtn,0);
 	}
 //	Sociaty_WriteMembers();
 //	printf("clearargs%d\n", $1);
@@ -142,7 +145,7 @@ control_expression
 ////////////////
 		if($3!=NULL){
 			rtn = EvalString($2, $3, 1);
-			ParseExpressionFromString(rtn);
+			ParseExpressionFromString(rtn,0);
 		}
 ///////////////
   }
@@ -152,7 +155,7 @@ control_expression
 	yd_print("IF");
 	if($2){
 		estraddeol(&$3);
-		ParseExpressionFromString($3);
+		ParseExpressionFromString($3,0);
 	}
 }
 | IF boolean_expression BLOCK ELSE else_expression
@@ -160,11 +163,11 @@ control_expression
 	yd_print("IF ELSE");
   if($2){
 		estraddeol(&$3);
-    ParseExpressionFromString($3);
+    ParseExpressionFromString($3,0);
   }
 	else{
 		estraddeol(&$5);
-		ParseExpressionFromString($5);
+		ParseExpressionFromString($5,0);
 	}
 }
 ;
@@ -278,7 +281,7 @@ internal_function
 	char *rtn;
 	rtn = EvalString($2, $3, 1);
 //  yd_print(rtn);
-	ParseExpressionFromString(rtn);
+	ParseExpressionFromString(rtn,0);
 }
 | PARSEFILE role
 {
@@ -477,9 +480,35 @@ void ParseExpressionFromFp(FILE *fp){
 	char *content;
 	content = ereadfile(fp);
 	estraddeol(&content);
-	ParseExpressionFromString(content);
+	ParseExpressionFromString(content,0);
 //	free(fpath);
 }
+void ParseExpressionFromStdin(char* starter){
+	char line[32768];
+	int li,c;
+	li = 0;
+	while(c=getchar()){
+		if(c == EOF){
+			break;
+		}
+		else if (c == '\n'){			
+			line[li] = '\n';
+			line[li+1] = '\0';
+			if(ParseExpressionFromString(line,1)){
+				printf("%s", starter);
+				li = 0;
+			}
+			else{
+				li ++;
+			}
+		}
+		else{
+			line[li++] = c;
+		}
+	}
+
+}
+
 void ParseExpressionFromFile(char *fpath){
   char *content;
   FILE *ifp;
@@ -500,7 +529,7 @@ void ParseExpressionFromFile(char *fpath){
 //  free(fpath);
 }
 
-void ParseExpressionFromString(char *str){
+char ParseExpressionFromString(char *str, char istry){
 //	printf("\nParseExpressionFromString\n=====\n%s\n=====\n\n", str);
   yyscan_t scanner;
 	current_scanner = scanner;
@@ -514,11 +543,16 @@ void ParseExpressionFromString(char *str){
 //	if (yyparse(&expr, scanner)) {
 	if (yyparse(scanner)){
     // error parsing
-		eerror("yyparse failed");
-    exit(1);
+		if(!istry){
+			eerror("yyparse failed");
+		}
+		yy_delete_buffer(state, scanner);
+		yylex_destroy(scanner);
+		return 0;
   }
 	yy_delete_buffer(state, scanner);
 	yylex_destroy(scanner);
+	return 1;
 //	free(str);
 
 }

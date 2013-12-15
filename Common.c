@@ -188,16 +188,14 @@ char* ereadfile(FILE *fp){
 	if(fp == NULL) eerror("readfile error");
 	fseek(fp, 0L, SEEK_END);
 	lsize = ftell(fp);
-//	printf("%d\n", lsize);
 	fseek(fp, 0L, SEEK_SET);
 	str = (char *)malloc(lsize+1);
 	result = fread (str,1,lsize,fp);
 	if( result != lsize ){
 		eerror("ereadfile failed");
-		exit(1);
+//		exit(1);
 	}
 	str[result] = '\0';
-
 
 	return str;
 }

@@ -40,7 +40,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 32 "Parser.y" /* yacc.c:1915  */
+#line 34 "Parser.y" /* yacc.c:1915  */
 
 #include "Common.h"  
 #include "Role.h"
@@ -50,10 +50,11 @@ extern int yydebug;
 #endif
 void ParseExpressionFromFile(char *fpath);
 void ParseExpressionFromFp(FILE *fp);
-void ParseExpressionFromString(char *str);
+char ParseExpressionFromString(char *str, char istry);
+void ParseExpressionFromStdin(char* starter);
 yyscan_t current_scanner;
 
-#line 57 "Parser.h" /* yacc.c:1915  */
+#line 58 "Parser.h" /* yacc.c:1915  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -93,7 +94,7 @@ yyscan_t current_scanner;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 52 "Parser.y" /* yacc.c:1915  */
+#line 55 "Parser.y" /* yacc.c:1915  */
 
 	Role* roleval;
 	int numval;
@@ -101,7 +102,7 @@ union YYSTYPE
 	StringInt strint;
 	char* strval;
 
-#line 105 "Parser.h" /* yacc.c:1915  */
+#line 106 "Parser.h" /* yacc.c:1915  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
