@@ -65,7 +65,7 @@ void stat_val(){
 					}else{
 						^
 						tl.\%|iname-P| = sihash_get(\%|iname-P|_hash, token);
-						if(tl.\%|iname-P| == NULL) continue;
+						if(tl.\%|iname-P| == -1) continue;
 						^
 					}
 				}else if(\&-I.Type.Name == 'char' && \&-I.Type.Size) {
@@ -111,7 +111,7 @@ int main(int argc, char **argv){
 				^;
 			}else{
 				^
-				sihash_adddb(\%|iname-P|_hash, "\%|DatabasePath-P|/\&|_Iterator.Type.Hash.Name-P|.edb");
+				sihash_readdb(\%|iname-P|_hash, "\%|DatabasePath-P|/\&|_Iterator.Type.Hash.Name-P|.edb", \&|_Iterator.Type.Hash.KeySize-P|);
 				^;
 			}
 		}

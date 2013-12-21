@@ -443,7 +443,17 @@ void sihash_put(sihash *map, const char *key, const int value)
 	strcpy(pair->key, key);
 	pair->value = value;
 }
-
+void sihash_readdb(sihash *map, char *file, int line_size){
+	FILE *fp;
+	char *line = malloc(line_size);
+	fp = fopen(file, "r");
+	if(fp == NULL) return;
+	int i = 0;
+	while(fread(line, line_size, 1, fp)){
+		sihash_put(map, line, i++);
+	}
+	fclose(fp);
+}
 int sihash_get_count(const sihash *map)
 {
 	unsigned int i, j, n, m;

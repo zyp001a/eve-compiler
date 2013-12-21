@@ -19,7 +19,7 @@ char *elementstr = "_Element";
 //char *superstr = "_Super";
 char *prefix = "";
 int const_count = 0;
-char version[] = "v0.2.1";
+char version[] = "v0.2.2";
 
 //char *const_name = "EveConst";
 #ifdef ETEST
