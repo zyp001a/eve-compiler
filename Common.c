@@ -12,12 +12,12 @@ char* estrdup(char *str){
 	if(str != NULL){
 		exp = (char*)malloc(strlen(str)+1);		
 		strcpy(exp, str);
+		return exp;
 	}
 	else{
-		exp = (char*)malloc(1);
-		strcpy(exp, "");
+		return NULL;
 	}
-	return exp;
+
 }
 char* estrndup(char *str, int len){
 	char *exp;
@@ -51,11 +51,12 @@ char* estrcent(char *str){
 		rtn = (char*)malloc(l-1);
 		rtn[l-2] = '\0';
 		strncpy(rtn, str, l-2);
+		return rtn;
 	}
 	else{
-		return estrdup(str);
+		return NULL;
 	}
-	return rtn;
+
 }
 char *estrlower(char *str){
 	char *rtn;

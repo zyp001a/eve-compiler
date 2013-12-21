@@ -1,5 +1,8 @@
 C.Definition.Type.Size = 0
 C.Definition.Print._Eval = `
+if @|Type.IsUnsigned-N| {
+^unsigned ^
+}
 if @|Type.Size-N| {
 ^@|Type.Name| @|Name|[@|Type.Size|];
 ^

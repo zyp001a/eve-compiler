@@ -1,6 +1,5 @@
 <DataStructure
-<_Table.BasicCheck
-<_Table.AdvancedCheck
+<_Table.Check
 <_Table.Read
 <_Table.Column
 Table:DataStructure
@@ -18,4 +17,6 @@ DataStartOffset: @|DataStartOffset-P|
 
 
 Table.Struct : C.Struct
+Table.Store : C
+Table.Store.TemplateFile="_Table.Store.e.c"
 

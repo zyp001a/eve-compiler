@@ -6,13 +6,13 @@
 C:ProgrammingLanguage
 
 
-C.ExecuteFile = "%|CmdArgs[0]|.@-N.x"
-C.CodeFile = "%|CmdArgs[0]|.@-N.c"
-C.OutputFile = "%|CmdArgs[0]|.@-N.output"
-
+C.ExecuteFile = "%|CmdArgs[0]|.@-N.%|EvalTime|.x"
+C.CodeFile = "%|CmdArgs[0]|.@-N.%|EvalTime|.c"
+C.OutputFile = "%|CmdArgs[0]|.@-N.%|EvalTime|.output"
+C.TemplateFile = "_@-N.c"
 C.Write._Eval = `
 >@|CodeFile|
-if @-N.TemplateFile {
+if isfile @-N.TemplateFile {
 @-N.Code = readfile @-N.TemplateFile
 }
 @-N.Code.Print

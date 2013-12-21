@@ -5,9 +5,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#define MAX_FILE_NAME 1024
+#define MAX_NAME_SIZE 255
 #define MAX_BLOCK_SIZE 1024*128
 
+#define MAX_FILE_NAME 255
 
 typedef int Index;
 
@@ -45,6 +46,7 @@ char* estrafter(char *, char);
 char* estrbeforedup(char *, char);
 void* estraddeol(char **);
 int estrstat(char *, char);
+
 
 char eisletter(char c);
 char eisdigit(char c);

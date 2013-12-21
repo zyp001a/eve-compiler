@@ -9,6 +9,9 @@ Role* Role_New(){
 
 	r->_Value = NULL;
 	r->_Target = NULL;
+	r->_Block = NULL;
+
+	r->_Flag = 0;
 	RoleArray_Init(&r->_Elements);
 	RoleHash_Init(&r->Subs);
 	
@@ -20,30 +23,50 @@ Role* Role_New(){
 
 	return r;
 }
-void Role_Print(Role *r){
+void Role_PrintDetails(Role *r){
 	fprintf(stderr, "_Name: %s\n", r->_Name);
 	fprintf(stderr, "Key: %s\n", r->Key);
 	fprintf(stderr, "Sup: %s\n", r->Sup->Key);
 	fprintf(stderr, "Index: %d\n", r->Index);
 	fprintf(stderr, "_Value: %s\n", r->_Value);
 	fprintf(stderr, "_Target: %s\n", r->_Target);
-	fprintf(stderr, "_Elements");RoleArray_Print(r->_Elements);
-	fprintf(stderr, "_Prts");RoleArray_Print(r->Prts);	
+//	fprintf(stderr, "_Elements");RoleArray_Print(r->_Elements);
+//	fprintf(stderr, "_Prts");RoleArray_Print(r->Prts);	
 	fprintf(stderr, "_Subs:\n");
-	RoleHash_Print(r->Subs);
+//	RoleHash_Print(r->Subs);
 	fprintf(stderr, "\n");
+}
+void Role_Print(Role *r, FILE *fp){
+	int i;
+	for(i=0;i<r->Prts->Length;i++)
+		fprintf(fp, "%s : %s\n", r->_Name, r->Prts->Values[i]->_Name);
+	if(!estrisnull(r->_Value)) 
+		fprintf(fp, "%s = `%s`\n", r->_Name, r->_Value);
+	if(r->_Target != NULL)
+		fprintf(fp, "%s =& %s\n", r->_Name, r->_Target->_Name);
+	if(r->_Elements->Length > 0)
+	  RoleArray_Print(r->_Elements, fp);
+  RoleHash_Print(r->Subs, fp);
+}
+
+void Role_FreeKeepValue(Role *r){
+//  printf("free %s\n", r->_Name);
+	
+  if(r->_Name != NULL) free(r->_Name);
+  if(r->Key != NULL && r->Index == -1) free(r->Key);
+  RoleArray_Free(r->_Elements);
+  RoleHash_Free(r->Subs);
+  if(r->Prts->Length>0)
+    free(r->Prts->Values);
+  free(r->Prts);
+  free(r);
 }
 
 
 void Role_Free(Role *r){
+//	printf("free %s\n", r->_Name);
 	if(r->_Value != NULL) free(r->_Value);
-	if(r->_Name != NULL) free(r->_Name);
-	if(r->Key != NULL) free(r->Key);
-
-	RoleHash_Free(r->Subs);	
-	RoleArray_Free(r->Prts);	
-	RoleArray_Free(r->_Elements);
-	free(r);
+	Role_FreeKeepValue(r);
 }
 void Role_Set(Role *r, Role *t){
 	if(r->_Value != NULL) 
@@ -119,7 +142,7 @@ void Role_AddElements(Role* r, Role* t){
 
 
 void RoleArray_Init(RoleArray **a){
-	*a = (RoleArray *)malloc(sizeof(RoleArray));
+	*a =(RoleArray *)malloc(sizeof(RoleArray));
   (*a)->Length = 0;
 	(*a)->Size =0;
   (*a)->Values = NULL;
@@ -130,13 +153,10 @@ RoleArray* RoleArray_New(){
 	return ra;
 }
 
-void RoleArray_Print(RoleArray *ra){
+void RoleArray_Print(RoleArray *ra, FILE *fp){
 	int i;
-	fprintf(stderr, "\tLength: %d, Size: %d", ra->Length, ra->Size);
-	for(i=0; i<ra->Length; i++){
-		fprintf(stderr, "\t%s", ra->Values[i]);
-	}
-	fprintf(stderr, "\n");
+	for(i=0; i<ra->Length; i++)
+		Role_Print(ra->Values[i], fp);
 }
 Index RoleArray_Add(RoleArray *a, Role *r){	
   Index p = a->Length++;
@@ -152,6 +172,7 @@ void RoleArray_Free(RoleArray *a){
 	int i;
 	for(i=0; i<a->Size; i++)
 		Role_Free(a->Values[i]);
+	free(a->Values);
 	free(a);
 }
 
@@ -224,7 +245,8 @@ void RoleHash_Free(RoleHash *map){
 		pair = bucket->pairs;
     j = 0;
     while(j < m) {
-      free(pair->value);
+			if(strcmp(pair->key, "Eve"))
+				 Role_Free(pair->value);
       pair++;
       j++;
     }
@@ -319,7 +341,7 @@ void RoleHash_Put(const RoleHash *map, const char *key, const Role* value){
   strcpy(pair->key, key);
   pair->value = (Role*)value;
 }
-void RoleHash_Print(const RoleHash *map){
+void RoleHash_Print(const RoleHash *map, FILE *fp){
 	unsigned int i, j, n, m;
   Bucket *bucket;
   Pair *pair;
@@ -332,8 +354,8 @@ void RoleHash_Print(const RoleHash *map){
     m = bucket->count;
     j = 0;
     while (j < m) {
-			printf("HashKey: %s\n", pair->key);
-			Role_Print(pair->value);
+			//printf("HashKey: %s\n", pair->key);
+			Role_Print(pair->value, fp);
 			pair++;
       j++;
     }

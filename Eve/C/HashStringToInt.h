@@ -334,6 +334,58 @@ void sihash_incr(sihash *map, const char *key){
 	pair->value = 1;
 
 }
+int sihash_getorputdb(sihash *map, const char *key, int *max_index, 
+											FILE *fp, int size){
+	unsigned int key_len, value_len, index;
+  Bucket *bucket;
+  Pair *tmp_pairs, *pair;
+  char *tmp_value;
+	char str[255];
+	index = hash(key) % map->count;
+  bucket = &(map->buckets[index]);
+  /* Check if we can handle insertion by sihashply replacing
+   * an existing value in a key-value pair in the bucket.
+   */
+  if ((pair = get_pair(bucket, key)) != NULL) {
+    /* The bucket contains a pair that matches the provided key,
+     * change the value for that pair to the new value.*/
+
+    return pair->value;
+  }
+	/* Create a key-value pair */
+	if (bucket->count == 0) {
+		/* The bucket is empty, lazily allocate space for a single
+		 * key-value pair.
+		 */
+		bucket->pairs = malloc(sizeof(Pair));
+		if (bucket->pairs == NULL) {
+			return;
+		}
+		bucket->count = 1;
+	}
+	else {
+		/* The bucket wasn't empty but no pair existed that matches the provided
+		 * key, so create a new key-value pair.
+		 */
+		tmp_pairs = realloc(bucket->pairs, (bucket->count + 1) * sizeof(Pair));
+		if (tmp_pairs == NULL) {
+			return;
+		}
+		bucket->pairs = tmp_pairs;
+		bucket->count++;
+	}
+	/* Get the last pair in the chain for the bucket */
+	pair = &(bucket->pairs[bucket->count - 1]);
+	strcpy(pair->key, key);
+
+	strcpy(str, key);
+
+	fwrite(&str, size, 1, fp);
+
+	pair->value = *max_index;
+	*max_index ++;
+	return pair->value;
+}
 
 void sihash_put(sihash *map, const char *key, const int value)
 {

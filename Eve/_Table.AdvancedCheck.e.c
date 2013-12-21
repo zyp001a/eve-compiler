@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
-#include "HashStr2Int.h"
-#include "InlineRadixTreeChar.h"
+#include "HashStringToInt.h"
+#include "InlineRadixTreeStringToChar.h"
 #define SEP '@@|Sep|'
 #define SEPSTR "@@|Sep|\n"
 #define __START_OFFSET @@|DataStartOffset|
@@ -37,33 +37,10 @@ int crow;
 		^
 	}
 }
-^
- /*
-sihash *chromosome;
-irtree *chromosome_root;
-long position_max = 0;
-static void iter_tree(const char *key, const int value)
-{
-	char *s = (char *)key;
-	printf("key %s: %d\n", key, value);	
-	irtree_putstr(chromosome_root, s, SEP);
-}
- */
 
-//
-
-^
 @@-N.DraftStruct.Name = '__TableLine'
 @@-N.DraftStruct.Print
 ^
-/*
-typedef struct __TableLine{
-//part2
-  char chromosome;
-  long position;
-//
-} __TableLine;
-*/
 
 void stat_val(){
 	int c, i, j;

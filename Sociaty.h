@@ -4,6 +4,8 @@
 #include "Common.h"
 #include "Role.h"
 #include "Hash.h"
+
+
 //#include "Expression.h"
 typedef struct Sociaty Sociaty;
 struct Sociaty{
@@ -15,10 +17,12 @@ struct Sociaty{
 	FILE *Out;
 	FILE *Err;
 	FILE *Program; //not used
+	FILE *Exec;
 	char InFile[MAX_FILE_NAME];
 	char OutFile[MAX_FILE_NAME];
 	char ErrFile[MAX_FILE_NAME];
 	char ProgramFile[MAX_FILE_NAME];
+	char ExecFile[MAX_FILE_NAME];
 
 	int Step;
 };

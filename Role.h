@@ -21,6 +21,7 @@ struct Role{
 	Role* _Target;
 	RoleArray *_Elements; 
 	RoleHash *Subs;
+	void* _Block;
 
 	int Index;
 	char Depth;
@@ -28,7 +29,7 @@ struct Role{
 	Role* Sup;
 
 	RoleArray *Prts;
-	char _Flag;
+	char _Flag; //is tmp role
 
 //	IndexArray Args; //Arguments
 };
@@ -69,9 +70,10 @@ void Role_AddPrt(Role* r, Role* t);
 void Role_AddElements(Role* r, Role* t);
 
 void Role_Free(Role *);
-void Role_Print(Role *r);
+void Role_FreeKeepValue(Role *r);
+void Role_Print(Role *r, FILE *fp);
 void RoleArray_Init(RoleArray **a);
-void RoleArray_Print(RoleArray *a);
+void RoleArray_Print(RoleArray *a, FILE *fp);
 RoleArray* RoleArray_New();
 RoleArray* RoleArray_NewStringArray(StringArray *a);
 Index RoleArray_Add(RoleArray *a, Role *r);
@@ -103,7 +105,7 @@ Role* RoleHash_Get(const RoleHash *map, const char *key);
 Role* RoleHash_GetOrPut(const RoleHash *map, const char *key);
 void RoleHash_Put(const RoleHash *map, const char *key, const Role* value);
 void RoleHash_Free(RoleHash *);
-void RoleHash_Print(const RoleHash *map);
+void RoleHash_Print(const RoleHash *map, FILE *fp);
 void RoleHash_PrintTree(const RoleHash *map);
 
 

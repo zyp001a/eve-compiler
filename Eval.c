@@ -10,18 +10,16 @@ extern char *elementstr;
 
 
 #define EVALDEBUG
-char* Eval(Role *r){
+char* Eval(Role *r, char *label){
 
 	char *eval;
 	Role *t;
-	t = Sociaty_RoleEmploy(r, evalstr);
-
+	t = Sociaty_RoleEmploy(r, label);
 //	p.title = evalstr;
 //	p.len = strlen(evalstr);
 //	Sociaty_AddNewRole(str);
 	eval = GetDymValue(t);
 	if(eval != NULL)
-//	printf("xxx%s\n", str);
 		return EvalString(r, eval, 2);
 	return NULL;
 }
@@ -42,13 +40,19 @@ ReadParam* ReadParam_New(){
 	return p;
 }
 char* EvalString(Role *r, char *str, char adddone){
-	char result_buf[MAX_BLOCK_SIZE];
-  char *result = &result_buf[0];
+
+	char *result_buf = malloc(MAX_BLOCK_SIZE);
+  char *result = result_buf;
+	
+//	fprintf(ns.Err, "/*%s*/", str);
+
+	if(str == NULL) return NULL;
   InterpretValue(Scanner_New(r, str, &result));
 	switch(adddone){
 	case 2:
 		result[0] = '\n';
 		result[1] = '\0';
+		strcat(result, "EvalTime++\n");
 		strcat(result, r->_Name);
 		strcat(result, ".Done = 1\n");
 		break;
@@ -59,11 +63,12 @@ char* EvalString(Role *r, char *str, char adddone){
 	default:
 		result[0] = '\0';
 	}
-  result =  &result_buf[0];
+
 #ifdef EVALDEBUG
 	fprintf(ns.Err, "\t---->Result: \n========\n%s\n========\n", result);
 #endif
-	return result;
+
+	return result_buf;
 }
 char GetFlag(char *str){
 	return 0;
@@ -73,10 +78,11 @@ char* GetPath(char *id){
 	char tpath[MAX_FILE_NAME];
 	char *fname;
 	FILE *tfp;
+	if(id == NULL) return NULL;
 	strcpy(tpath, path);
 	token = strtok(tpath ,":");
 
-	fname = (char *)malloc(MAX_FILE_NAME);
+	fname = malloc(MAX_FILE_NAME);
 
 	while ( token = strtok(NULL, ":") ){
 		strcpy(fname, token);
@@ -90,20 +96,20 @@ char* GetPath(char *id){
 	}	
 	return NULL;
 }
-char* UseFile(char *str){
+void UseFile(char *str){
   char* fpath;
   fpath=GetPath(str);
   if(fpath == NULL){
     eerror("fail to include file");
     eerror(str);
-    exit(1);
+		return;
   }
-
   if(Sociaty_SearchUsedFile(fpath) == -1){
     Sociaty_AddUsedFile(fpath);
-		return fpath;
+		ParseExpressionFromFile(fpath);	
   }
-	return NULL;
+	free(fpath);
+
 }
 /*
 getdymvalue criteria:
@@ -285,7 +291,7 @@ static char* PrintArray(Role *a, char *sep, char *end, char* format){
 	if(a->_Elements->Length == 0) return;
 //	printf("sep %s, end %s, format %s\n",sep, end, format);
 	sprintf(v, format, GetValue(a->_Elements->Values[0]));
-//	printf("xxxxx%s\n",v);
+
 	p = &v[strlen(v)];
 	for(i=1; i<a->_Elements->Length; i++){
 		sprintf(p, sep);
@@ -300,6 +306,18 @@ static char* PrintArray(Role *a, char *sep, char *end, char* format){
 }
 static char* PrintHash(Role *a, char *sep, char *kvsep, char *end, char format){
 	return NULL;
+}
+void TokenParam_Dispose(TokenParam *pp){
+	int i;
+	for(i=0;i<pp->steplen;i++)
+		free(pp->keys[i]);
+
+	if(pp->steplen >0){
+		free(pp->issubs);
+		free(pp->keys);
+	}
+
+
 }
 Role *GetRoleParam(TokenParam *pp, Scanner *ps){
 	Role *r;
@@ -342,10 +360,12 @@ Role *GetRoleParam(TokenParam *pp, Scanner *ps){
 	}
 //	Parameter, r: gene.AdvancedCheck.Run;
 	for(i=0; i<pp->steplen; i++)
-		if(pp->issubs[i])
+		if(pp->issubs[i]){
 			r = Sociaty_RoleEmploy(r, pp->keys[i]);
-		else
+		}
+		else{
 			r = Sociaty_RoleExpend(r, atoi(pp->keys[i]));
+		}
 	return r;	
 }
 char EvalParam(TokenParam *pp, Scanner *ps){
@@ -449,10 +469,12 @@ char ScanIdentifer(Scanner *ps){
 	char *val, *indexstr;
 	char c;
 	TokenParam p;
-	
+	int i;	
 	p.op = ps->in_curr;
 	p.argc = 0;
 	tmp = ps->in_curr+1;
+
+
 	p.oplen = 1;
 	while(tmp[0] == '$' || tmp[0] == '@'){
 		p.oplen++;
@@ -469,7 +491,10 @@ char ScanIdentifer(Scanner *ps){
 		while(1){
 			/*get title*/
 			len = 0;
-			if(!eisletter(tmp[0])) return 0;
+			if(!eisletter(tmp[0])){
+				TokenParam_Dispose(&p);
+				return 0;
+			}
 			tmp2=tmp;
 			len ++;
 			tmp++;
@@ -479,17 +504,22 @@ char ScanIdentifer(Scanner *ps){
 				tmp++;
 			}
 //////////////////////////
+
 			if(p.steplen == 0){
 				p.keys = (char**)malloc(sizeof(char*));
 				p.issubs = (char*)malloc(1);
 			}
 			else{
-				p.keys = (char**)realloc(p.keys, p.steplen+1 * sizeof(char*));
-        p.issubs = (char*)realloc(p.issubs, p.steplen+1);
+				p.keys = realloc(p.keys, (p.steplen+1) * sizeof(char*));
+        p.issubs = realloc(p.issubs, p.steplen+1);
 			}
+			
 			p.issubs[p.steplen] = 1;
 			p.keys[p.steplen] = estrndup(tmp2, len);
+
 			p.steplen++;
+
+
 ////////////////////////			
 
 			if(tmp[0] == '['){
@@ -500,25 +530,30 @@ char ScanIdentifer(Scanner *ps){
 					len ++;
 					tmp++;
 				}
-				if(tmp[0] != ']') return 0;
+				if(tmp[0] != ']'){
+					TokenParam_Dispose(&p);
+					return 0;
+				}
 				tmp++; //skip ]
 /////////////				
-			if(p.steplen == 0){
-				p.keys = (char**)malloc(sizeof(char*));
-				p.issubs = (char*)malloc(1);
-			}
-			else{
-				p.keys = (char**)realloc(p.keys, p.steplen+1 * sizeof(char*));
-        p.issubs = (char*)realloc(p.issubs, p.steplen+1);
-			}
-			p.issubs[p.steplen] = 0;
-			p.keys[p.steplen] = estrndup(tmp2, len);
-			p.steplen++;
+				if(p.steplen == 0){
+					p.keys = (char**)malloc(sizeof(char*));
+					p.issubs = (char*)malloc(1);
+				}
+				else{
+					p.keys = (char**)realloc(p.keys, (p.steplen+1) * sizeof(char*));
+					p.issubs = (char*)realloc(p.issubs, p.steplen+1);
+				}
+				p.issubs[p.steplen] = 0;
+				p.keys[p.steplen] = estrndup(tmp2, len);
+				p.steplen++;
+
+
 /////////////////
 			}
 			/*eval para*/
 			if(tmp[0] == '|' || tmp[0] == '-'){	
-//				printf("xxxxx%c\n",p.op[0]);
+
 
 				break;
 			}
@@ -527,6 +562,7 @@ char ScanIdentifer(Scanner *ps){
 				tmp ++;
 			}
 			else{
+				TokenParam_Dispose(&p);
 				return 0;
 			}
 
@@ -539,69 +575,79 @@ char ScanIdentifer(Scanner *ps){
 		see_dash = 1;
 		p.c = tmp[1];
 		tmp += 2;
-
-		if(tmp[0] == '('){
-      tmp++;
-//			tmp2 = tmp;
-			len2= 0;
-      while(1){
-				if(tmp[0] == ')'){
-					p.argv[p.argc][len2]='\0';
-					if(len2){
-						p.argc++;
-					}
-					tmp++;
-					break;
-				}
-				if(tmp[0] == ','){
-					p.argv[p.argc][len2]='\0';
-					len2=0;
-					p.argc++;
-					tmp++;
-					continue;
-				}
-				if(tmp[0] == '\\'){
-					switch(tmp[1]){
-					case ',':
-						tmp++;
-						break;
-					case 't':
-						p.argv[p.argc][len2] = '\t';
-						len2++;
-						tmp+=2;
-						continue;
-						break;
-					case 'n':
-						p.argv[p.argc][len2] = '\n';
-            len2++;
-            tmp+=2;						
-            continue;
-            break;
-					}					
-				}
-
-				p.argv[p.argc][len2] = tmp[0];
-				len2++;
-        tmp++;
-      }
-    }
-
 	}
 	else{
 		p.c = 'v';
 	}
 
+	if(tmp[0] == '('){
+		tmp++;
+//			tmp2 = tmp;
+		len2= 0;
+		while(1){
+			if(tmp[0] == ')'){
+				p.argv[p.argc][len2]='\0';
+				if(len2){
+					p.argc++;
+				}
+				tmp++;
+				break;
+			}
+			if(tmp[0] == ','){
+				p.argv[p.argc][len2]='\0';
+				len2=0;
+				p.argc++;
+				tmp++;
+				continue;
+			}
+			if(tmp[0] == '\\'){
+				switch(tmp[1]){
+				case ',':
+					tmp++;
+					break;
+				case 't':
+					p.argv[p.argc][len2] = '\t';
+					len2++;
+					tmp+=2;
+					continue;
+					break;
+				case 'n':
+					p.argv[p.argc][len2] = '\n';
+					len2++;
+					tmp+=2;						
+					continue;
+					break;
+				}					
+			}
+
+			p.argv[p.argc][len2] = tmp[0];
+			len2++;
+			tmp++;
+		}
+	}
+
+
 	if(see_left){
-		if(tmp[0] != '|') return 0;
+		if(tmp[0] != '|'){
+			TokenParam_Dispose(&p);
+			return 0;
+		}
 		tmp ++ ;
 	}
-	if(!see_left && !see_dash) return 0;
+	if(!see_left && !see_dash){
+		TokenParam_Dispose(&p);
+		return 0;
+	}
 #ifdef EVALDEBUG
-	int i;
+
+//	int i;
+
   fprintf(ns.Err, "Parameter, r: %s\n",	ps->r->_Name);
+	
 	for(i=0; i<p.steplen; i++){
 		fprintf(ns.Err, "%s,%d,", p.keys[i], p.issubs[i]);
 	}
+
   fprintf(ns.Err, "\nop ");
 	for(i=0; i<p.oplen; i++){
     fprintf(ns.Err, "%c", p.op[i]);
@@ -611,9 +657,13 @@ char ScanIdentifer(Scanner *ps){
     fprintf(ns.Err, "%s,", p.argv[i]);
   }
 	fprintf(ns.Err, "\n");
+
 #endif
 	ps->id_end_pos = tmp;
-	if(!EvalParam(&p, ps)) return 0;
+	if(!EvalParam(&p, ps)){
+		TokenParam_Dispose(&p);
+		return 0;
+	}
 
 	ps->in_curr = tmp;
 	if(ps->is_read){
@@ -623,13 +673,16 @@ char ScanIdentifer(Scanner *ps){
 		IndexArray_Add(ps->read_param->ia, strlen(ps->read_param->buf));
 		StringArray_Add(ps->read_param->sa, estrdup(ps->read_param->buf));
 	}
+	TokenParam_Dispose(&p);
 	return 1;
+}
+void Scanner_Free(Scanner *ps){
+	free(ps);
 }
 void InterpretValue(Scanner *ps){
 #ifdef EVALDEBUG
 	fprintf(ns.Err, "\t---->Eval Content: \n========\n%s\n========\n", ps->in_curr);
 #endif
-
 
 	char c;
 	while (1){
@@ -641,6 +694,7 @@ void InterpretValue(Scanner *ps){
 				IndexArray_Add(ps->read_param->ia, strlen(ps->read_param->buf));
 				StringArray_Add(ps->read_param->sa, estrdup(ps->read_param->buf));
 			}
+			Scanner_Free(ps);
 			return;
 		case '\\':
 			c = ps->in_curr[1];

@@ -14,7 +14,7 @@
 #ifdef LEXDEBUG
 #define ld_print(s1, s2) \
   {\
-    fprintf(ns.Err, "LINE %d: %s, %s\n", yylineno, s1, s2);\
+    fprintf(ns.Err, "%s, %s\n", s1, s2);\
   }
 #else
 #define ld_print(s1, s2) 
@@ -24,7 +24,7 @@ extern Sociaty ns;
 
  
 %option outfile="Lexer.c" header-file="Lexer.h"
-%option warn nodefault yylineno 
+%option warn nodefault 
  
 %option reentrant noyywrap never-interactive nounistd
 %option bison-bridge
@@ -122,10 +122,7 @@ loop:
 	Sociaty_SetIn(yytext+2, "r");
 }
 ^"<".* {
-  char *fpath;
-  fpath = UseFile(yytext+1);
-  if(fpath != NULL)
-		ParseExpressionFromFile(fpath);	
+  UseFile(yytext+1);
 }
 "use" {
   ld_print("TOKEN", yytext);
@@ -164,10 +161,12 @@ loop:
 "~".+ { 
   ld_print("Run command", yytext+1);
   system(yytext+1);
+  fprintf(ns.Exec, "%s\n", yytext+1);
 }
 "system".+ { 
   ld_print("Run command", yytext+6);
   system(yytext+6);
+  fprintf(ns.Exec, "%s\n", yytext+6);
 }
 
 
@@ -236,12 +235,19 @@ loop:
   ld_print("TOKEN", "readfile");
   return READFILE;
 }
+"storefile" {
+  ld_print("TOKEN", yytext);
+  return STOREFILE;
+}
 "parsefile" {
   ld_print("TOKEN", yytext);
   return PARSEFILE;
 }
 
 
+"exit" {
+  return EXIT;
+}
 
 
 "setargs" { 

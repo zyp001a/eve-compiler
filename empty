@@ -1,0 +1,10 @@
+a=1
+a=1
+a=[1,2,3]
+a:b
+a.b:b
+a.b=1
+for a {
+^&-I.Print
+}
+//a.Print

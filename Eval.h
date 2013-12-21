@@ -43,13 +43,14 @@ typedef struct TokenParam{
 	char argc;
 } TokenParam;
 
-char* Eval(Role *r);
+char* Eval(Role *r, char *label);
 char* EvalString(Role *r, char *str, char op);
-char* UseFile(char *str);
+void UseFile(char *str);
 char* GetPath(char *);
 char* GetDefaultValue(Role *r);
 char* GetNoDefaultValue(Role *r);
 char* GetDymValue(Role *r); //for any name return a value
+
 char DoReadParam(TokenParam *pp, Scanner *ps, Role *r);
 char DoWriteParam(TokenParam *pp, Scanner *ps, Role *r);
 char EvalParam(TokenParam *pp, Scanner *ps);
@@ -57,6 +58,7 @@ char ScanIdentifer(Scanner *ps);
 void InterpretValue(Scanner *ps);
 Scanner* Scanner_New(Role *r, char *v, char **out_curr);
 ReadParam* ReadParam_New();
+void TokenParam_Dispose(TokenParam *p);
 
 //Lang GetLang(char *);
 char GetFlag(char *);

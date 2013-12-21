@@ -10,7 +10,7 @@
 #include "Eval.h"
 #include "Parser.h"
 #include "Lexer.h"
-#include "Database.h"
+#include "Reader.h"
 int yyparse(yyscan_t scanner);
 
 int yyerror(yyscan_t scanner, const char *msg){
@@ -18,7 +18,7 @@ int yyerror(yyscan_t scanner, const char *msg){
 }
 
 
-#define YACCDEBUG
+//#define YACCDEBUG
 #ifdef YACCDEBUG
 #define yd_print(s) \
   {\
@@ -28,7 +28,9 @@ int yyerror(yyscan_t scanner, const char *msg){
 #define yd_print(s) 
 #endif
 extern Sociaty ns;
- 
+extern char *evalstr;
+extern char *evalargsstr; 
+extern int *eval_time;
 %}
  
 %code requires {
@@ -42,7 +44,10 @@ void ParseExpressionFromFile(char *fpath);
 void ParseExpressionFromFp(FILE *fp);
 char ParseExpressionFromString(char *str, char istry);
 void ParseExpressionFromStdin(char* starter);
+void EvalRole(Role* r, RoleArray* ra);
 yyscan_t current_scanner;
+
+
 }
  
 %output  "Parser.c"
@@ -67,7 +72,7 @@ yyscan_t current_scanner;
 %token <strval> BLOCK
 %token <strval> ADDRESS
 %token FOR WHILE IF ELSIF ELSE 
-%token USE LOAD ADD INVOKE PRINT PARSEFILE
+%token USE LOAD ADD INVOKE PRINT PARSEFILE STOREFILE EXIT
 %token <strval> PUTSTR
 %token VALUE READFILE
 %token NOT ISFILE ISDIR
@@ -78,7 +83,6 @@ yyscan_t current_scanner;
 %type <strval> role_as_const
 %type <strval> const_or_int
  //%type <roleval> const_as_role
-%type <roleval> eval_expression
 %type <roleval> role
 %type <roleval> member
 %type <roleval> argument
@@ -100,14 +104,20 @@ translation_unit
 ;
 statement
 : END_OF_STATEMENT 
+| EXIT END_OF_STATEMENT 
+{
+	YYABORT; //not used currently
+}
 | expression END_OF_STATEMENT
 | expression PUTSTR
 {
 	Sociaty_PutString($2);
+	free($2);
 }
 | PUTSTR 
 {
 	Sociaty_PutString($1);
+	free($1);
 }
 ;
 expression
@@ -116,39 +126,34 @@ expression
 | assignment_expression
 | inherent_expression
 | eval_expression
-{
-	char *rtn;
-	rtn = Eval($1);
-	if(rtn != NULL){
-		yd_print(rtn);
-		ParseExpressionFromString(rtn,0);
-	}
-//	Sociaty_WriteMembers();
-//	printf("clearargs%d\n", $1);
-//	Sociaty_ClearArgs($1);
-}
 ;
 control_expression
 : FOR role BLOCK
 {
-	yd_print("FOR");
 	int i;
 	Role *ri, *rt;
-	char str[8];
+	char str[20];
 	char *rtn;
-	rt = Sociaty_RoleEmploy($2, "_Iterator");
-	ri = Sociaty_RoleEmploy($2, "_Index");
-	for(i=0; i< $2->_Elements->Length; i++){
-    Role_SetTarget(rt, $2->_Elements->Values[i]);
-		sprintf(str, "%d", i);
-		Role_SetValue(ri, estrdup(str));
+	
+
+	rtn = EvalString($2, $3, 1);
+	free($3);		
+	if(rtn != NULL){
+		
+		yd_print("FOR");
+		rt = Sociaty_RoleEmploy($2, "_Iterator");
+		ri = Sociaty_RoleEmploy($2, "_Index");
+		for(i=0; i< $2->_Elements->Length; i++){
+			Role_SetTarget(rt, $2->_Elements->Values[i]);
+			sprintf(str, "%d", i);
+			Role_SetValue(ri, estrdup(str));
 ////////////////
-		if($3!=NULL){
-			rtn = EvalString($2, $3, 1);
 			ParseExpressionFromString(rtn,0);
 		}
+	}
 ///////////////
-  }
+	free(rtn);
+
 }
 | IF boolean_expression BLOCK
 {
@@ -157,6 +162,7 @@ control_expression
 		estraddeol(&$3);
 		ParseExpressionFromString($3,0);
 	}
+	free($3);
 }
 | IF boolean_expression BLOCK ELSE else_expression
 {
@@ -169,6 +175,8 @@ control_expression
 		estraddeol(&$5);
 		ParseExpressionFromString($5,0);
 	}
+	free($3);
+	free($5);
 }
 ;
 else_expression
@@ -179,12 +187,21 @@ else_expression
 | IF boolean_expression BLOCK
 {
 	if($2) $$ = $3;
-	else $$ = estrdup("");
+	else{
+		$$ = estrdup("");
+		free($3);
+	}
 }
 | IF boolean_expression BLOCK ELSE else_expression
 {
-	if($2) $$ = $3;
-  else $$ = $5;
+	if($2){
+		$$ = $3;
+		free($5);
+	}
+  else{
+		$$ = $5;
+		free($3);
+	}
 }
 ;
 boolean_expression
@@ -194,32 +211,57 @@ boolean_expression
 		$$ = 1;
 	else
 		$$ = 0;
+	free($1);
 }
 | role_as_const '=' '=' role_as_const
 {
-	if(!strcmp($1, $4)) $$ = 1;
+	char b1,b2;
+	b1 = estrisnull($1);
+	b2 = estrisnull($4);
+	if(b1 && b2) $$ = 1;
+	else if(b1 || b2) $$ = 0;
+	else if(!strcmp($1, $4)) $$ = 1;
 	else $$ = 0;
+	free($1);
+	free($4);
 }
 | role_as_const NOT '=' role_as_const
 {
-	if(strcmp($1, $4)) $$ = 1;
-	else $$ = 0;
+	char b1,b2;
+  b1 = estrisnull($1);
+  b2 = estrisnull($4);
+  if(b1 && b2) $$ = 0;
+  else if(b1 || b2) $$ = 1;
+  else if(!strcmp($1, $4)) $$ = 0;
+  else $$ = 1;
+  free($1);
+  free($4);
 }
 | role_as_const '<' role_as_const
 {
 	$$ = (atoi($1) < atoi($3));
+	free($1);
+	free($3);
 }
 | role_as_const '>' role_as_const
 {
 	$$ = (atoi($1) >= atoi($3));
+	free($1);
+	free($3);
+
 }
 | role_as_const '<' '=' role_as_const
 {
   $$ = (atoi($1) <= atoi($4));
+	free($1);
+	free($4);
 }
 | role_as_const '>' '=' role_as_const
 {
   $$ = (atoi($1) >= atoi($4));
+	free($1);
+	free($4);
+
 }
 | NOT boolean_expression
 {
@@ -227,11 +269,17 @@ boolean_expression
 }
 | ISFILE role_as_const
 {
-	$$ = eisfile($2);
+	char *a = GetPath($2);
+	$$ = eisfile(a);
+	free($2);
+	free(a);
 }
 | ISDIR role_as_const
 {
-  $$ = eisdir($2);
+	char *a = GetPath($2);
+  $$ = eisdir(a);
+	free(a);
+	free($2);
 }
 | '(' boolean_expression ')'
 {
@@ -250,13 +298,13 @@ internal_function
 : USE role_as_const
 {
 	char *fpath;
-  fpath = UseFile($2);
-		if(fpath != NULL)
-			ParseExpressionFromFile(fpath);
+  UseFile($2);
+	free($2);
 }
 | LOAD role_as_const
 {
 	ParseExpressionFromFile($2);
+	free($2);
 }
 /*
 | PRINT argument_list 
@@ -282,6 +330,8 @@ internal_function
 	rtn = EvalString($2, $3, 1);
 //  yd_print(rtn);
 	ParseExpressionFromString(rtn,0);
+	free(rtn);
+	free($3);
 }
 | PARSEFILE role
 {
@@ -317,12 +367,22 @@ assignment_expression
 | role '=' role_as_const
 { 
 	yd_print("ASSIGN VALUE");
-	Role_SetValue($1, estrdup($3));
+	Role_SetValue($1, $3);
+	//not free, directly passed to value
 }
 | role '+' '=' role_as_const
 {
 	yd_print("CONCAT VALUE");
   estrcat(&$1->_Value, $4);
+	free($4);
+}
+| role '+' '+'
+{
+	yd_print("INCR VALUE");
+	int i = atoi($1->_Value) + 1;
+	char a[8];
+	sprintf(a, "%d", i);
+	Role_SetValue($1, estrdup(a));
 }
 | role '=' '&' role
 {
@@ -340,35 +400,29 @@ inherent_expression
 eval_expression
 : role {
 	yd_print("EVAL");
-	$$ = $1; 
+	EvalRole($1, NULL);
 }
 | role '(' ')' {  
 	yd_print("EVAL");
-	$$ = $1; 
+
 }
 | role argument_list
 {
-
 	yd_print("EVAL ARGS");
-	Role *t = Sociaty_RoleEmploy($1, "_Args");
-	Sociaty_RoleSetElements(t, $2);
-	$$ = $1;
+	EvalRole($1, $2);
 }
 | role '(' argument_list ')'
 {
 	yd_print("EVAL ARGS");
-  Role *t = Sociaty_RoleEmploy($1, "_Args");
-	Sociaty_RoleSetElements(t, $3);
-	$$ = $1;
+	EvalRole($1, $3);
 }
 ;
 role_as_const
 : role {
 //////////////////////////////////////////////////////
-	char *v=GetDymValue($1);
+	char *v = GetDymValue($1);
 	if(v == NULL) $$ = NULL;
 	else $$ = EvalString($1, v, 0);
-
 ////////////////
 }
 | const_or_int {
@@ -389,13 +443,17 @@ role_as_const
 	yd_print("READFILE");
 	char* fpath;
   FILE *fp;
-  fpath=GetPath($2);
-  if(fpath == NULL){
-		$$ = "";
-  }
-	yd_print(fpath);
-  fp = fopen(fpath, "r");
-  $$ = ereadfile(fp);
+	fpath=GetPath($2);
+	free($2);
+	if(fpath == NULL){
+		$$ = NULL;
+	}
+	else{
+		yd_print(fpath);
+		fp = fopen(fpath, "r");
+		$$ = ereadfile(fp);
+		free(fpath);
+	}
 }
 ;
 /*
@@ -420,10 +478,12 @@ role
 | IDENTIFIER
 {
 	$$ = Sociaty_RoleEmploy(ns.Curr, $1);
+	free($1);
 }
 | ADDRESS
 {
 	$$ = (Role*)atol($1);
+	free($1);
 }
 ;
 
@@ -433,20 +493,26 @@ member
 	Role *r;
 	r = Sociaty_RoleEmploy(ns.Curr, $1);
 	$$ = Sociaty_RoleEmploy(r, $3);
+	free($1);
+	free($3);
 }
 | IDENTIFIER '[' INTEGER ']'
 {
 	Role *r;
   r = Sociaty_RoleEmploy(ns.Curr, $1);
 	$$ = Sociaty_RoleExpend(r, atoi($3));
+	free($1);
+	free($3);
 }
 | member '.' IDENTIFIER
 {
 	$$ = Sociaty_RoleEmploy($1, $3);
+	free($3);
 }
 | member '[' INTEGER ']'
 {
 	$$ = Sociaty_RoleExpend($1, atoi($3));
+  free($3);
 }
 ;
 
@@ -454,6 +520,7 @@ argument
 : const_or_int 
 {	
 	$$ = Role_New();
+	$$->_Flag = 1;
 	$$->_Value = $1;
 }
 | role 
@@ -477,18 +544,24 @@ argument_list
 
 	//void ParseExpressionFromString(Expression *expr, char *str){
 void ParseExpressionFromFp(FILE *fp){
+	if(fp == NULL) return;
 	char *content;
 	content = ereadfile(fp);
-	estraddeol(&content);
-	ParseExpressionFromString(content,0);
+	if(content != NULL){
+		estraddeol(&content);
+		ParseExpressionFromString(content, 0);
+		free(content);
+	}
+	
 //	free(fpath);
 }
 void ParseExpressionFromStdin(char* starter){
-	char line[32768];
+	char line[MAX_BLOCK_SIZE];
 	int li,c;
 	li = 0;
 	while(c=getchar()){
 		if(c == EOF){
+//			printf("\n");
 			break;
 		}
 		else if (c == '\n'){			
@@ -515,6 +588,7 @@ void ParseExpressionFromFile(char *fpath){
   if(fpath[0]){
     if((ifp=fopen(fpath,"r")) != NULL){
 			ParseExpressionFromFp(ifp);
+			fclose(ifp);
 		}
 		else{
 			eerror("file not exist");
@@ -525,14 +599,14 @@ void ParseExpressionFromFile(char *fpath){
     eerror("file not exist");
     exit(1);
   }
-	fclose(ifp);
+
 //  free(fpath);
 }
 
 char ParseExpressionFromString(char *str, char istry){
 //	printf("\nParseExpressionFromString\n=====\n%s\n=====\n\n", str);
   yyscan_t scanner;
-	current_scanner = scanner;
+//	current_scanner = scanner;
   YY_BUFFER_STATE state;
 	if (yylex_init(&scanner)) {
     // couldn't initialize
@@ -545,6 +619,7 @@ char ParseExpressionFromString(char *str, char istry){
     // error parsing
 		if(!istry){
 			eerror("yyparse failed");
+			exit(1);
 		}
 		yy_delete_buffer(state, scanner);
 		yylex_destroy(scanner);
@@ -554,5 +629,27 @@ char ParseExpressionFromString(char *str, char istry){
 	yylex_destroy(scanner);
 	return 1;
 //	free(str);
+
+}
+void EvalRole(Role* r, RoleArray* ra){
+	char *rtn;
+	Role *t;
+	if(ra != NULL){
+		t = Sociaty_RoleEmploy(r, "_Args");
+		Sociaty_RoleSetElements(t, ra);
+		rtn = Eval(r,evalargsstr);
+		if(rtn != NULL){
+			ParseExpressionFromString(rtn,0);
+			free(rtn);
+		}
+	}
+	Role_Print(r, ns.Err);
+	fprintf(ns.Err, "\n%s\n", r->_Name);
+	rtn = Eval(r, evalstr);
+	if(rtn != NULL){
+		yd_print(rtn);
+		ParseExpressionFromString(rtn,0);
+		free(rtn);
+	}
 
 }

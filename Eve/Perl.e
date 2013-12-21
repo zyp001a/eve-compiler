@@ -2,8 +2,8 @@
 
 Perl:ProgrammingLanguage
 
-Perl.CodeFile = "%|CmdArgs[0]|.@-N.pl"
-Perl.OutputFile = "%|CmdArgs[0]|.@-N.output"
+Perl.CodeFile = "%|CmdArgs[0]|.@-N.%|EvalTime|.pl"
+Perl.OutputFile = "%|CmdArgs[0]|.@-N.%|EvalTime|.output"
 
 Perl.Write._Eval = `
 >@|CodeFile|

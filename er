@@ -1,0 +1,12 @@
+#!/usr/bin/perl
+$eve = "/home/zyp/bin/eve";
+if(@ARGV == 0){
+		printf("example\ner HelloWorld\n");
+		exit;
+}
+for $i (1..$#ARGV){
+		$ARGV[$i] = qq(\"$ARGV[$i]\");
+}
+$string = join " ",@ARGV;
+print "$string\n";
+system qq(echo \'$string\' | $eve);

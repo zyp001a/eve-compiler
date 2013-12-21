@@ -7,11 +7,15 @@
 char isfrompipe(){
 	return !isatty(fileno(stdin));
 }
+char erename(char *oldname, char* newname){
+	return (char)rename( (const char*)oldname , (const char *)newname );
+}
 #endif
 
 #ifdef __unix__
 #include <unistd.h> 
 char eisfile(char *path){
+	if(path == NULL) return 0;
 	if( access( path, F_OK ) != -1 ) {
     return !eisdir(path);
 	} else {
@@ -23,8 +27,13 @@ char eisfile(char *path){
 #ifdef __GNUC__
 #include <sys/stat.h>
 char eisdir(char *path){
+	if(path == NULL) return 0;
 	struct stat buf;
 	stat(path, &buf);
 	return S_ISDIR(buf.st_mode);
+}
+char echmod(char *f, char mod[]){
+	int i = strtol(mod, 0, 8);
+	return chmod(f, i);
 }
 #endif
