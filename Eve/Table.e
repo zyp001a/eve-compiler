@@ -20,3 +20,10 @@ Table.Struct : C.Struct
 Table.Store : C
 Table.Store.TemplateFile="_Table.Store.e.c"
 
+IndexTable : Table
+IDMappingTable : Table
+InfoTable:Table
+RelationTable:Table
+
+
+

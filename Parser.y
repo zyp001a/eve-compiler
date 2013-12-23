@@ -44,7 +44,8 @@ void ParseExpressionFromFile(char *fpath);
 void ParseExpressionFromFp(FILE *fp);
 char ParseExpressionFromString(char *str, char istry);
 void ParseExpressionFromStdin(char* starter);
-void EvalRole(Role* r, RoleArray* ra);
+void EvalRole(Role* r);
+void SetRole(Role* r, RoleArray* ra);
 yyscan_t current_scanner;
 
 
@@ -74,11 +75,11 @@ yyscan_t current_scanner;
 %token FOR WHILE IF ELSIF ELSE 
 %token USE LOAD ADD INVOKE PRINT PARSEFILE STOREFILE EXIT
 %token <strval> PUTSTR
-%token VALUE READFILE
+%token VALUE READFILE TARGET NULL_TOKEN
 %token NOT ISFILE ISDIR
 
 %token END_OF_STATEMENT 
-%token SETFLAG SETARGS
+%token SETFLAG 
 
 %type <strval> role_as_const
 %type <strval> const_or_int
@@ -352,10 +353,7 @@ internal_function
   yd_print("SETFLAG");
 	Sociaty_GetRole($2)->_Flag = GetFlag($3);
 }
-| SETARGS role argument_list
-{
-	//TODO 
-} 
+
 */
 ;
 assignment_expression
@@ -396,25 +394,35 @@ inherent_expression
 	yd_print("INHERENT");
 	Role_AddPrt($1, $3);
 }
+
+| role ':' role '(' argument_list ')'
+{
+	yd_print("INHERENT");
+  Role_AddPrt($1, $3);
+	SetRole($1, $5);
+}
+
 ;
 eval_expression
 : role {
 	yd_print("EVAL");
-	EvalRole($1, NULL);
+	EvalRole($1);
 }
 | role '(' ')' {  
 	yd_print("EVAL");
-
+	EvalRole($1);
 }
 | role argument_list
 {
 	yd_print("EVAL ARGS");
-	EvalRole($1, $2);
+	SetRole($1,$2);
+	EvalRole($1);
 }
 | role '(' argument_list ')'
 {
 	yd_print("EVAL ARGS");
-	EvalRole($1, $3);
+	SetRole($1, $3);
+	EvalRole($1);
 }
 ;
 role_as_const
@@ -485,6 +493,12 @@ role
 	$$ = (Role*)atol($1);
 	free($1);
 }
+
+| TARGET role
+{
+	$$ = $2->_Target;
+}
+
 ;
 
 member
@@ -527,6 +541,9 @@ argument
 {
 	$$ = $1;
 }
+| NULL_TOKEN {
+	$$ = NULL;
+}
 ;
 argument_list
 : argument 
@@ -538,6 +555,12 @@ argument_list
 	RoleArray_Add($1, $3);
 	$$ = $1;
 }
+| argument_list ','
+{
+	RoleArray_Add($1, NULL);
+  $$ = $1;
+}
+
 ;
 
 %%
@@ -631,7 +654,7 @@ char ParseExpressionFromString(char *str, char istry){
 //	free(str);
 
 }
-void EvalRole(Role* r, RoleArray* ra){
+void SetRole(Role* r, RoleArray* ra){
 	char *rtn;
 	Role *t;
 	if(ra != NULL){
@@ -643,7 +666,10 @@ void EvalRole(Role* r, RoleArray* ra){
 			free(rtn);
 		}
 	}
-	Role_Print(r, ns.Err);
+}
+void EvalRole(Role* r){
+	char *rtn;
+	Role *t;
 	fprintf(ns.Err, "\n%s\n", r->_Name);
 	rtn = Eval(r, evalstr);
 	if(rtn != NULL){
@@ -651,5 +677,4 @@ void EvalRole(Role* r, RoleArray* ra){
 		ParseExpressionFromString(rtn,0);
 		free(rtn);
 	}
-
 }

@@ -69,10 +69,12 @@ void Role_Free(Role *r){
 	Role_FreeKeepValue(r);
 }
 void Role_Set(Role *r, Role *t){
+	
 	if(r->_Value != NULL) 
 		free(r->_Value);
 	r->_Value = t->_Value;
 	r->_Target = t->_Target;
+	
 }
 void Role_SetName(Role *r, char *name){
 	if(r->_Name != NULL) 
@@ -106,7 +108,7 @@ void Role_AddSub(Role* r, char* key, Role* t){
 static char Role_IsDirectlyRelevant(Role *r, Role *t, char op){
 	Role *tmp;
 	int i;
-
+//	printf("search %s %s\n", r->_Name, t->_Name);
 	if(op > -1 && RoleArray_Search(r->Prts, t) != -1){
 		return 1;
 	}
@@ -128,8 +130,11 @@ static char Role_IsDirectlyRelevant(Role *r, Role *t, char op){
 	return 0;
 }
 void Role_AddPrt(Role* r, Role* t){
-	if(Role_IsDirectlyRelevant(r,t,0))
+	if(Role_IsDirectlyRelevant(r,t,0)){
 		eerror("Directly Relevant !");
+		eerror(r->_Name);
+		eerror(t->_Name);
+	}
 	else
 		RoleArray_Add(r->Prts, t);
 }

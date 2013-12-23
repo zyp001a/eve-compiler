@@ -1,3 +1,9 @@
+C.Definition._EvalArgs = `
+if &-A[0] { &-N.Name = &-A[0]; }
+if &-A[1] { &-N.Type.Name = &-A[1]; }
+if &-A[2] { &-N.Type.Size = &-A[2]; }
+if &-A[3] { &-N.Type.IsUnsigned = &-A[3]; }
+`
 C.Definition.Type.Size = 0
 C.Definition.Print._Eval = `
 if @|Type.IsUnsigned-N| {

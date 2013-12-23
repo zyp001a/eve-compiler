@@ -249,10 +249,14 @@ loop:
   return EXIT;
 }
 
+"target" {
+  ld_print("TARGET", yytext);
+  return TARGET;
+}
 
-"setargs" { 
-  ld_print("TOKEN", yytext);
-  return SETARGS; 
+"null" {
+  ld_print("NULL", yytext);
+  return NULL_TOKEN;
 }
 "setflag" { 
   ld_print("TOKEN", yytext);

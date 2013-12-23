@@ -54,7 +54,7 @@ void stat_val(){
           ^token = strtok(NULL, SEPSTR);^;
         }
 				iname = \&-I.Name;
-				if(\&-I.Type.Hash.Name){
+				if(\&-I.Type.IsHash){
 					if(\&-I.Type.Create){
 						^
 						tl.\%|iname-P| =
@@ -96,7 +96,7 @@ int main(int argc, char **argv){
 ^
   for @@-N.Struct.Definitions {
 		iname = \&-I.Name;
-		if(\&-I.Type.Hash.Name) {
+		if(\&-I.Type.IsHash) {
 			^\%|iname-P|_ind = 0;
 			^
 			if(\&-I.Type.Name == 'char'){
@@ -122,7 +122,7 @@ int main(int argc, char **argv){
 ^
  for @@-N.Struct.Definitions {
 		iname = \&-I.Name;
-		if(\&-I.Type.Hash.Name) {
+		if(\&-I.Type.IsHash) {
 			if(\&-I.Type.Create){
 				^fclose(\%|iname-P|_fp);
 				^

@@ -52,7 +52,7 @@ char* EvalString(Role *r, char *str, char adddone){
 	case 2:
 		result[0] = '\n';
 		result[1] = '\0';
-		strcat(result, "EvalTime++\n");
+//		strcat(result, "EvalTime++\n");
 		strcat(result, r->_Name);
 		strcat(result, ".Done = 1\n");
 		break;
@@ -160,28 +160,41 @@ static char* GetValueSub(Role *p, Role *r, int level){
 	fprintf(ns.Err, "GetValueSub %s %s %d\n", t->_Name, r->_Name, level);
 #endif
 	//make sure walk to end
-	for(i=level; i>=0; i--){
-		t2 = GetRoleKeyIndex(t, r, i);
-		if(t2 == NULL){
-			if(t!=ns.Root){
-				ra = t->Prts;
-				for(pi = ra->Length-1; pi>=0; pi--){
-					t3 = ra->Values[pi];
-					v = GetValueSub(t3, r, i);
-					if(v!=NULL) return v;
-				}
-				t3 = t;
-				if(t3->_Target != NULL){
-					t3 = t3->_Target;
-					v = GetValueSub(t3, r, i);
-					if(v!=NULL) return v;
-				}
-			}
-			return NULL;
-		}
-		t = t2;
+//	for(i=level; i>=0; i--){
+
+	i = level;
+	if(i==-1)
+		return GetValue(t);
+
+	t2 = GetRoleKeyIndex(t, r, i);
+	if(t2 != NULL){
+		v = GetValueSub(t2, r, i-1);
+		if(v!=NULL) return v;
+		
 	}
-	return GetValue(t);
+	if(t!=ns.Root){
+		ra = t->Prts;
+//									fprintf(ns.Err,"%d\n",ra->Length-1);
+		for(pi = ra->Length-1; pi>=0; pi--){
+			t3 = ra->Values[pi];
+//									fprintf(ns.Err,"%s\n",t3->_Name);
+			v = GetValueSub(t3, r, i);
+			if(v!=NULL) return v;
+		}
+		t3 = t;
+		if(t3->_Target != NULL){
+			t3 = t3->_Target;
+			v = GetValueSub(t3, r, i);
+			if(v!=NULL) return v;
+		}
+	}
+//			return NULL;
+//		}
+
+//		t = t2;
+//	}
+		
+	return NULL;
 /*
 	if(t != NULL){
 		v = GetValue(t);
@@ -215,11 +228,11 @@ char* GetDymValue(Role *r){
 	char *v;
 	v = GetValue(r);
 #ifdef EVALDEBUG
-  fprintf(ns.Err, "GetValue %s", v);
+  fprintf(ns.Err, "GetValue %s\n", v);
 #endif
 	if(v == NULL) v = GetNoDefaultValue(r);
 #ifdef EVALDEBUG
-  fprintf(ns.Err, "GetNoDefaultValue %s", v);
+  fprintf(ns.Err, "GetNoDefaultValue %s\n", v);
 #endif
 	if(v == NULL) v = GetDefaultValue(r);
 #ifdef EVALDEBUG
